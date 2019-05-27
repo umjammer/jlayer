@@ -1,6 +1,6 @@
 /*
- * 11/19/04		1.0 moved to LGPL.
- * 12/12/99		Initial version.	mdm@techie.com
+ * 11/19/04        1.0 moved to LGPL.
+ * 12/12/99        Initial version.    mdm@techie.com
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -22,10 +22,10 @@ package javazoom.jl.decoder;
 
 /**
  * Work in progress.
- * 
+ *
  * API usage errors may be handled by throwing an instance of this
- * class, as per JMF 2.0. 
+ * class, as per JMF 2.0.
  */
 public class JavaLayerError extends Error
-{	
+{
 }

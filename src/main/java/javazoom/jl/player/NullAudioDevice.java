@@ -1,6 +1,6 @@
 /*
- * 11/19/04		1.0 moved o LGPL.
- * 29/01/00		Initial version. mdm@techie.com
+ * 11/19/04        1.0 moved o LGPL.
+ * 29/01/00        Initial version. mdm@techie.com
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -23,15 +23,15 @@ package javazoom.jl.player;
 /**
  * The <code>NullAudioDevice</code> implements a silent, no-op
  * audio device. This is useful for testing purposes.
- * 
+ *
  * @since 0.0.8
  * @author Mat McGowan
  */
 public class NullAudioDevice extends AudioDeviceBase
 {
-			
-	public int getPosition()
-	{
-		return 0;
-	}
+
+    public int getPosition()
+    {
+        return 0;
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * 11/19/04		1.0 moved to LGPL.
+ * 11/19/04        1.0 moved to LGPL.
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -23,14 +23,14 @@ import java.io.InputStream;
 
 /**
  * The <code>JavaLayerHooks</code> class allows developers to change
- * the way the JavaLayer library uses Resources. 
+ * the way the JavaLayer library uses Resources.
  */
 
 public interface JavaLayerHook
 {
-	/**
-	 * Retrieves the named resource. This allows resources to be
-	 * obtained without specifying how they are retrieved. 
-	 */
-	public InputStream getResourceAsStream(String name);
+    /**
+     * Retrieves the named resource. This allows resources to be
+     * obtained without specifying how they are retrieved.
+     */
+    public InputStream getResourceAsStream(String name);
 }

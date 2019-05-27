@@ -26,130 +26,124 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Bitstream unit test.
  * It matches test.mp3 properties to test.mp3.properties expected results.
  * As we don't ship test.mp3, you have to generate your own test.mp3.properties
- * Uncomment out = System.out; in setUp() method to generated it on stdout from 
+ * Uncomment out = System.out; in setUp() method to generated it on stdout from
  * your own MP3 file.
+ *
  * @since 0.4
  */
-public class BitstreamTest extends TestCase
-{
-	private String basefile = null;
-	private String name = null;
-	private String filename = null;
-	private PrintStream out = null;
-	private Properties props = null;
-	private FileInputStream mp3in = null;
-	private Bitstream in = null;
-	
-	/**
-	 * Constructor for BitstreamTest.
-	 * @param arg0
-	 */
-	public BitstreamTest(String arg0)
-	{
-		super(arg0);
-	}
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception
-	{
-		super.setUp();
-		props = new Properties();
-		InputStream pin = getClass().getClassLoader().getResourceAsStream("test.mp3.properties");
-		props.load(pin);
-		basefile = (String) props.getProperty("basefile");
-		name = (String) props.getProperty("filename");		
-		filename = basefile + name;	
-		mp3in = new FileInputStream(filename);
-		in = new Bitstream(mp3in);
-		//out = System.out;
-	}
-	/*
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception
-	{
-		super.tearDown();
-		in.close();
-		mp3in.close();	
-	}
+public class BitstreamTest {
 
-	public void testStream()
-	{
-		try
-		{
-			InputStream id3in = in.getRawID3v2();
-			int size = id3in.available();
-			Header header = in.readFrame();
-			if (out != null)
-			{
-				out.println("--- "+filename+" ---");
-				out.println("ID3v2Size="+size);
-				out.println("version="+header.version());
-				out.println("version_string="+header.version_string());
-				out.println("layer="+header.layer());
-				out.println("frequency="+header.frequency());
-				out.println("frequency_string="+header.sample_frequency_string());
-				out.println("bitrate="+header.bitrate());
-				out.println("bitrate_string="+header.bitrate_string());
-				out.println("mode="+header.mode());
-				out.println("mode_string="+header.mode_string());
-				out.println("slots="+header.slots());
-				out.println("vbr="+header.vbr());
-				out.println("vbr_scale="+header.vbr_scale());
-				out.println("max_number_of_frames="+header.max_number_of_frames(mp3in.available()));
-				out.println("min_number_of_frames="+header.min_number_of_frames(mp3in.available()));
-				out.println("ms_per_frame="+header.ms_per_frame());
-				out.println("frames_per_second="+(float) ((1.0 / (header.ms_per_frame())) * 1000.0));
-				out.println("total_ms="+header.total_ms(mp3in.available()));
-				out.println("SyncHeader="+header.getSyncHeader());
-				out.println("checksums="+header.checksums());
-				out.println("copyright="+header.copyright());
-				out.println("original="+header.original());
-				out.println("padding="+header.padding());
-				out.println("framesize="+header.calculate_framesize());
-				out.println("number_of_subbands="+header.number_of_subbands());				
-			}
-			assertEquals("ID3v2Size",Integer.parseInt((String)props.getProperty("ID3v2Size")),size);			
-			assertEquals("version",Integer.parseInt((String)props.getProperty("version")),header.version());
-			assertEquals("version_string",(String)props.getProperty("version_string"),header.version_string());
-			assertEquals("layer",Integer.parseInt((String)props.getProperty("layer")),header.layer());
-			assertEquals("frequency",Integer.parseInt((String)props.getProperty("frequency")),header.frequency());
-			assertEquals("frequency_string",(String)props.getProperty("frequency_string"),header.sample_frequency_string());
-			assertEquals("bitrate",Integer.parseInt((String)props.getProperty("bitrate")),header.bitrate());
-			assertEquals("bitrate_string",(String)props.getProperty("bitrate_string"),header.bitrate_string());
-			assertEquals("mode",Integer.parseInt((String)props.getProperty("mode")),header.mode());
-			assertEquals("mode_string",(String)props.getProperty("mode_string"),header.mode_string());
-			assertEquals("slots",Integer.parseInt((String)props.getProperty("slots")),header.slots());
-			assertEquals("vbr",Boolean.valueOf((String)props.getProperty("vbr")),new Boolean(header.vbr()));
-			assertEquals("vbr_scale",Integer.parseInt((String)props.getProperty("vbr_scale")),header.vbr_scale());
-			assertEquals("max_number_of_frames",Integer.parseInt((String)props.getProperty("max_number_of_frames")),header.max_number_of_frames(mp3in.available()));
-			assertEquals("min_number_of_frames",Integer.parseInt((String)props.getProperty("min_number_of_frames")),header.min_number_of_frames(mp3in.available()));
-			assertTrue("ms_per_frame",Float.parseFloat((String)props.getProperty("ms_per_frame"))==header.ms_per_frame());
-			assertTrue("frames_per_second",Float.parseFloat((String)props.getProperty("frames_per_second"))==(float) ((1.0 / (header.ms_per_frame())) * 1000.0));
-			assertTrue("total_ms",Float.parseFloat((String)props.getProperty("total_ms"))==header.total_ms(mp3in.available()));
-			assertEquals("SyncHeader",Integer.parseInt((String)props.getProperty("SyncHeader")),header.getSyncHeader());
-			assertEquals("checksums",Boolean.valueOf((String)props.getProperty("checksums")),new Boolean(header.checksums()));
-			assertEquals("copyright",Boolean.valueOf((String)props.getProperty("copyright")),new Boolean(header.copyright()));
-			assertEquals("original",Boolean.valueOf((String)props.getProperty("original")),new Boolean(header.original()));
-			assertEquals("padding",Boolean.valueOf((String)props.getProperty("padding")),new Boolean(header.padding()));
-			assertEquals("framesize",Integer.parseInt((String)props.getProperty("framesize")),header.calculate_framesize());
-			assertEquals("number_of_subbands",Integer.parseInt((String)props.getProperty("number_of_subbands")),header.number_of_subbands());
-			in.closeFrame();
-		}
-		catch (BitstreamException e)
-		{
-			assertTrue("BitstreamException : "+e.getMessage(),false);
-		}		
-		catch (IOException e)
-		{
-			assertTrue("IOException : "+e.getMessage(),false);
-		}		
-	}
+    private String basefile = null;
+    private String name = null;
+    private String filename = null;
+    private PrintStream out = null;
+    private Properties props = null;
+    private FileInputStream mp3in = null;
+    private Bitstream in = null;
+
+    @BeforeEach
+    protected void setUp() throws Exception {
+        props = new Properties();
+        InputStream pin = getClass().getClassLoader().getResourceAsStream("test.mp3.properties");
+        props.load(pin);
+        basefile = props.getProperty("basefile");
+        name = props.getProperty("filename");
+        filename = basefile + name;
+        mp3in = new FileInputStream(filename);
+        in = new Bitstream(mp3in);
+//        out = System.out;
+    }
+
+    @AfterEach
+    protected void tearDown() throws Exception {
+        in.close();
+        mp3in.close();
+    }
+
+    @Test
+    public void testStream() {
+        try {
+            InputStream id3in = in.getRawID3v2();
+            int size = id3in.available();
+            Header header = in.readFrame();
+            if (out != null) {
+                out.println("--- " + filename + " ---");
+                out.println("ID3v2Size=" + size);
+                out.println("version=" + header.version());
+                out.println("version_string=" + header.version_string());
+                out.println("layer=" + header.layer());
+                out.println("frequency=" + header.frequency());
+                out.println("frequency_string=" + header.sample_frequency_string());
+                out.println("bitrate=" + header.bitrate());
+                out.println("bitrate_string=" + header.bitrate_string());
+                out.println("mode=" + header.mode());
+                out.println("mode_string=" + header.mode_string());
+                out.println("slots=" + header.slots());
+                out.println("vbr=" + header.vbr());
+                out.println("vbr_scale=" + header.vbr_scale());
+                out.println("max_number_of_frames=" + header.max_number_of_frames(mp3in.available()));
+                out.println("min_number_of_frames=" + header.min_number_of_frames(mp3in.available()));
+                out.println("ms_per_frame=" + header.ms_per_frame());
+                out.println("frames_per_second=" + (float) ((1.0 / (header.ms_per_frame())) * 1000.0));
+                out.println("total_ms=" + header.total_ms(mp3in.available()));
+                out.println("SyncHeader=" + header.getSyncHeader());
+                out.println("checksums=" + header.checksums());
+                out.println("copyright=" + header.copyright());
+                out.println("original=" + header.original());
+                out.println("padding=" + header.padding());
+                out.println("framesize=" + header.calculate_framesize());
+                out.println("number_of_subbands=" + header.number_of_subbands());
+            }
+            assertEquals(Integer.parseInt(props.getProperty("ID3v2Size")), size, "ID3v2Size");
+            assertEquals(Integer.parseInt(props.getProperty("version")), header.version(), "version");
+            assertEquals(props.getProperty("version_string"), header.version_string(), "version_string");
+            assertEquals(Integer.parseInt(props.getProperty("layer")), header.layer(), "layer");
+            assertEquals(Integer.parseInt(props.getProperty("frequency")), header.frequency(), "frequency");
+            assertEquals(props.getProperty("frequency_string"), header.sample_frequency_string(), "frequency_string");
+            assertEquals(Integer.parseInt(props.getProperty("bitrate")), header.bitrate(), "bitrate");
+            assertEquals(props.getProperty("bitrate_string"), header.bitrate_string(), "bitrate_string");
+            assertEquals(Integer.parseInt(props.getProperty("mode")), header.mode(), "mode");
+            assertEquals(props.getProperty("mode_string"), header.mode_string(), "mode_string");
+            assertEquals(Integer.parseInt(props.getProperty("slots")), header.slots(), "slots");
+            assertEquals(Boolean.valueOf(props.getProperty("vbr")), new Boolean(header.vbr()), "vbr");
+            assertEquals(Integer.parseInt(props.getProperty("vbr_scale")), header.vbr_scale(), "vbr_scale");
+            assertEquals(Integer.parseInt(props.getProperty("max_number_of_frames")),
+                         header.max_number_of_frames(mp3in.available()),
+                         "max_number_of_frames");
+            assertEquals(Integer.parseInt(props.getProperty("min_number_of_frames")),
+                         header.min_number_of_frames(mp3in.available()),
+                         "min_number_of_frames");
+            assertTrue(Float.parseFloat(props.getProperty("ms_per_frame")) == header.ms_per_frame(), "ms_per_frame");
+            assertTrue(Float
+                    .parseFloat(props.getProperty("frames_per_second")) == (float) ((1.0 / (header.ms_per_frame())) * 1000.0),
+                       "frames_per_second");
+            assertTrue(Float.parseFloat(props.getProperty("total_ms")) == header.total_ms(mp3in.available()), "total_ms");
+            assertEquals(Integer.parseInt(props.getProperty("SyncHeader")), header.getSyncHeader(), "SyncHeader");
+            assertEquals(Boolean.valueOf(props.getProperty("checksums")), new Boolean(header.checksums()), "checksums");
+            assertEquals(Boolean.valueOf(props.getProperty("copyright")), new Boolean(header.copyright()), "copyright");
+            assertEquals(Boolean.valueOf(props.getProperty("original")), new Boolean(header.original()), "original");
+            assertEquals(Boolean.valueOf(props.getProperty("padding")), new Boolean(header.padding()), "padding");
+            assertEquals(Integer.parseInt(props.getProperty("framesize")), header.calculate_framesize(), "framesize");
+            assertEquals(Integer.parseInt(props.getProperty("number_of_subbands")),
+                         header.number_of_subbands(),
+                         "number_of_subbands");
+            in.closeFrame();
+        } catch (BitstreamException e) {
+            assertTrue(false, "BitstreamException : " + e.getMessage());
+        } catch (IOException e) {
+            assertTrue(false, "IOException : " + e.getMessage());
+        }
+    }
 }

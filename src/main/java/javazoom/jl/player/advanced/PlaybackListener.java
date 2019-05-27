@@ -1,5 +1,5 @@
 /*
- * 11/19/04		1.0 moved to LGPL. 
+ * 11/19/04        1.0 moved to LGPL.
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -25,6 +25,6 @@ package javazoom.jl.player.advanced;
  */
 public abstract class PlaybackListener
 {
-	public void playbackStarted(PlaybackEvent evt){}
-	public void playbackFinished(PlaybackEvent evt){}
+    public void playbackStarted(PlaybackEvent evt){}
+    public void playbackFinished(PlaybackEvent evt){}
 }

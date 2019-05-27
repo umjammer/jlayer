@@ -1,7 +1,7 @@
 /*
  * 09/26/08     throw exception on subbband alloc error: Christopher G. Jennings (cjennings@acm.org)
- * 11/19/04		1.0 moved to LGPL.
- * 12/12/99		Initial version.	mdm@techie.com
+ * 11/19/04        1.0 moved to LGPL.
+ * 12/12/99        Initial version.    mdm@techie.com
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -24,16 +24,16 @@ package javazoom.jl.decoder;
 /**
  * Implementations of FrameDecoder are responsible for decoding
  * an MPEG audio frame.
- *  
+ *
  */
 //REVIEW: the interface currently is too thin. There should be
 // methods to specify the output buffer, the synthesis filters and
-// possibly other objects used by the decoder. 
+// possibly other objects used by the decoder.
 public interface FrameDecoder
 {
-	/**
-	 * Decodes one frame of MPEG audio. 
-	 */
-	public void decodeFrame() throws DecoderException;
-		
+    /**
+     * Decodes one frame of MPEG audio.
+     */
+    public void decodeFrame() throws DecoderException;
+
 }
