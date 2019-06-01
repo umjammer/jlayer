@@ -49,8 +49,8 @@ and anyone can add his contribution. JLayer is licensed under LGPL (see LICENSE.
 
 ```
   java javazoom.jl.player.jlp -url http://www.aserver.com/remotefile.mp3
-
 ```
+
   Note : MP3 simple player only works under JVM that supports JavaSound 1.0 (i.e JDK1.3.x+)
 
 ### How to run the advanced (threaded) MP3 player ?
@@ -93,15 +93,15 @@ and anyone can add his contribution. JLayer is licensed under LGPL (see LICENSE.
    * Heap use range : 1380KB to 1900KB - 370 classes loaded. 
    * Footprint :
 
-|~8MB| under WinNT4/Win2K + J2SE 1.3 (Hotspot).|
-|~10MB| under WinNT4/Win2K + J2SE 1.4.1 (Hotspot).|
+| ~8MB | under WinNT4/Win2K + J2SE 1.3 (Hotspot) |
+| ~10MB | under WinNT4/Win2K + J2SE 1.4.1 (Hotspot) |
 
    * CPU usage :
 
-| ~12% |under PIII 800Mhz/WinNT4+J2SE 1.3 (Hotspot).|
-|~8% |under PIII 1Ghz/Win2K+J2SE 1.3.1 (Hotspot).|
-|~12% |under PIII 1Ghz/Win2K+J2SE 1.4.1 (Hotspot).|
-|~1% |under PIII 1Ghz/Win2K+J2SE 1.5.0 (Hotspot).|
+| ~12% | under PIII 800Mhz/WinNT4+J2SE 1.3 (Hotspot) |
+| ~8% | under PIII 1Ghz/Win2K+J2SE 1.3.1 (Hotspot) |
+| ~12% | under PIII 1Ghz/Win2K+J2SE 1.4.1 (Hotspot) |
+| ~1% | under PIII 1Ghz/Win2K+J2SE 1.5.0 (Hotspot) |
 
 ### How to contact JLayer developers ?
 
