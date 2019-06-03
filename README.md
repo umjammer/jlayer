@@ -94,11 +94,13 @@ and anyone can add his contribution. JLayer is licensed under LGPL (see LICENSE.
    * Footprint :
 
 | ~8MB | under WinNT4/Win2K + J2SE 1.3 (Hotspot) |
+|---|---|
 | ~10MB | under WinNT4/Win2K + J2SE 1.4.1 (Hotspot) |
 
    * CPU usage :
 
 | ~12% | under PIII 800Mhz/WinNT4+J2SE 1.3 (Hotspot) |
+|---|---|
 | ~8% | under PIII 1Ghz/Win2K+J2SE 1.3.1 (Hotspot) |
 | ~12% | under PIII 1Ghz/Win2K+J2SE 1.4.1 (Hotspot) |
 | ~1% | under PIII 1Ghz/Win2K+J2SE 1.5.0 (Hotspot) |
