@@ -572,7 +572,8 @@ final class SynthesisFilter
   /**
    * Compute new values via a fast cosine transform.
    */
-  private void compute_new_v_old()
+  @SuppressWarnings("unused")
+private void compute_new_v_old()
   {
     // p is fully initialized from x1
      //float[] p = _p;
@@ -970,6 +971,7 @@ final class SynthesisFilter
   {
     final float[] vp = actual_v;
 
+    @SuppressWarnings("unused")
     int idx = 0;
     //int inc = v_inc;
     final float[] tmpOut = _tmpOut;
@@ -1617,7 +1619,7 @@ private void compute_pcm_samples(Obuffer buffer)
     {
         try
         {
-            Class elemType = Float.TYPE;
+            Class<?> elemType = Float.TYPE;
             Object o = JavaLayerUtils.deserializeArrayResource("sfd.ser", elemType, 512);
             return (float[])o;
         }

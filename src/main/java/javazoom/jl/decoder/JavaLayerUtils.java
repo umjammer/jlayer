@@ -44,7 +44,7 @@ public class JavaLayerUtils
      * @param in    The input stream to deserialize an object from.
      * @param cls    The expected class of the deserialized object.
      */
-    static public Object deserialize(InputStream in, Class cls)
+    static public Object deserialize(InputStream in, Class<?> cls)
         throws IOException
     {
         if (cls==null)
@@ -107,7 +107,7 @@ public class JavaLayerUtils
      * @param length    The expected length of the array, or -1 if
      *                    any length is expected.
      */
-    static public Object deserializeArray(InputStream in, Class elemType, int length)
+    static public Object deserializeArray(InputStream in, Class<?> elemType, int length)
         throws IOException
     {
         if (elemType==null)
@@ -118,13 +118,13 @@ public class JavaLayerUtils
 
         Object obj = deserialize(in);
 
-        Class cls = obj.getClass();
+        Class<?> cls = obj.getClass();
 
 
         if (!cls.isArray())
             throw new InvalidObjectException("object is not an array");
 
-        Class arrayElemType = cls.getComponentType();
+        Class<?> arrayElemType = cls.getComponentType();
         if (arrayElemType!=elemType)
             throw new InvalidObjectException("unexpected array component type");
 
@@ -138,7 +138,7 @@ public class JavaLayerUtils
         return obj;
     }
 
-    static public Object deserializeArrayResource(String name, Class elemType, int length)
+    static public Object deserializeArrayResource(String name, Class<?> elemType, int length)
         throws IOException
     {
         InputStream str = getResourceAsStream(name);
@@ -198,7 +198,7 @@ public class JavaLayerUtils
         }
         else
         {
-            Class cls = JavaLayerUtils.class;
+            Class<?> cls = JavaLayerUtils.class;
             is = cls.getResourceAsStream(name);
         }
 

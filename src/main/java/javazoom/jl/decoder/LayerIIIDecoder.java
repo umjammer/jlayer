@@ -1813,6 +1813,7 @@ final class LayerIIIDecoder implements FrameDecoder
         }
     }
 
+    @SuppressWarnings("unused")
     private int counter = 0;
     private static final int        SSLIMIT=18;
     private static final int        SBLIMIT=32;

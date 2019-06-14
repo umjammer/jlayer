@@ -61,7 +61,7 @@ public class FactoryRegistry extends AudioDeviceFactory
         factories.put(factory.getClass(), factory);
     }
 
-    public void removeFactoryType(Class cls)
+    public void removeFactoryType(Class<?> cls)
     {
         factories.remove(cls);
     }

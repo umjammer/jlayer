@@ -87,14 +87,14 @@ public class Decoder implements DecoderErrors
      * @param params    The <code>Params</code> instance that describes
      *                    the customizable aspects of the decoder.
      */
-    public Decoder(Params params0)
+    public Decoder(Params params)
     {
-        if (params0==null)
-            params0 = DEFAULT_PARAMS;
+        if (params==null)
+            params = DEFAULT_PARAMS;
 
-        params = params0;
+        this.params = params;
 
-        Equalizer eq = params.getInitialEqualizerSettings();
+        Equalizer eq = this.params.getInitialEqualizerSettings();
         if (eq!=null)
         {
             equalizer.setFrom(eq);
@@ -126,7 +126,7 @@ public class Decoder implements DecoderErrors
      * Decodes one frame from an MPEG audio bitstream.
      *
      * @param header        The header describing the frame to decode.
-     * @param bitstream        The bistream that provides the bits for te body of the frame.
+     * @param stream        The bit stream that provides the bits for te body of the frame.
      *
      * @return A SampleBuffer containing the decoded samples.
      */
@@ -165,7 +165,7 @@ public class Decoder implements DecoderErrors
      * by this decoder. This typically corresponds to the sample
      * rate encoded in the MPEG audio stream.
      *
-     * @param the sample rate (in Hz) of the samples written to the
+     * @return the sample rate (in Hz) of the samples written to the
      *        output buffer when decoding.
      */
     public int getOutputFrequency()
@@ -271,6 +271,7 @@ public class Decoder implements DecoderErrors
         float scalefactor = 32700.0f;
 
         int mode = header.mode();
+        @SuppressWarnings("unused")
         int layer = header.layer();
         int channels = mode==Header.SINGLE_CHANNEL ? 1 : 2;
 

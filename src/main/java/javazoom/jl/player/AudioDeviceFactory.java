@@ -69,7 +69,7 @@ public abstract class AudioDeviceFactory
     {
         AudioDevice dev = null;
 
-        Class cls = null;
+        Class<?> cls = null;
         if (loader==null)
         {
             cls = Class.forName(name);

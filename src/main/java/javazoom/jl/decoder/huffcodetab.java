@@ -49,14 +49,19 @@ final class huffcodetab
 
   private char                 tablename0 = ' ';      /* string, containing table_description   */
   private char                 tablename1 = ' ';      /* string, containing table_description   */
+  @SuppressWarnings("unused")
   private char                 tablename2 = ' ';      /* string, containing table_description   */
 
   private int                 xlen;                     /* max. x-index+                          */
   private int                 ylen;                    /* max. y-index+                          */
   private int                 linbits;                 /* number of linbits                         */
+  @SuppressWarnings("unused")
   private int                  linmax;                /* max number to be stored in linbits      */
+  @SuppressWarnings("unused")
   private int                 ref;                    /* a positive value indicates a reference */
+  @SuppressWarnings("unused")
   private int[]                 table=null;            /* pointer to array[xlen][ylen]              */
+  @SuppressWarnings("unused")
   private int[]                hlen=null;             /* pointer to array[xlen][ylen]              */
   private int[][]             val=null;                /* decoder tree                              */
   private int                  treelen;                /* length of decoder tree                    */
@@ -417,7 +422,8 @@ final class huffcodetab
 
   public static huffcodetab[]  ht = null;     /* Simulate extern struct                 */
 
-  private static int[] bitbuf = new int[32];
+  @SuppressWarnings("unused")
+private static int[] bitbuf = new int[32];
 
   /**
    * Big Constructor : Computes all Huffman Tables.
@@ -453,6 +459,7 @@ final class huffcodetab
     // 32,33 count1-tables
 
     int dmask = 1 << ((4 * 8) - 1);
+    @SuppressWarnings("unused")
     int hs    = 4 * 8;
       int level;
       int point = 0;
