@@ -1,4 +1,4 @@
-[![Release](https://jitpack.io/v/umjammer/jlayer.svg)](https://jitpack.io/#umjammer/jlayer)
+[![Release](https://jitpack.io/v/umjammer/jlayer.svg)](https://jitpack.io/#umjammer/jlayer) [![Parent](https://img.shields.io/badge/Parent-vavi--sound--sandbox-pink)](https://github.com/umjammer/vavi-sound-sandbox)
 
 # JLayer
 
