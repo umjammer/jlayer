@@ -29,6 +29,11 @@ import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.decoder.SampleBuffer;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Port;
+
 /**
  * The <code>Player</code> class implements a simple player for playback
  * of an MPEG audio stream.
@@ -103,6 +108,50 @@ public class Player
     public void play() throws JavaLayerException
     {
         play(Integer.MAX_VALUE);
+    }
+
+    public boolean setGain(final float gain)
+    {
+        if(this.audio instanceof JavaSoundAudioDevice)
+        {
+            final JavaSoundAudioDevice javaSoundAudioDevice = (JavaSoundAudioDevice) this.audio;
+            try
+            {
+                javaSoundAudioDevice.write(null, 0, 0);
+            } catch (JavaLayerException e)
+            {
+                e.printStackTrace();
+            }
+            return javaSoundAudioDevice.setLineGain(gain);
+        }
+        return false;
+    }
+
+
+    public void setVolume(final double vol)
+    {
+        try
+        {
+            final Mixer.Info[] infos = AudioSystem.getMixerInfo();
+            Mixer.Info[] mixerInfos;
+            for (int length = (mixerInfos = infos).length, i = 0; i < length; ++i)
+            {
+                final Mixer.Info info = mixerInfos[i];
+                final Mixer mixer = AudioSystem.getMixer(info);
+                if (mixer.isLineSupported(Port.Info.SPEAKER))
+                {
+                    final Port port = (Port)mixer.getLine(Port.Info.SPEAKER);
+                    port.open();
+                    if (port.isControlSupported(FloatControl.Type.VOLUME))
+                    {
+                        final FloatControl volume = (FloatControl)port.getControl(FloatControl.Type.VOLUME);
+                        volume.setValue((float)(vol / 100.0));
+                    }
+                    port.close();
+                }
+            }
+        }
+        catch (Exception ignored) {}
     }
 
     /**

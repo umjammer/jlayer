@@ -24,12 +24,7 @@
 
 package javazoom.jl.player;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.*;
 
 import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.JavaLayerException;
@@ -74,6 +69,18 @@ public class JavaSoundAudioDevice extends AudioDeviceBase
         //DataLine.Info info = new DataLine.Info(SourceDataLine.class, fmt, 4000);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, fmt);
         return info;
+    }
+
+    public boolean setLineGain(final float gain)
+    {
+        if(this.source != null)
+        {
+            final FloatControl floatControl = (FloatControl)this.source.getControl(FloatControl.Type.MASTER_GAIN);
+            final float newGain = Math.min(Math.max(gain, floatControl.getMinimum()), floatControl.getMaximum());
+            floatControl.setValue(newGain);
+            return true;
+        }
+        return false;
     }
 
     public void open(AudioFormat fmt) throws JavaLayerException
