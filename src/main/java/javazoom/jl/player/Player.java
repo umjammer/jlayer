@@ -132,9 +132,8 @@ public class Player
     {
         try
         {
-            final Mixer.Info[] infos = AudioSystem.getMixerInfo();
-            Mixer.Info[] mixerInfos;
-            for (int length = (mixerInfos = infos).length, i = 0; i < length; ++i)
+            final Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+            for (int length = mixerInfos.length, i = 0; i < length; ++i)
             {
                 final Mixer.Info info = mixerInfos[i];
                 final Mixer mixer = AudioSystem.getMixer(info);
