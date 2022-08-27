@@ -1,14 +1,16 @@
-[![Release](https://jitpack.io/v/umjammer/jlayer.svg)](https://jitpack.io/#umjammer/jlayer) [![Parent](https://img.shields.io/badge/Parent-vavi--sound--sandbox-pink)](https://github.com/umjammer/vavi-sound-sandbox)
+[![Release](https://jitpack.io/v/umjammer/jlayer.svg)](https://jitpack.io/#umjammer/jlayer)
+[![Parent](https://img.shields.io/badge/Parent-vavi--sound--sandbox-pink)](https://github.com/umjammer/vavi-sound-sandbox)
+![Java](https://img.shields.io/badge/Java-8-b07219)
 
 # JLayer
 
  JavaZOOM 1999-2008
 
  Project Homepage :<br/>
-   http://www.javazoom.net/javalayer/javalayer.html 
+   [http://www.javazoom.net/javalayer/javalayer.html](https://web.archive.org/web/20210108055829/http://www.javazoom.net/javalayer/javalayer.html) 
 
  JAVA and MP3 online Forums :<br/>
-   http://www.javazoom.net/services/forums/index.jsp
+   [http://www.javazoom.net/services/forums/index.jsp](https://web.archive.org/web/20041010053627/http://www.javazoom.net/services/forums/index.jsp)
 
 ----
 
@@ -16,15 +18,14 @@
 
 JLayer is a library that decodes/plays/converts MPEG 1/2/2.5 Layer 1/2/3
 (i.e. MP3) in real time for the JAVA(tm) platform. This is a non-commercial project 
-and anyone can add his contribution. JLayer is licensed under LGPL (see LICENSE.txt).
+and anyone can add his contribution. JLayer is licensed under LGPL (see [LICENSE](LICENSE.txt)).
 
 
 ## FAQ
 
 ### How to install JLayer ?
 
-  Before running JLayer you must set `PATH` and `CLASSPATH` for JAVA
-  and you must add `jl1.0.1.jar` to the `CLASSPATH`.
+ * https://jitpack.io/#umjammer/jlayer
 
 ### Do I need JMF to run JLayer player ?
 
@@ -91,33 +92,25 @@ and anyone can add his contribution. JLayer is licensed under LGPL (see LICENSE.
   Here are our benchmark notes :
 
    * Heap use range : 1380KB to 1900KB - 370 classes loaded. 
-   * Footprint :
 
-| ~8MB | under WinNT4/Win2K + J2SE 1.3 (Hotspot) |
-|---|---|
+Footprint :
+
+| size  | jvm                                       |
+|-------|-------------------------------------------|
+| ~8MB  | under WinNT4/Win2K + J2SE 1.3 (Hotspot)   |
 | ~10MB | under WinNT4/Win2K + J2SE 1.4.1 (Hotspot) |
 
-   * CPU usage :
+CPU usage :
 
-| ~12% | under PIII 800Mhz/WinNT4+J2SE 1.3 (Hotspot) |
-|---|---|
-| ~8% | under PIII 1Ghz/Win2K+J2SE 1.3.1 (Hotspot) |
-| ~12% | under PIII 1Ghz/Win2K+J2SE 1.4.1 (Hotspot) |
-| ~1% | under PIII 1Ghz/Win2K+J2SE 1.5.0 (Hotspot) |
+| usage  | jvm                                         |
+|--------|---------------------------------------------|
+| ~12%   | under PIII 800Mhz/WinNT4+J2SE 1.3 (Hotspot) |
+| ~8%    | under PIII 1Ghz/Win2K+J2SE 1.3.1 (Hotspot)  |
+| ~12%   | under PIII 1Ghz/Win2K+J2SE 1.4.1 (Hotspot)  |
+| ~1%    | under PIII 1Ghz/Win2K+J2SE 1.5.0 (Hotspot)  |
 
 ### How to contact JLayer developers ?
 
-  Try to post a thread on Java&MP3 online forums at :
-  http://www.javazoom.net/services/forums/index.jsp
-  You can also contact us at jlayer@javazoom.net for contributions.
-
-
-## KNOWN PROBLEMS
-
-99% of MP3 plays well with JLayer but some (1%) return an `ArrayIndexOutOfBoundsException` 
-while playing. It might come from invalid audio frames. 
-
-### Workaround
-
- Just `try`/`catch` `ArrayIndexOutOfBoundsException` in your code to skip 
- non-detected invalid frames.
+ * Try to post a thread on Java&MP3 online forums at :
+   [http://www.javazoom.net/services/forums/index.jsp](https://web.archive.org/web/20041010053627/http://www.javazoom.net/services/forums/index.jsp)
+ * You can also contact us at jlayer@javazoom.net for contributions.

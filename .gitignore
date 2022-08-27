@@ -5,3 +5,4 @@ build-win32.bat
 playerapplet.html
 setEnvAnt.bat
 doc
+tmp/
