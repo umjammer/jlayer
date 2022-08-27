@@ -1,4 +1,5 @@
 [![Release](https://jitpack.io/v/umjammer/jlayer.svg)](https://jitpack.io/#umjammer/jlayer)
+[![CodeQL](https://github.com/umjammer/jlayer/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/jlayer/actions/workflows/codeql-analysis.yml)
 [![Parent](https://img.shields.io/badge/Parent-vavi--sound--sandbox-pink)](https://github.com/umjammer/vavi-sound-sandbox)
 ![Java](https://img.shields.io/badge/Java-8-b07219)
 
@@ -86,31 +87,3 @@ and anyone can add his contribution. JLayer is licensed under LGPL (see [LICENSE
 ### How to skip frames to have a seek feature ?
 
   See `javazoom.jl.player.advanced.jlap` source to learn how to skip frames.
-
-### How much memory/CPU JLayer needs to run ?
-
-  Here are our benchmark notes :
-
-   * Heap use range : 1380KB to 1900KB - 370 classes loaded. 
-
-Footprint :
-
-| size  | jvm                                       |
-|-------|-------------------------------------------|
-| ~8MB  | under WinNT4/Win2K + J2SE 1.3 (Hotspot)   |
-| ~10MB | under WinNT4/Win2K + J2SE 1.4.1 (Hotspot) |
-
-CPU usage :
-
-| usage  | jvm                                         |
-|--------|---------------------------------------------|
-| ~12%   | under PIII 800Mhz/WinNT4+J2SE 1.3 (Hotspot) |
-| ~8%    | under PIII 1Ghz/Win2K+J2SE 1.3.1 (Hotspot)  |
-| ~12%   | under PIII 1Ghz/Win2K+J2SE 1.4.1 (Hotspot)  |
-| ~1%    | under PIII 1Ghz/Win2K+J2SE 1.5.0 (Hotspot)  |
-
-### How to contact JLayer developers ?
-
- * Try to post a thread on Java&MP3 online forums at :
-   [http://www.javazoom.net/services/forums/index.jsp](https://web.archive.org/web/20041010053627/http://www.javazoom.net/services/forums/index.jsp)
- * You can also contact us at jlayer@javazoom.net for contributions.
