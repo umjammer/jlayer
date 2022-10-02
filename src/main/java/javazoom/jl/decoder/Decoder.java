@@ -33,11 +33,6 @@ public class Decoder implements DecoderErrors
     static private final Params DEFAULT_PARAMS = new Params();
 
     /**
-     * The Bistream from which the MPEG audio frames are read.
-     */
-    //private Bitstream                stream;
-
-    /**
      * The Obuffer instance that will receive the decoded
      * PCM samples.
      */
@@ -353,6 +348,6 @@ public class Decoder implements DecoderErrors
             return equalizer;
         }
 
-    };
+    }
 }
 

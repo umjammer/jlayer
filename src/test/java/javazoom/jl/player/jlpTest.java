@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.jlp;
@@ -69,7 +70,7 @@ System.err.println(filename);
             assertTrue(true, "Play");
         } catch (JavaLayerException e) {
             e.printStackTrace();
-            assertTrue(false, "JavaLayerException : " + e.getMessage());
+            fail("JavaLayerException : " + e.getMessage());
         }
     }
 }

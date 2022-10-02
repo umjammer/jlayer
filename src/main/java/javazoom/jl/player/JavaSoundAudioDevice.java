@@ -104,24 +104,10 @@ public class JavaSoundAudioDevice extends AudioDeviceBase
                  source = (SourceDataLine)line;
                 //source.open(fmt, millisecondsToBytes(fmt, 2000));
                 source.open(fmt);
-                /*
-                if (source.isControlSupported(FloatControl.Type.MASTER_GAIN))
-                {
-                    FloatControl c = (FloatControl)source.getControl(FloatControl.Type.MASTER_GAIN);
-                    c.setValue(c.getMaximum());
-                }*/
                 source.start();
 
             }
-        } catch (RuntimeException ex)
-          {
-              t = ex;
-          }
-          catch (LinkageError ex)
-          {
-              t = ex;
-          }
-          catch (LineUnavailableException ex)
+        } catch (RuntimeException | LineUnavailableException | LinkageError ex)
           {
               t = ex;
           }

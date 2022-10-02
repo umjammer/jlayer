@@ -145,7 +145,7 @@ final class LayerIIIDecoder implements FrameDecoder
         // Sftable
         int[] ll0 = {0, 6, 11, 16, 21};
         int[] ss0 = {0, 6, 12};
-        sftable = new Sftable(ll0,ss0);
+        sftable = new Sftable(ll0, ss0);
         // END OF Sftable
 
         // scalefac_buffer
@@ -289,15 +289,10 @@ final class LayerIIIDecoder implements FrameDecoder
 
                      reorder(lr[ch], ch, gr);
                         antialias(ch, gr);
-                 //for (int hb = 0;hb<576;hb++) CheckSumOut1d = CheckSumOut1d + out_1d[hb];
-                 //System.out.println("CheckSumOut1d = "+CheckSumOut1d);
 
-                   hybrid(ch, gr);
+                 hybrid(ch, gr);
 
-                 //for (int hb = 0;hb<576;hb++) CheckSumOut1d = CheckSumOut1d + out_1d[hb];
-                 //System.out.println("CheckSumOut1d = "+CheckSumOut1d);
-
-                        for (sb18=18;sb18<576;sb18+=36) // Frequency inversion
+                 for (sb18=18;sb18<576;sb18+=36) // Frequency inversion
                        for (ss=1;ss<SSLIMIT;ss+=2)
                             out_1d[sb18 + ss] = -out_1d[sb18 + ss];
 
@@ -341,8 +336,6 @@ final class LayerIIIDecoder implements FrameDecoder
               //    counter++;
               //}
               //else
-              //{
-              //}
 
     }
 
@@ -812,9 +805,7 @@ final class LayerIIIDecoder implements FrameDecoder
           is_1d[index++] = x[0];
           is_1d[index++] = y[0];
           CheckSumHuff = CheckSumHuff + v[0] + w[0] + x[0] + y[0];
-          // System.out.println("v = "+v[0]+" w = "+w[0]);
-          // System.out.println("x = "+x[0]+" y = "+y[0]);
-          num_bits = br.hsstell();
+            num_bits = br.hsstell();
        }
 
         if (num_bits > part2_3_end) {
@@ -830,10 +821,7 @@ final class LayerIIIDecoder implements FrameDecoder
 
         // Zero out rest
 
-       if (index < 576)
-           nonzero[ch] = index;
-       else
-           nonzero[ch] = 576;
+        nonzero[ch] = Math.min(index, 576);
 
        if (index < 0) index = 0;
 
@@ -862,7 +850,7 @@ final class LayerIIIDecoder implements FrameDecoder
     /**
      *
      */
-    private void dequantize_sample(float xr[][], int ch, int gr)
+    private void dequantize_sample(float[][] xr, int ch, int gr)
     {
         gr_info_s gr_info = (si.ch[ch].gr[gr]);
         int  cb=0;
@@ -983,19 +971,13 @@ final class LayerIIIDecoder implements FrameDecoder
           {
 
                 t_index = (index - cb_begin) / cb_width;
-    /*            xr[sb][ss] *= pow(2.0, ((-2.0 * gr_info.subblock_gain[t_index])
-                                        -(0.5 * (1.0 + gr_info.scalefac_scale)
-                                          * scalefac[ch].s[t_index][cb]))); */
-                int idx = scalefac[ch].s[t_index][cb]
+              int idx = scalefac[ch].s[t_index][cb]
                                 << gr_info.scalefac_scale;
              idx += (gr_info.subblock_gain[t_index] << 2);
 
                 xr_1d[quotien][reste] *= two_to_negative_half_pow[idx];
 
             } else {   // LONG block types 0,1,3 & 1st 2 subbands of switched blocks
-    /*                xr[sb][ss] *= pow(2.0, -0.5 * (1.0+gr_info.scalefac_scale)
-                                                         * (scalefac[ch].l[cb]
-                                                         + gr_info.preflag * pretab[cb])); */
                 int idx = scalefac[ch].l[cb];
 
                if (gr_info.preflag != 0)
@@ -1017,13 +999,12 @@ final class LayerIIIDecoder implements FrameDecoder
              xr_1d[quotien][reste] = 0.0f;
        }
 
-          return;
     }
 
     /**
      *
      */
-    private void reorder(float xr[][], int ch, int gr)
+    private void reorder(float[][] xr, int ch, int gr)
     {
        gr_info_s gr_info = (si.ch[ch].gr[gr]);
        int freq, freq3;
@@ -1389,10 +1370,7 @@ final class LayerIIIDecoder implements FrameDecoder
                              lr[0][sb][ss] = lr[1][sb][ss] * is_ratio[i];
                    }
                     }
-    /*                else {
-                        System.out.println("Error in stereo processing\n");
-                    } */
-                i++;
+                    i++;
                 }
 
         } // channels == 2
@@ -1457,14 +1435,12 @@ final class LayerIIIDecoder implements FrameDecoder
 
            tsOut = out_1d;
            // Modif E.B 02/22/99
-           for (int cc = 0;cc<18;cc++)
-               tsOutCopy[cc] = tsOut[cc+sb18];
+           System.arraycopy(tsOut, 0 + sb18, tsOutCopy, 0, 18);
 
            inv_mdct(tsOutCopy, rawout, bt);
 
 
-           for (int cc = 0;cc<18;cc++)
-               tsOut[cc+sb18] = tsOutCopy[cc];
+           System.arraycopy(tsOutCopy, 0, tsOut, 0 + sb18, 18);
            // Fin Modif
 
             // overlap addition
@@ -1821,10 +1797,9 @@ final class LayerIIIDecoder implements FrameDecoder
     // This may be adjusted for performance without any problems.
     //public static final int     POW_TABLE_LIMIT=512;
 
-    /************************************************************/
-    /*                            L3TABLE                       */
-    /************************************************************/
-
+    /**
+    *                            L3TABLE
+    */
     static class SBI
     {
        public int[]         l;
@@ -1917,30 +1892,19 @@ final class LayerIIIDecoder implements FrameDecoder
             s = new int[3][13];
         }
     }
-    //class III_scalefac_t
-    //{
-    //    public temporaire2[]    tab;
-    //       /**
-    //        * Dummy Constructor
-    //        */
-    //       public III_scalefac_t()
-    //       {
-    //           tab = new temporaire2[2];
-    //    }
-    //}
 
-    private static final int slen[][] =
+    private static final int[][] slen =
     {
      {0, 0, 0, 0, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4},
      {0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 2, 3}
     };
 
-    public static final int pretab[] =
+    public static final int[] pretab =
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 3, 3, 2, 0};
 
     private SBI[]            sfBandIndex; // Init in the constructor.
 
-    public static final float two_to_negative_half_pow[] =
+    public static final float[] two_to_negative_half_pow =
     { 1.0000000000E+00f, 7.0710678119E-01f, 5.0000000000E-01f, 3.5355339059E-01f,
       2.5000000000E-01f, 1.7677669530E-01f, 1.2500000000E-01f, 8.8388347648E-02f,
       6.2500000000E-02f, 4.4194173824E-02f, 3.1250000000E-02f, 2.2097086912E-02f,
@@ -1960,7 +1924,7 @@ final class LayerIIIDecoder implements FrameDecoder
     };
 
 
-    public static final float t_43[] = create_t_43();
+    public static final float[] t_43 = create_t_43();
 
     static private float[] create_t_43()
     {
@@ -1974,7 +1938,7 @@ final class LayerIIIDecoder implements FrameDecoder
         return t43;
     }
 
-    public static final float io[][] =
+    public static final float[][] io =
     {
      { 1.0000000000E+00f, 8.4089641526E-01f, 7.0710678119E-01f, 5.9460355751E-01f,
        5.0000000001E-01f, 4.2044820763E-01f, 3.5355339060E-01f, 2.9730177876E-01f,
@@ -1996,7 +1960,7 @@ final class LayerIIIDecoder implements FrameDecoder
 
 
 
-    public static final float TAN12[] =
+    public static final float[] TAN12 =
     {
      0.0f, 0.26794919f, 0.57735027f, 1.0f,
      1.73205081f, 3.73205081f, 9.9999999e10f, -3.73205081f,
@@ -2007,102 +1971,15 @@ final class LayerIIIDecoder implements FrameDecoder
     // REVIEW: in java, the array lookup may well be slower than
     // the actual calculation
     // 576 / 18
-/*
-    private static final int ss_div[] =
-    {
-         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-         2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
-         3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
-         4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,
-         5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
-         6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,
-         7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  7,
-         8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,
-         9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
-        10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-        11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
-        12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
-        13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-        14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-        17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
-        18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
-        19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
-        20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
-        21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
-        22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,
-        23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
-        24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
-        25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25,
-        26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26,
-        27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
-        28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-        29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29,
-        30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
-        31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
-    };
-
-    // 576 % 18
-    private static final int ss_mod[] =
-    {
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-         0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17
-    };
-*/
-    private static /*final*/ int reorder_table[][]/* = loadReorderTable()*/;    // SZD: will be generated on demand
+    private static /*final*/ int[][] reorder_table/* = loadReorderTable()*/;    // SZD: will be generated on demand
 
     /**
      * Loads the data for the reorder
      */
-    /*private static int[][] loadReorderTable()    // SZD: table will be generated
-    {
-        try
-        {
-            Class elemType = int[][].class.getComponentType();
-            Object o = JavaLayerUtils.deserializeArrayResource("l3reorder.ser", elemType, 6);
-            return (int[][])o;
-        }
-        catch (IOException ex)
-        {
-            throw new ExceptionInInitializerError(ex);
-        }
-    }*/
 
-    static int[] reorder(int scalefac_band[]) {    // SZD: converted from LAME
+    static int[] reorder(int[] scalefac_band) {    // SZD: converted from LAME
         int j = 0;
-        int ix[] = new int[576];
+        int[] ix = new int[576];
         for(int sfb = 0; sfb < 13; sfb++) {
             int start = scalefac_band[sfb];
             int end   = scalefac_band[sfb + 1];
@@ -2334,13 +2211,13 @@ final class LayerIIIDecoder implements FrameDecoder
     };
 */
 
-    private static final float cs[] =
+    private static final float[] cs =
     {
      0.857492925712f, 0.881741997318f, 0.949628649103f, 0.983314592492f,
      0.995517816065f, 0.999160558175f, 0.999899195243f, 0.999993155067f
     };
 
-    private static final float ca[] =
+    private static final float[] ca =
     {
      -0.5144957554270f, -0.4717319685650f, -0.3133774542040f, -0.1819131996110f,
      -0.0945741925262f, -0.0409655828852f, -0.0141985685725f, -0.00369997467375f
@@ -2362,7 +2239,7 @@ final class LayerIIIDecoder implements FrameDecoder
     /***************************************************************/
     /*                             INV_MDCT                        */
     /***************************************************************/
-    public static final float win[][] =
+    public static final float[][] win =
     {
      { -1.6141214951E-02f, -5.3603178919E-02f, -1.0070713296E-01f, -1.6280817573E-01f,
        -4.9999999679E-01f, -3.8388735032E-01f, -6.2061144372E-01f, -1.1659756083E+00f,
@@ -2408,7 +2285,7 @@ final class LayerIIIDecoder implements FrameDecoder
     /*                         END OF INV_MDCT                     */
     /***************************************************************/
 
-    class Sftable
+    static class Sftable
     {
         public int[]     l;
         public int[]     s;
@@ -2428,7 +2305,7 @@ final class LayerIIIDecoder implements FrameDecoder
 
     public Sftable                sftable;
 
-    public static final int     nr_of_sfb_block[][][] =
+    public static final int[][][] nr_of_sfb_block =
     {{{ 6, 5, 5, 5} , { 9, 9, 9, 9} , { 6, 9, 9, 9}},
     {{ 6, 5, 7, 3} , { 9, 9,12, 6} , { 6, 9,12, 6}},
     {{11,10, 0, 0} , {18,18, 0, 0} , {15,18, 0, 0}},

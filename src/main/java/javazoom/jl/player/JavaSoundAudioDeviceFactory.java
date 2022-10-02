@@ -47,11 +47,7 @@ public class JavaSoundAudioDeviceFactory extends AudioDeviceFactory
         {
             return createAudioDeviceImpl();
         }
-        catch (Exception ex)
-        {
-            throw new JavaLayerException("unable to create JavaSound device: "+ex);
-        }
-        catch (LinkageError ex)
+        catch (Exception | LinkageError ex)
         {
             throw new JavaLayerException("unable to create JavaSound device: "+ex);
         }
@@ -66,11 +62,7 @@ public class JavaSoundAudioDeviceFactory extends AudioDeviceFactory
             JavaSoundAudioDevice dev = (JavaSoundAudioDevice)instantiate(loader, DEVICE_CLASS_NAME);
             return dev;
         }
-        catch (Exception ex)
-        {
-            throw new JavaLayerException("Cannot create JavaSound device", ex);
-        }
-        catch (LinkageError ex)
+        catch (Exception | LinkageError ex)
         {
             throw new JavaLayerException("Cannot create JavaSound device", ex);
         }

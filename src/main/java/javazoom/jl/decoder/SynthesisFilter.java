@@ -48,21 +48,6 @@ final class SynthesisFilter
   private float              scalefactor;
   private float[]             eq;
 
-    /**
-     * Quality value for controlling CPU usage/quality tradeoff.
-     */
-    /*
-    private int                quality;
-
-    private int                v_inc;
-
-
-
-    public static final int    HIGH_QUALITY = 1;
-    public static final int MEDIUM_QUALITY = 2;
-    public static final int LOW_QUALITY = 4;
-    */
-
   /**
    * Contructor.
    * The scalefactor scales the calculated float pcm samples to short values
@@ -102,28 +87,6 @@ final class SynthesisFilter
      }
 
   }
-
-    /*
-    private void setQuality(int quality0)
-    {
-          switch (quality0)
-          {
-        case HIGH_QUALITY:
-        case MEDIUM_QUALITY:
-        case LOW_QUALITY:
-            v_inc = 16 * quality0;
-            quality = quality0;
-            break;
-        default :
-            throw new IllegalArgumentException("Unknown quality value");
-          }
-    }
-
-    public int getQuality()
-    {
-        return quality;
-    }
-    */
 
   /**
    * Reset the synthesis filter.
@@ -174,20 +137,6 @@ final class SynthesisFilter
     // p is fully initialized from x1
      //float[] p = _p;
      // pp is fully initialized from p
-     //float[] pp = _pp;
-
-     //float[] new_v = _new_v;
-
-      //float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
-    //float[] p = new float[16];
-    //float[] pp = new float[16];
-
-     /*
-     for (int i=31; i>=0; i--)
-     {
-         new_v[i] = 0.0f;
-     }
-      */
 
     float new_v0, new_v1, new_v2, new_v3, new_v4, new_v5, new_v6, new_v7, new_v8, new_v9;
     float new_v10, new_v11, new_v12, new_v13, new_v14, new_v15, new_v16, new_v17, new_v18, new_v19;
@@ -199,10 +148,6 @@ final class SynthesisFilter
     new_v20 = new_v21 = new_v22 = new_v23 = new_v24 = new_v25 = new_v26 = new_v27 = new_v28 = new_v29 =
     new_v30 = new_v31 = 0.0f;
 
-
-//    float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
-//    float[] p = new float[16];
-//    float[] pp = new float[16];
 
     float[] s = samples;
 
@@ -447,7 +392,7 @@ final class SynthesisFilter
 
     // insert V[0-15] (== new_v[0-15]) into actual v:
     // float[] x2 = actual_v + actual_write_pos;
-    float dest[] = actual_v;
+    float[] dest = actual_v;
 
     int pos = actual_write_pos;
 
@@ -578,11 +523,8 @@ private void compute_new_v_old()
     // p is fully initialized from x1
      //float[] p = _p;
      // pp is fully initialized from p
-     //float[] pp = _pp;
 
-     //float[] new_v = _new_v;
-
-      float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
+    float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
     float[] p = new float[16];
     float[] pp = new float[16];
 
@@ -591,10 +533,6 @@ private void compute_new_v_old()
      {
          new_v[i] = 0.0f;
      }
-
-//    float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
-//    float[] p = new float[16];
-//    float[] pp = new float[16];
 
     float[] x1 = samples;
 
@@ -1428,7 +1366,7 @@ private void compute_new_v_old()
             for( int i=0; i<32; i++)
             {
                 float pcm_sample;
-                final float dp[] = d16[i];
+                final float[] dp = d16[i];
                 pcm_sample = ((vp[15 + dvp] * dp[0]) +
                     (vp[14 + dvp] * dp[1]) +
                     (vp[13 + dvp] * dp[2]) +
@@ -1512,35 +1450,7 @@ private void compute_pcm_samples(Obuffer buffer)
         buffer.appendSamples(channel, _tmpOut);
     }
 
-/*
-     // MDM: I was considering putting in quality control for
-     // low-spec CPUs, but the performance gain (about 10-15%)
-     // did not justify the considerable drop in audio quality.
-        switch (inc)
-        {
-        case 16:
-            buffer.appendSamples(channel, tmpOut);
-            break;
-        case 32:
-            for (int i=0; i<16; i++)
-            {
-                buffer.append(channel, (short)tmpOut[i]);
-                buffer.append(channel, (short)tmpOut[i]);
-            }
-            break;
-        case 64:
-            for (int i=0; i<8; i++)
-            {
-                buffer.append(channel, (short)tmpOut[i]);
-                buffer.append(channel, (short)tmpOut[i]);
-                buffer.append(channel, (short)tmpOut[i]);
-                buffer.append(channel, (short)tmpOut[i]);
-            }
-            break;
-
-        }
-*/
-  }
+}
 
   /**
    * Calculate 32 PCM samples and put the into the Obuffer-object.
@@ -1602,14 +1512,14 @@ private void compute_pcm_samples(Obuffer buffer)
   // as in Annex 3-B.3 of the ISO/IEC DIS 11172-3
   // private float d[] = {0.000000000, -4.000442505};
 
-  private static float d[] = null;
+  private static float[] d = null;
 
   /**
    * d[] split into subarrays of length 16. This provides for
    * more faster access by allowing a block of 16 to be addressed
    * with constant offset.
    **/
-  private static float d16[][] = null;
+  private static float[][] d16 = null;
 
   /**
    * Loads the data for the d[] from the resource SFd.ser.
@@ -1673,10 +1583,7 @@ private void compute_pcm_samples(Obuffer buffer)
             len = 0;
 
         float[] subarray = new float[len];
-        for (int i=0; i<len; i++)
-        {
-            subarray[i] = array[offs+i];
-        }
+      System.arraycopy(array, offs + 0, subarray, 0, len);
 
         return subarray;
     }

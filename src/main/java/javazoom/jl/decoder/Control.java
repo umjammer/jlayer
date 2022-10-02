@@ -29,29 +29,29 @@ public interface Control
     /**
      * Starts playback of the media presented by this control.
      */
-    public void start();
+    void start();
 
     /**
      * Stops playback of the media presented by this control.
      */
-    public void stop();
+    void stop();
 
-    public boolean isPlaying();
+    boolean isPlaying();
 
-    public void pause();
+    void pause();
 
 
-    public boolean isRandomAccess();
+    boolean isRandomAccess();
 
     /**
      * Retrieves the current position.
      */
-    public double    getPosition();
+    double    getPosition();
 
     /**
      *
      */
-    public void        setPosition(double d);
+    void        setPosition(double d);
 
 
 }

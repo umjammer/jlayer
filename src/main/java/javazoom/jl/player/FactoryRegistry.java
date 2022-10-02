@@ -21,7 +21,9 @@
 package javazoom.jl.player;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -50,7 +52,7 @@ public class FactoryRegistry extends AudioDeviceFactory
     }
 
 
-    protected Hashtable factories = new Hashtable();
+    protected final Map<Class<? extends AudioDeviceFactory>, AudioDeviceFactory> factories = new HashMap<>();
 
     /**
      * Registers an <code>AudioDeviceFactory</code> instance
@@ -111,10 +113,8 @@ public class FactoryRegistry extends AudioDeviceFactory
             {
                 fa = new AudioDeviceFactory[size];
                 int idx = 0;
-                Enumeration e = factories.elements();
-                while (e.hasMoreElements())
+                for (AudioDeviceFactory factory : factories.values())
                 {
-                    AudioDeviceFactory factory = (AudioDeviceFactory)e.nextElement();
                     fa[idx++] = factory;
                 }
             }

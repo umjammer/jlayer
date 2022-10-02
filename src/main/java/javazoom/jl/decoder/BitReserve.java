@@ -109,32 +109,9 @@ final class BitReserve
      return val;
    }
 
-
-
-   /**
-    * Read 1 bit from the bit stream.
-    */
-/*
-   public int hget1bit_old()
-   {
-         int val;
-      totbit++;
-      if (buf_bit_idx == 0)
-      {
-         buf_bit_idx = 8;
-         buf_byte_idx++;
-      }
-      // BUFSIZE = 4096 = 2^12, so
-      // buf_byte_idx%BUFSIZE == buf_byte_idx & 0xfff
-      val = buf[buf_byte_idx & BUFSIZE_MASK] & putmask[buf_bit_idx];
-      buf_bit_idx--;
-      val = val >>> buf_bit_idx;
-      return val;
-   }
- */
-   /**
+    /**
     * Returns next bit from reserve.
-    * @returns 0 if next bit is reset, or 1 if next bit is set.
+    * @return 0 if next bit is reset, or 1 if next bit is set.
     */
    public int hget1bit()
    {
@@ -144,40 +121,7 @@ final class BitReserve
       return val;
    }
 
-   /**
-    * Retrieves bits from the reserve.
-    */
-/*
-   public int readBits(int[] out, int len)
-   {
-        if (buf_bit_idx == 0)
-        {
-           buf_bit_idx = 8;
-           buf_byte_idx++;
-           current = buf[buf_byte_idx & BUFSIZE_MASK];
-        }
-
-
-
-        // save total number of bits returned
-        len = buf_bit_idx;
-        buf_bit_idx = 0;
-
-        int b = current;
-        int count = len-1;
-
-        while (count >= 0)
-        {
-            out[count--] = (b & 0x1);
-            b >>>= 1;
-        }
-
-        totbit += len;
-        return len;
-   }
-  */
-
-   /**
+    /**
     * Write 8 bits into the bit stream.
     */
    public void hputbuf(int val)

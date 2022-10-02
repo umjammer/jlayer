@@ -109,10 +109,8 @@ public final class Bitstream implements BitstreamErrors {
      *
      */
     private boolean single_ch_mode;
-//    private int current_frame_number;
-//    private int last_frame_number;
 
-    private final int bitmask[] = {
+    private final int[] bitmask = {
         0, // dummy
         0x00000001, 0x00000003, 0x00000007, 0x0000000F, 0x0000001F, 0x0000003F, 0x0000007F, 0x000000FF, 0x000001FF, 0x000003FF,
         0x000007FF, 0x00000FFF, 0x00001FFF, 0x00003FFF, 0x00007FFF, 0x0000FFFF, 0x0001FFFF
@@ -122,7 +120,7 @@ public final class Bitstream implements BitstreamErrors {
 
     private final Header header = new Header();
 
-    private final byte syncbuf[] = new byte[4];
+    private final byte[] syncbuf = new byte[4];
 
     private Crc16[] crc = new Crc16[1];
 
@@ -146,8 +144,6 @@ public final class Bitstream implements BitstreamErrors {
         source = new PushbackInputStream(in, BUFFER_INT_SIZE * 4);
 
         closeFrame();
-        //current_frame_number = -1;
-        //last_frame_number = -1;
     }
 
     /**
@@ -253,7 +249,7 @@ public final class Bitstream implements BitstreamErrors {
         try {
             result = readNextFrame();
             // E.B, Parse VBR (if any) first frame.
-            if (firstframe == true) {
+            if (firstframe) {
                 result.parseVBR(frame_bytes);
                 firstframe = false;
             }
@@ -402,9 +398,6 @@ public final class Bitstream implements BitstreamErrors {
             sync = isSyncMark(headerstring, syncmode, syncword);
         } while (!sync);
 
-        //current_frame_number++;
-        //if (last_frame_number < current_frame_number) last_frame_number = current_frame_number;
-
         return headerstring;
     }
 
@@ -454,14 +447,6 @@ public final class Bitstream implements BitstreamErrors {
         int bytesize = framesize;
 
         // Check ID3v1 TAG (True only if last frame).
-        //for (int t=0;t<(byteread.length)-2;t++)
-        //{
-        //    if ((byteread[t]=='T') && (byteread[t+1]=='A') && (byteread[t+2]=='G'))
-        //    {
-        //        System.out.println("ID3v1 detected at offset "+t);
-        //        throw newBitstreamException(INVALIDFRAME, null);
-        //    }
-        //}
 
         for (int k = 0; k < bytesize; k = k + 4) {
             @SuppressWarnings("unused")

@@ -34,6 +34,6 @@ public interface FrameDecoder
     /**
      * Decodes one frame of MPEG audio.
      */
-    public void decodeFrame() throws DecoderException;
+    void decodeFrame() throws DecoderException;
 
 }

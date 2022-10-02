@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -117,7 +118,7 @@ public class BitstreamTest {
             assertEquals(Integer.parseInt(props.getProperty("mode")), header.mode(), "mode");
             assertEquals(props.getProperty("mode_string"), header.mode_string(), "mode_string");
             assertEquals(Integer.parseInt(props.getProperty("slots")), header.slots(), "slots");
-            assertEquals(Boolean.valueOf(props.getProperty("vbr")), new Boolean(header.vbr()), "vbr");
+            assertEquals(Boolean.valueOf(props.getProperty("vbr")), header.vbr(), "vbr");
             assertEquals(Integer.parseInt(props.getProperty("vbr_scale")), header.vbr_scale(), "vbr_scale");
             assertEquals(Integer.parseInt(props.getProperty("max_number_of_frames")),
                          header.max_number_of_frames(mp3in.available()),
@@ -125,25 +126,24 @@ public class BitstreamTest {
             assertEquals(Integer.parseInt(props.getProperty("min_number_of_frames")),
                          header.min_number_of_frames(mp3in.available()),
                          "min_number_of_frames");
-            assertTrue(Float.parseFloat(props.getProperty("ms_per_frame")) == header.ms_per_frame(), "ms_per_frame");
-            assertTrue(Float
-                    .parseFloat(props.getProperty("frames_per_second")) == (float) ((1.0 / (header.ms_per_frame())) * 1000.0),
-                       "frames_per_second");
-            assertTrue(Float.parseFloat(props.getProperty("total_ms")) == header.total_ms(mp3in.available()), "total_ms");
+            assertEquals(Float.parseFloat(props.getProperty("ms_per_frame")), header.ms_per_frame(), "ms_per_frame");
+            assertEquals(Float
+                    .parseFloat(props.getProperty("frames_per_second")), (float) ((1.0 / (header.ms_per_frame())) * 1000.0), "frames_per_second");
+            assertEquals(Float.parseFloat(props.getProperty("total_ms")), header.total_ms(mp3in.available()), "total_ms");
             assertEquals(Integer.parseInt(props.getProperty("SyncHeader")), header.getSyncHeader(), "SyncHeader");
-            assertEquals(Boolean.valueOf(props.getProperty("checksums")), new Boolean(header.checksums()), "checksums");
-            assertEquals(Boolean.valueOf(props.getProperty("copyright")), new Boolean(header.copyright()), "copyright");
-            assertEquals(Boolean.valueOf(props.getProperty("original")), new Boolean(header.original()), "original");
-            assertEquals(Boolean.valueOf(props.getProperty("padding")), new Boolean(header.padding()), "padding");
+            assertEquals(Boolean.valueOf(props.getProperty("checksums")), header.checksums(), "checksums");
+            assertEquals(Boolean.valueOf(props.getProperty("copyright")), header.copyright(), "copyright");
+            assertEquals(Boolean.valueOf(props.getProperty("original")), header.original(), "original");
+            assertEquals(Boolean.valueOf(props.getProperty("padding")), header.padding(), "padding");
             assertEquals(Integer.parseInt(props.getProperty("framesize")), header.calculate_framesize(), "framesize");
             assertEquals(Integer.parseInt(props.getProperty("number_of_subbands")),
                          header.number_of_subbands(),
                          "number_of_subbands");
             in.closeFrame();
         } catch (BitstreamException e) {
-            assertTrue(false, "BitstreamException : " + e.getMessage());
+            fail("BitstreamException : " + e.getMessage());
         } catch (IOException e) {
-            assertTrue(false, "IOException : " + e.getMessage());
+            fail("IOException : " + e.getMessage());
         }
     }
 }

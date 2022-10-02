@@ -63,7 +63,7 @@ public abstract class Obuffer
   /**
    * Clip Sample to 16 Bits
    */
-  private final short clip(float sample)
+  private short clip(float sample)
   {
     return ((sample > 32767.0f) ? 32767 :
            ((sample < -32768.0f) ? -32768 :

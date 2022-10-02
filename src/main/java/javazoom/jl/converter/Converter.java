@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.Decoder;
@@ -165,7 +166,7 @@ public class Converter {
     protected InputStream openInput(String fileName) throws IOException {
         // ensure name is abstract path name
         File file = new File(fileName);
-        InputStream fileIn = new FileInputStream(file);
+        InputStream fileIn = Files.newInputStream(file.toPath());
         BufferedInputStream bufIn = new BufferedInputStream(fileIn);
 
         return bufIn;
@@ -177,15 +178,15 @@ public class Converter {
      * and to provide new information as it becomes available.
      */
 
-    static public interface ProgressListener {
-        public static final int UPDATE_FRAME_COUNT = 1;
+    public interface ProgressListener {
+        int UPDATE_FRAME_COUNT = 1;
 
         /**
          * Conversion is complete. Param1 contains the time
          * to convert in milliseconds. Param2 contains the number
          * of MPEG audio frames converted.
          */
-        public static final int UPDATE_CONVERT_COMPLETE = 2;
+        int UPDATE_CONVERT_COMPLETE = 2;
 
         /**
          * Notifies the listener that new information is available.
@@ -204,13 +205,13 @@ public class Converter {
          *            param2
          *            is the number of frames converted.
          */
-        public void converterUpdate(int updateID, int param1, int param2);
+        void converterUpdate(int updateID, int param1, int param2);
 
         /**
          * If the converter wishes to make a first pass over the
          * audio frames, this is called as each frame is parsed.
          */
-        public void parsedFrame(int frameNo, Header header);
+        void parsedFrame(int frameNo, Header header);
 
         /**
          * This method is called after each frame has been read,
@@ -219,7 +220,7 @@ public class Converter {
          * @param frameNo The 0-based sequence number of the frame.
          * @param header The Header rerpesenting the frame just read.
          */
-        public void readFrame(int frameNo, Header header);
+        void readFrame(int frameNo, Header header);
 
         /**
          * This method is called after a frame has been decoded.
@@ -228,7 +229,7 @@ public class Converter {
          * @param header The Header rerpesenting the frame just read.
          * @param o The Obuffer the deocded data was written to.
          */
-        public void decodedFrame(int frameNo, Header header, Obuffer o);
+        void decodedFrame(int frameNo, Header header, Obuffer o);
 
         /**
          * Called when an exception is thrown during while converting
@@ -245,7 +246,7 @@ public class Converter {
          *         <code>true</code> is returned, the exception is silently
          *         ignored and the converter moves onto the next frame.
          */
-        public boolean converterException(Throwable t);
+        boolean converterException(Throwable t);
 
     }
 

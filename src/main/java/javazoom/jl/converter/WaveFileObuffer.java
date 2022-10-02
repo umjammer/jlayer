@@ -53,10 +53,10 @@ public class WaveFileObuffer extends Obuffer
    *
    * @param fileName    The filename to write the data to.
    */
-  public WaveFileObuffer(int number_of_channels, int freq, String FileName)
+  public WaveFileObuffer(int number_of_channels, int freq, String fileName)
   {
-      if (FileName==null)
-        throw new NullPointerException("FileName");
+      if (fileName==null)
+        throw new NullPointerException("fileName");
 
     buffer = new short[OBUFFERSIZE];
     bufferp = new short[MAXCHANNELS];
@@ -67,7 +67,7 @@ public class WaveFileObuffer extends Obuffer
 
     outWave = new WaveFile();
 
-    int rc = outWave.OpenForWrite (FileName,freq,(short)16,(short)channels);
+    int rc = outWave.OpenForWrite (fileName,freq,(short)16,(short)channels);
   }
 
   /**
@@ -76,7 +76,7 @@ public class WaveFileObuffer extends Obuffer
   public void append(int channel, short value)
   {
     buffer[bufferp[channel]] = value;
-    bufferp[channel] += channels;
+    bufferp[channel] += (short) channels;
   }
 
   /**
@@ -91,17 +91,6 @@ public class WaveFileObuffer extends Obuffer
 
     rc = outWave.WriteData(buffer, bufferp[0]);
     // REVIEW: handle RiffFile errors.
-    /*
-    for (int j=0;j<bufferp[0];j=j+2)
-    {
-
-        //myBuffer[0] = (short)(((buffer[j]>>8)&0x000000FF) | ((buffer[j]<<8)&0x0000FF00));
-        //myBuffer[1] = (short) (((buffer[j+1]>>8)&0x000000FF) | ((buffer[j+1]<<8)&0x0000FF00));
-        myBuffer[0] = buffer[j];
-        myBuffer[1] = buffer[j+1];
-        rc = outWave.WriteData (myBuffer,2);
-    }
-    */
     for (int i = 0; i < channels; ++i) bufferp[i] = (short)i;
   }
 
