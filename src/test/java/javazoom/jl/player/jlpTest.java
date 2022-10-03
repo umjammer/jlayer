@@ -23,14 +23,15 @@ package javazoom.jl.player;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.my.MyJavaSoundAudioDevice;
+import javazoom.jl.player.my.MyJavaSoundAudioDeviceFactory;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import vavix.util.DelayedWorker;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -46,6 +47,8 @@ public class jlpTest {
     private Properties props = null;
     private String filename = null;
 
+    long time;
+
     @BeforeEach
     public void setUp() throws Exception {
         props = new Properties();
@@ -55,20 +58,44 @@ public class jlpTest {
         String name = props.getProperty("filename");
         filename = basefile + name;
         System.err.println(filename);
+        time = System.getProperty("vavi.test", "").equals("ide") ? 100000 : 3000;
     }
 
     @Test
-    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
-    public void testPlay() {
+    @DisplayName("original audio device")
+    public void testPlay() throws Exception {
         String[] args = new String[1];
         args[0] = filename;
         jlp player = jlp.createInstance(args);
-        try {
-            player.play();
-            assertTrue(true, "Play");
-        } catch (JavaLayerException e) {
-            e.printStackTrace();
-            fail("JavaLayerException : " + e.getMessage());
-        }
+        player.setAudioDevice(FactoryRegistry.systemRegistry().createAudioDevice(JavaSoundAudioDeviceFactory.class));
+        DelayedWorker.later(3000, player::stop);
+        player.play();
+        assertTrue(true, "Play");
+    }
+
+    @Test
+    @DisplayName("my audio device w/ volume")
+    public void testPlay2() throws Exception {
+        String[] args = new String[1];
+        args[0] = filename;
+        jlp player = jlp.createInstance(args);
+        // my audio device might have first priority
+        ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(0.05f);
+        DelayedWorker.later(3000, player::stop);
+        player.play();
+        assertTrue(true, "Play");
+    }
+
+    @Test
+    @DisplayName("specified my audio device w/ volume")
+    public void testPlay3() throws Exception {
+        String[] args = new String[1];
+        args[0] = filename;
+        jlp player = jlp.createInstance(args);
+        player.setAudioDevice(FactoryRegistry.systemRegistry().createAudioDevice(MyJavaSoundAudioDeviceFactory.class));
+        ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(0.05f);
+        DelayedWorker.later(3000, player::stop);
+        player.play();
+        assertTrue(true, "Play");
     }
 }

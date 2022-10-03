@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -40,8 +41,12 @@ import javazoom.jl.decoder.JavaLayerException;
  */
 public class jlp {
 
+    private static final Logger logger = Logger.getLogger(jlp.class.getName());
+
     private String fFilename = null;
     private boolean remote = false;
+    private AudioDevice audioDevice;
+    private Player player;
 
     public static void main(String[] args) {
         int retval = 0;
@@ -107,15 +112,21 @@ public class jlp {
             throws JavaLayerException {
         try {
             System.out.println("playing " + fFilename + "...");
-            InputStream in = null;
+            InputStream in;
             if (remote) in = getURLInputStream();
             else in = getInputStream();
-            AudioDevice dev = getAudioDevice();
-            Player player = new Player(in, dev);
+            AudioDevice dev = setAudioDevice();
+            logger.fine("audioDevice: " + dev);
+            player = new Player(in, dev);
             player.play();
         } catch (Exception ex) {
             throw new JavaLayerException("Problem playing file " + fFilename, ex);
         }
+    }
+
+    /** @since 1.0.2 */
+    public void stop() {
+        player.close();
     }
 
     /**
@@ -140,8 +151,24 @@ public class jlp {
         return bin;
     }
 
-    protected AudioDevice getAudioDevice()
+    /**
+     * Use when you want to use a specific audio device.
+     * @since 1.0.2
+     */
+    public void setAudioDevice(AudioDevice audioDevice) {
+        this.audioDevice = audioDevice;
+    }
+
+    /**
+     * if you don't use {@link #setAudioDevice},
+     * default audio device depends on service loader.
+     * @since 1.0.2 default audio device depends on service loader
+     */
+    public AudioDevice setAudioDevice()
             throws JavaLayerException {
-        return FactoryRegistry.systemRegistry().createAudioDevice();
+        if (audioDevice == null) {
+            audioDevice = FactoryRegistry.systemRegistry().createAudioDevice();
+        }
+        return audioDevice;
     }
 }

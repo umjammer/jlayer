@@ -77,7 +77,6 @@ public interface AudioDevice {
      */
     void write(short[] samples, int offs, int len) throws JavaLayerException;
 
-
     /**
      * Closes this audio device. Any currently playing audio is stopped
      * as soon as possible. Any previously written audio data that has not been heard
@@ -88,7 +87,6 @@ public interface AudioDevice {
      * operation should be unblocked by this method.
      */
     void close();
-
 
     /**
      * Blocks until all audio samples previously written to this audio device have

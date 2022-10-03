@@ -30,38 +30,28 @@ import javazoom.jl.decoder.JavaLayerException;
  * for JavaSound, or they may have the incorrect version.
  */
 public class JavaSoundAudioDeviceFactory extends AudioDeviceFactory {
+
     private boolean tested = false;
 
-    static private final String DEVICE_CLASS_NAME = "javazoom.jl.player.JavaSoundAudioDevice";
-
+    @Override
     public synchronized AudioDevice createAudioDevice()
             throws JavaLayerException {
+
         if (!tested) {
             testAudioDevice();
             tested = true;
         }
 
-        try {
-            return createAudioDeviceImpl();
-        } catch (Exception | LinkageError ex) {
-            throw new JavaLayerException("unable to create JavaSound device: " + ex);
-        }
+        return new JavaSoundAudioDevice();
     }
 
-    protected JavaSoundAudioDevice createAudioDeviceImpl()
-            throws JavaLayerException {
-        ClassLoader loader = getClass().getClassLoader();
-        try {
-            JavaSoundAudioDevice dev = (JavaSoundAudioDevice) instantiate(loader, DEVICE_CLASS_NAME);
-            return dev;
-        } catch (Exception | LinkageError ex) {
-            throw new JavaLayerException("Cannot create JavaSound device", ex);
-        }
-
-    }
-
-    public void testAudioDevice() throws JavaLayerException {
-        JavaSoundAudioDevice dev = createAudioDeviceImpl();
+    private void testAudioDevice() throws JavaLayerException {
+        JavaSoundAudioDevice dev = new JavaSoundAudioDevice();
         dev.test();
+    }
+
+    @Override
+    protected int priority() {
+        return 90;
     }
 }

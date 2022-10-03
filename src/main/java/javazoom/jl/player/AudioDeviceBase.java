@@ -30,16 +30,14 @@ import javazoom.jl.decoder.JavaLayerException;
  * Template methods are provided for subclasses to override and
  * in doing so provide the implementation for the main operations
  * of the <code>AudioDevice</code> interface.
- *
- * @author Mat McGowan
- * @since 0.0.8
- */
-/*
+ * <p>
  * REVIEW:  It is desirable to be able to use the decoder whe
  *            in the implementation of open(), but the decoder
  *            has not yet read a frame, and so much of the
  *            desired information (sample rate, channels etc.)
  *            are not available.
+ * @author Mat McGowan
+ * @since 0.0.8
  */
 public abstract class AudioDeviceBase implements AudioDevice {
     private boolean open = false;
