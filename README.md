@@ -2,7 +2,7 @@
 [![Java CI](https://github.com/umjammer/jlayer/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/jlayer/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/umjammer/jlayer/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/jlayer/actions/workflows/codeql-analysis.yml)
 ![Java](https://img.shields.io/badge/Java-8-b07219)
-[![Parent](https://img.shields.io/badge/Parent-vavi--sound--sandbox-pink)](https://github.com/umjammer/vavi-sound-sandbox)
+[![Parent](https://img.shields.io/badge/Parent-mp3spi-pink)](https://github.com/umjammer/mp3spi)
 
 # JLayer
 
