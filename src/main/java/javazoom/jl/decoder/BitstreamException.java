@@ -33,39 +33,30 @@ package javazoom.jl.decoder;
  *        indicating that an exceptional condition has occurred.
  * </li></ol></p>
  *
- * @since 0.0.6
  * @author MDM    12/12/99
+ * @since 0.0.6
  */
-
 public class BitstreamException extends JavaLayerException
-    implements BitstreamErrors
-{
-    private int errorcode = UNKNOWN_ERROR;
+        implements BitstreamErrors {
+    private int errorCode = UNKNOWN_ERROR;
 
-    public BitstreamException(String msg, Throwable t)
-    {
+    public BitstreamException(String msg, Throwable t) {
         super(msg, t);
     }
 
-    public BitstreamException(int errorcode, Throwable t)
-    {
-        this(getErrorString(errorcode), t);
-        this.errorcode = errorcode;
+    public BitstreamException(int errorCode, Throwable t) {
+        this(getErrorString(errorCode), t);
+        this.errorCode = errorCode;
     }
 
-    public int getErrorCode()
-    {
-        return errorcode;
+    public int getErrorCode() {
+        return errorCode;
     }
 
-
-    static public String getErrorString(int errorcode)
-    {
+    static public String getErrorString(int errorcode) {
         // REVIEW: use resource bundle to map error codes
         // to locale-sensitive strings.
 
-        return "Bitstream errorcode "+Integer.toHexString(errorcode);
+        return "Bitstream errorCode " + Integer.toHexString(errorcode);
     }
-
-
 }

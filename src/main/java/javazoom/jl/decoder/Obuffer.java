@@ -32,57 +32,55 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *----------------------------------------------------------------------
  */
+
 package javazoom.jl.decoder;
 
 /**
  * Base Class for audio output.
  */
-public abstract class Obuffer
-{
-  public static final int    OBUFFERSIZE = 2 * 1152;    // max. 2 * 1152 samples per frame
-  public static final int   MAXCHANNELS = 2;        // max. number of channels
+public abstract class Obuffer {
+    public static final int OBUFFERSIZE = 2 * 1152;    // max. 2 * 1152 samples per frame
+    public static final int MAXCHANNELS = 2;        // max. number of channels
 
-  /**
-   * Takes a 16 Bit PCM sample.
-   */
-  public abstract void append(int channel, short value);
+    /**
+     * Takes a 16 Bit PCM sample.
+     */
+    public abstract void append(int channel, short value);
 
-  /**
-   * Accepts 32 new PCM samples.
-   */
-    public void appendSamples(int channel, float[] f)
-    {
+    /**
+     * Accepts 32 new PCM samples.
+     */
+    public void appendSamples(int channel, float[] f) {
         short s;
-        for (int i=0; i<32;)
-        {
-              s = clip(f[i++]);
+        for (int i = 0; i < 32; ) {
+            s = clip(f[i++]);
             append(channel, s);
         }
     }
 
-  /**
-   * Clip Sample to 16 Bits
-   */
-  private final short clip(float sample)
-  {
-    return ((sample > 32767.0f) ? 32767 :
-           ((sample < -32768.0f) ? -32768 :
-              (short) sample));
-  }
+    /**
+     * Clip Sample to 16 Bits
+     */
+    private short clip(float sample) {
+        return ((sample > 32767.0f) ? 32767 :
+                ((sample < -32768.0f) ? -32768 :
+                        (short) sample));
+    }
 
-  /**
-   * Write the samples to the file or directly to the audio hardware.
-   */
-  public abstract void write_buffer(int val);
-  public abstract void close();
+    /**
+     * Write the samples to the file or directly to the audio hardware.
+     */
+    public abstract void write_buffer(int val);
 
-  /**
-   * Clears all data in the buffer (for seeking).
-   */
-  public abstract void clear_buffer();
+    public abstract void close();
 
-  /**
-   * Notify the buffer that the user has stopped the stream.
-   */
-  public abstract void set_stop_flag();
+    /**
+     * Clears all data in the buffer (for seeking).
+     */
+    public abstract void clear_buffer();
+
+    /**
+     * Notify the buffer that the user has stopped the stream.
+     */
+    public abstract void set_stop_flag();
 }

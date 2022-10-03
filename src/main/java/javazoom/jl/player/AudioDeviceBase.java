@@ -23,39 +23,35 @@ package javazoom.jl.player;
 import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.JavaLayerException;
 
+
 /**
  * The <code>AudioDeviceBase</code> class provides a simple thread-safe
  * implementation of the <code>AudioDevice</code> interface.
  * Template methods are provided for subclasses to override and
  * in doing so provide the implementation for the main operations
  * of the <code>AudioDevice</code> interface.
- *
- * @since    0.0.8
- * @author    Mat McGowan
- */
-/*
+ * <p>
  * REVIEW:  It is desirable to be able to use the decoder whe
  *            in the implementation of open(), but the decoder
  *            has not yet read a frame, and so much of the
  *            desired information (sample rate, channels etc.)
  *            are not available.
+ * @author Mat McGowan
+ * @since 0.0.8
  */
-public abstract class AudioDeviceBase implements AudioDevice
-{
-    private    boolean            open = false;
+public abstract class AudioDeviceBase implements AudioDevice {
+    private boolean open = false;
 
-    private Decoder            decoder = null;
+    private Decoder decoder = null;
 
     /**
      * Opens this audio device.
      *
-     * @param decoder    The decoder that will provide audio data
-     *                    to this audio device.
+     * @param decoder The decoder that will provide audio data
+     *                to this audio device.
      */
-    public synchronized void open(Decoder decoder) throws JavaLayerException
-    {
-        if (!isOpen())
-        {
+    public synchronized void open(Decoder decoder) throws JavaLayerException {
+        if (!isOpen()) {
             this.decoder = decoder;
             openImpl();
             setOpen(true);
@@ -66,15 +62,13 @@ public abstract class AudioDeviceBase implements AudioDevice
      * Template method to provide the
      * implementation for the opening of the audio device.
      */
-    protected void openImpl() throws JavaLayerException
-    {
+    protected void openImpl() throws JavaLayerException {
     }
 
     /**
      * Sets the open state for this audio device.
      */
-    protected void setOpen(boolean open)
-    {
+    protected void setOpen(boolean open) {
         this.open = open;
     }
 
@@ -82,10 +76,9 @@ public abstract class AudioDeviceBase implements AudioDevice
      * Determines if this audio device is open or not.
      *
      * @return <code>true</code> if the audio device is open,
-     *        <code>false</code> if it is not.
+     * <code>false</code> if it is not.
      */
-    public synchronized boolean isOpen()
-    {
+    public synchronized boolean isOpen() {
         return open;
     }
 
@@ -94,10 +87,8 @@ public abstract class AudioDeviceBase implements AudioDevice
      * audio, playback is stopped immediately without flushing
      * any buffered audio data.
      */
-    public synchronized void close()
-    {
-        if (isOpen())
-        {
+    public synchronized void close() {
+        if (isOpen()) {
             closeImpl();
             setOpen(false);
             decoder = null;
@@ -108,8 +99,7 @@ public abstract class AudioDeviceBase implements AudioDevice
      * Template method to provide the implementation for
      * closing the audio device.
      */
-    protected void closeImpl()
-    {
+    protected void closeImpl() {
     }
 
     /**
@@ -118,18 +108,16 @@ public abstract class AudioDeviceBase implements AudioDevice
      * method may return before the data has actually been sounded
      * by the device if the device buffers audio samples.
      *
-     * @param samples    The samples to write to the audio device.
-     * @param offs        The offset into the array of the first sample to write.
-     * @param len        The number of samples from the array to write.
+     * @param samples The samples to write to the audio device.
+     * @param offs    The offset into the array of the first sample to write.
+     * @param len     The number of samples from the array to write.
      * @throws JavaLayerException if the audio data could not be
-     *            written to the audio device.
-     * If the audio device is not open, this method does nthing.
+     *                            written to the audio device.
+     *                            If the audio device is not open, this method does nthing.
      */
     public void write(short[] samples, int offs, int len)
-        throws JavaLayerException
-    {
-        if (isOpen())
-        {
+            throws JavaLayerException {
+        if (isOpen()) {
             writeImpl(samples, offs, len);
         }
     }
@@ -139,8 +127,7 @@ public abstract class AudioDeviceBase implements AudioDevice
      * writing audio samples to the audio device.
      */
     protected void writeImpl(short[] samples, int offs, int len)
-        throws JavaLayerException
-    {
+            throws JavaLayerException {
     }
 
     /**
@@ -148,10 +135,8 @@ public abstract class AudioDeviceBase implements AudioDevice
      * audio device. This method should only be called prior
      * to closing the device.
      */
-    public void flush()
-    {
-        if (isOpen())
-        {
+    public void flush() {
+        if (isOpen()) {
             flushImpl();
         }
     }
@@ -160,8 +145,7 @@ public abstract class AudioDeviceBase implements AudioDevice
      * Template method to provide the implementation for
      * flushing any buffered audio data.
      */
-    protected void flushImpl()
-    {
+    protected void flushImpl() {
     }
 
     /**
@@ -170,8 +154,7 @@ public abstract class AudioDeviceBase implements AudioDevice
      *
      * @return The associated decoder.
      */
-    protected Decoder getDecoder()
-    {
+    protected Decoder getDecoder() {
         return decoder;
     }
 }

@@ -29,6 +29,7 @@
 package javazoom.jl.converter;
 
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import javazoom.jl.decoder.Crc16;
 import javazoom.jl.decoder.JavaLayerException;
@@ -43,14 +44,15 @@ import javazoom.jl.decoder.OutputChannels;
  */
 public class jlc {
 
-    static public void main(String args[]) {
+    private static final Logger logger = Logger.getLogger(jlc.class.getName());
+
+    static public void main(String[] args) {
         String[] argv;
         long start = System.currentTimeMillis();
         int argc = args.length + 1;
         argv = new String[argc];
         argv[0] = "jlc";
-        for (int i = 0; i < args.length; i++)
-            argv[i + 1] = args[i];
+        System.arraycopy(args, 0, argv, 1, args.length);
 
         jlcArgs ma = new jlcArgs();
         if (!ma.processArgs(argv))
@@ -61,12 +63,12 @@ public class jlc {
         int detail = (ma.verbose_mode ? ma.verbose_level : Converter.PrintWriterProgressListener.NO_DETAIL);
 
         Converter.ProgressListener listener = new Converter.PrintWriterProgressListener(new PrintWriter(System.out, true),
-                                                                                        detail);
+                detail);
 
         try {
             conv.convert(ma.filename, ma.output_filename, listener);
         } catch (JavaLayerException ex) {
-            System.err.println("Convertion failure: " + ex);
+            logger.warning("Conversion failure: " + ex);
         }
 
         System.exit(0);
@@ -77,10 +79,6 @@ public class jlc {
      */
     static class jlcArgs {
         // channel constants moved into OutputChannels class.
-//        public static final int both = 0;
-//        public static final int left = 1;
-//        public static final int right = 2;
-//        public static final int downmix = 3;
 
         public int which_c;
 
@@ -94,7 +92,6 @@ public class jlc {
 
         public String filename;
 
-        //public boolean             stdout_mode;
         public boolean verbose_mode;
 
         public int verbose_level = 3;
@@ -103,13 +100,12 @@ public class jlc {
             which_c = OutputChannels.BOTH_CHANNELS;
             use_own_scalefactor = false;
             scalefactor = (float) 32768.0;
-            //stdout_mode = false;
             verbose_mode = false;
         }
 
         /**
          * Process user arguments.
-         *
+         * <p>
          * Returns true if successful.
          */
         public boolean processArgs(String[] argv) {
@@ -119,7 +115,6 @@ public class jlc {
             int i;
             int argc = argv.length;
 
-            //stdout_mode  = false;
             verbose_mode = false;
             output_mode = OutputChannels.BOTH_CHANNELS;
             output_filename = "";
@@ -128,7 +123,7 @@ public class jlc {
 
             i = 1;
             while (i < argc) {
-//                System.out.println("Option = " + argv[i]);
+logger.finer("Option = " + argv[i]);
                 if (argv[i].charAt(0) == '-') {
                     if (argv[i].startsWith("-v")) {
                         verbose_mode = true;
@@ -141,26 +136,13 @@ public class jlc {
                             }
                         }
                         System.out.println("Verbose Activated (level " + verbose_level + ")");
-                    }
-//                    else if (argv[i].equals("-s"))
-//                        ma.stdout_mode = true;
-                    else if (argv[i].equals("-p")) {
+                    } else if (argv[i].equals("-p")) {
                         if (++i == argc) {
                             System.out.println("Please specify an output filename after the -p option!");
                             System.exit(1);
                         }
-                        //output_mode = O_WAVEFILE;
                         output_filename = argv[i];
-                    }
-//                    else if (argv[i].equals("-f")) {
-//                        if (++i == argc) {
-//                            System.out.println("Please specify a new scalefactor after the -f option!");
-//                            System.exit(1);
-//                        }
-//                        ma.use_own_scalefactor = true;
-//                        ma.scalefactor = argv[i];
-//                    }
-                    else
+                    } else
                         return Usage();
                 } else {
                     filename = argv[i];
@@ -190,10 +172,10 @@ public class jlc {
 //            System.out.println("  -s         write pcm samples to stdout");
 //            System.out.println("  -d         downmix mode (layer III only)");
             System.out.println("  -p name    output as a PCM wave file");
-            System.out.println("");
+            System.out.println();
             System.out.println("  More info on http://www.javazoom.net");
 //            System.out.println("  -f ushort  use this scalefactor instead of the default value 32768");
             return false;
         }
-    };
-};
+    }
+}

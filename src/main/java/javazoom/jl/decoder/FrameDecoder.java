@@ -24,16 +24,15 @@ package javazoom.jl.decoder;
 /**
  * Implementations of FrameDecoder are responsible for decoding
  * an MPEG audio frame.
- *
+ * <p>
+ * REVIEW: the interface currently is too thin. There should be
+ * methods to specify the output buffer, the synthesis filters and
+ * possibly other objects used by the decoder.
  */
-//REVIEW: the interface currently is too thin. There should be
-// methods to specify the output buffer, the synthesis filters and
-// possibly other objects used by the decoder.
-public interface FrameDecoder
-{
+public interface FrameDecoder {
+
     /**
      * Decodes one frame of MPEG audio.
      */
-    public void decodeFrame() throws DecoderException;
-
+    void decodeFrame() throws DecoderException;
 }

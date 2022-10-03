@@ -27,6 +27,7 @@ package javazoom.jl.converter;
 
 import javazoom.jl.decoder.Obuffer;
 
+
 /**
  * Implements an Obuffer by writing the data to
  * a file in RIFF WAVE format.
@@ -35,92 +36,74 @@ import javazoom.jl.decoder.Obuffer;
  */
 
 
-public class WaveFileObuffer extends Obuffer
-{
-  private short[]         buffer;
-  private short[]         bufferp;
-  private int             channels;
-  private WaveFile      outWave;
+public class WaveFileObuffer extends Obuffer {
+    private short[] buffer;
+    private short[] bufferp;
+    private int channels;
+    private WaveFile outWave;
 
-  /**
-   * Creates a new WareFileObuffer instance.
-   *
-   * @param number_of_channels
-   *                The number of channels of audio data
-   *                this buffer will receive.
-   *
-   * @param freq    The sample frequency of the samples in the buffer.
-   *
-   * @param fileName    The filename to write the data to.
-   */
-  public WaveFileObuffer(int number_of_channels, int freq, String FileName)
-  {
-      if (FileName==null)
-        throw new NullPointerException("FileName");
+    /**
+     * Creates a new WareFileObuffer instance.
+     *
+     * @param number_of_channels The number of channels of audio data
+     *                           this buffer will receive.
+     * @param freq               The sample frequency of the samples in the buffer.
+     * @param fileName           The filename to write the data to.
+     */
+    public WaveFileObuffer(int number_of_channels, int freq, String fileName) {
+        if (fileName == null)
+            throw new NullPointerException("fileName");
 
-    buffer = new short[OBUFFERSIZE];
-    bufferp = new short[MAXCHANNELS];
-    channels = number_of_channels;
+        buffer = new short[OBUFFERSIZE];
+        bufferp = new short[MAXCHANNELS];
+        channels = number_of_channels;
 
-    for (int i = 0; i < number_of_channels; ++i)
-        bufferp[i] = (short)i;
+        for (int i = 0; i < number_of_channels; ++i)
+            bufferp[i] = (short) i;
 
-    outWave = new WaveFile();
+        outWave = new WaveFile();
 
-    int rc = outWave.OpenForWrite (FileName,freq,(short)16,(short)channels);
-  }
-
-  /**
-   * Takes a 16 Bit PCM sample.
-   */
-  public void append(int channel, short value)
-  {
-    buffer[bufferp[channel]] = value;
-    bufferp[channel] += channels;
-  }
-
-  /**
-   * Write the samples to the file (Random Acces).
-   */
-  short[] myBuffer = new short[2];
-  public void write_buffer(int val)
-  {
-
-    int k = 0;
-    int rc = 0;
-
-    rc = outWave.WriteData(buffer, bufferp[0]);
-    // REVIEW: handle RiffFile errors.
-    /*
-    for (int j=0;j<bufferp[0];j=j+2)
-    {
-
-        //myBuffer[0] = (short)(((buffer[j]>>8)&0x000000FF) | ((buffer[j]<<8)&0x0000FF00));
-        //myBuffer[1] = (short) (((buffer[j+1]>>8)&0x000000FF) | ((buffer[j+1]<<8)&0x0000FF00));
-        myBuffer[0] = buffer[j];
-        myBuffer[1] = buffer[j+1];
-        rc = outWave.WriteData (myBuffer,2);
+        int rc = outWave.OpenForWrite(fileName, freq, (short) 16, (short) channels);
     }
-    */
-    for (int i = 0; i < channels; ++i) bufferp[i] = (short)i;
-  }
 
-  public void close()
-  {
-    outWave.Close();
-  }
+    /**
+     * Takes a 16 Bit PCM sample.
+     */
+    public void append(int channel, short value) {
+        buffer[bufferp[channel]] = value;
+        bufferp[channel] += (short) channels;
+    }
 
-  /**
-   *
-   */
-  public void clear_buffer()
-  {}
+    /**
+     * Write the samples to the file (Random Acces).
+     */
+    short[] myBuffer = new short[2];
 
-  /**
-   *
-   */
-  public void set_stop_flag()
-  {}
+    public void write_buffer(int val) {
+
+        int k = 0;
+        int rc = 0;
+
+        rc = outWave.WriteData(buffer, bufferp[0]);
+        // REVIEW: handle RiffFile errors.
+        for (int i = 0; i < channels; ++i) bufferp[i] = (short) i;
+    }
+
+    public void close() {
+        outWave.Close();
+    }
+
+    /**
+     *
+     */
+    public void clear_buffer() {
+    }
+
+    /**
+     *
+     */
+    public void set_stop_flag() {
+    }
 
   /*
    * Create STDOUT buffer

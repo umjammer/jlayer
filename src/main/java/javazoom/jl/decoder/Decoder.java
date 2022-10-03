@@ -24,59 +24,50 @@ package javazoom.jl.decoder;
  * The <code>Decoder</code> class encapsulates the details of
  * decoding an MPEG audio frame.
  *
- * @author    MDM
+ * @author MDM
  * @version 0.0.7 12/12/99
- * @since    0.0.5
+ * @since 0.0.5
  */
-public class Decoder implements DecoderErrors
-{
+public class Decoder implements DecoderErrors {
     static private final Params DEFAULT_PARAMS = new Params();
-
-    /**
-     * The Bistream from which the MPEG audio frames are read.
-     */
-    //private Bitstream                stream;
 
     /**
      * The Obuffer instance that will receive the decoded
      * PCM samples.
      */
-    private Obuffer            output;
+    private Obuffer output;
 
     /**
      * Synthesis filter for the left channel.
      */
-    private SynthesisFilter            filter1;
+    private SynthesisFilter filter1;
 
     /**
      * Sythesis filter for the right channel.
      */
-    private SynthesisFilter            filter2;
+    private SynthesisFilter filter2;
 
     /**
      * The decoder used to decode layer III frames.
      */
-    private LayerIIIDecoder            l3decoder;
-    private LayerIIDecoder            l2decoder;
-    private LayerIDecoder            l1decoder;
+    private LayerIIIDecoder l3decoder;
+    private LayerIIDecoder l2decoder;
+    private LayerIDecoder l1decoder;
 
-    private int                        outputFrequency;
-    private int                        outputChannels;
+    private int outputFrequency;
+    private int outputChannels;
 
-    private Equalizer                equalizer = new Equalizer();
+    private Equalizer equalizer = new Equalizer();
 
-    private Params                    params;
+    private Params params;
 
-    private boolean                    initialized;
-
+    private boolean initialized;
 
     /**
      * Creates a new <code>Decoder</code> instance with default
      * parameters.
      */
-
-    public Decoder()
-    {
+    public Decoder() {
         this(null);
     }
 
@@ -84,57 +75,50 @@ public class Decoder implements DecoderErrors
      * Creates a new <code>Decoder</code> instance with default
      * parameters.
      *
-     * @param params    The <code>Params</code> instance that describes
-     *                    the customizable aspects of the decoder.
+     * @param params The <code>Params</code> instance that describes
+     *               the customizable aspects of the decoder.
      */
-    public Decoder(Params params)
-    {
-        if (params==null)
+    public Decoder(Params params) {
+        if (params == null)
             params = DEFAULT_PARAMS;
 
         this.params = params;
 
         Equalizer eq = this.params.getInitialEqualizerSettings();
-        if (eq!=null)
-        {
+        if (eq != null) {
             equalizer.setFrom(eq);
         }
     }
 
-    static public Params getDefaultParams()
-    {
-        return (Params)DEFAULT_PARAMS.clone();
+    static public Params getDefaultParams() {
+        return (Params) DEFAULT_PARAMS.clone();
     }
 
-    public void setEqualizer(Equalizer eq)
-    {
-        if (eq==null)
+    public void setEqualizer(Equalizer eq) {
+        if (eq == null)
             eq = Equalizer.PASS_THRU_EQ;
 
         equalizer.setFrom(eq);
 
         float[] factors = equalizer.getBandFactors();
 
-        if (filter1!=null)
+        if (filter1 != null)
             filter1.setEQ(factors);
 
-        if (filter2!=null)
+        if (filter2 != null)
             filter2.setEQ(factors);
     }
 
     /**
      * Decodes one frame from an MPEG audio bitstream.
      *
-     * @param header        The header describing the frame to decode.
-     * @param stream        The bit stream that provides the bits for te body of the frame.
-     *
+     * @param header The header describing the frame to decode.
+     * @param stream The bit stream that provides the bits for te body of the frame.
      * @return A SampleBuffer containing the decoded samples.
      */
     public Obuffer decodeFrame(Header header, Bitstream stream)
-        throws DecoderException
-    {
-        if (!initialized)
-        {
+            throws DecoderException {
+        if (!initialized) {
             initialize(header);
         }
 
@@ -155,8 +139,7 @@ public class Decoder implements DecoderErrors
      * Changes the output buffer. This will take effect the next time
      * decodeFrame() is called.
      */
-    public void setOutputBuffer(Obuffer out)
-    {
+    public void setOutputBuffer(Obuffer out) {
         output = out;
     }
 
@@ -166,10 +149,9 @@ public class Decoder implements DecoderErrors
      * rate encoded in the MPEG audio stream.
      *
      * @return the sample rate (in Hz) of the samples written to the
-     *        output buffer when decoding.
+     * output buffer when decoding.
      */
-    public int getOutputFrequency()
-    {
+    public int getOutputFrequency() {
         return outputFrequency;
     }
 
@@ -179,11 +161,9 @@ public class Decoder implements DecoderErrors
      * channels in the MPEG audio stream, although it may differ.
      *
      * @return The number of output channels in the decoded samples: 1
-     *        for mono, or 2 for stereo.
-     *
+     * for mono, or 2 for stereo.
      */
-    public int getOutputChannels()
-    {
+    public int getOutputChannels() {
         return outputChannels;
     }
 
@@ -196,67 +176,57 @@ public class Decoder implements DecoderErrors
      * upon the sample rate and number of channels.
      *
      * @return The maximum number of samples that are written to the
-     *        output buffer when decoding a single frame of MPEG audio.
+     * output buffer when decoding a single frame of MPEG audio.
      */
-    public int getOutputBlockSize()
-    {
+    public int getOutputBlockSize() {
         return Obuffer.OBUFFERSIZE;
     }
 
-
-    protected DecoderException newDecoderException(int errorcode)
-    {
-        return new DecoderException(errorcode, null);
+    protected DecoderException newDecoderException(int errorCode) {
+        return new DecoderException(errorCode, null);
     }
 
-    protected DecoderException newDecoderException(int errorcode, Throwable throwable)
-    {
-        return new DecoderException(errorcode, throwable);
+    protected DecoderException newDecoderException(int errorCode, Throwable throwable) {
+        return new DecoderException(errorCode, throwable);
     }
 
     protected FrameDecoder retrieveDecoder(Header header, Bitstream stream, int layer)
-        throws DecoderException
-    {
+            throws DecoderException {
         FrameDecoder decoder = null;
 
         // REVIEW: allow channel output selection type
         // (LEFT, RIGHT, BOTH, DOWNMIX)
-        switch (layer)
-        {
+        switch (layer) {
         case 3:
-            if (l3decoder==null)
-            {
+            if (l3decoder == null) {
                 l3decoder = new LayerIIIDecoder(stream,
-                    header, filter1, filter2,
-                    output, OutputChannels.BOTH_CHANNELS);
+                        header, filter1, filter2,
+                        output, OutputChannels.BOTH_CHANNELS);
             }
 
             decoder = l3decoder;
             break;
         case 2:
-            if (l2decoder==null)
-            {
+            if (l2decoder == null) {
                 l2decoder = new LayerIIDecoder();
                 l2decoder.create(stream,
-                    header, filter1, filter2,
-                    output, OutputChannels.BOTH_CHANNELS);
+                        header, filter1, filter2,
+                        output, OutputChannels.BOTH_CHANNELS);
             }
             decoder = l2decoder;
             break;
         case 1:
-            if (l1decoder==null)
-            {
+            if (l1decoder == null) {
                 l1decoder = new LayerIDecoder();
                 l1decoder.create(stream,
-                    header, filter1, filter2,
-                    output, OutputChannels.BOTH_CHANNELS);
+                        header, filter1, filter2,
+                        output, OutputChannels.BOTH_CHANNELS);
             }
             decoder = l1decoder;
             break;
         }
 
-        if (decoder==null)
-        {
+        if (decoder == null) {
             throw newDecoderException(UNSUPPORTED_LAYER, null);
         }
 
@@ -264,8 +234,7 @@ public class Decoder implements DecoderErrors
     }
 
     private void initialize(Header header)
-        throws DecoderException
-    {
+            throws DecoderException {
 
         // REVIEW: allow customizable scale factor
         float scalefactor = 32700.0f;
@@ -273,18 +242,18 @@ public class Decoder implements DecoderErrors
         int mode = header.mode();
         @SuppressWarnings("unused")
         int layer = header.layer();
-        int channels = mode==Header.SINGLE_CHANNEL ? 1 : 2;
+        int channels = mode == Header.SINGLE_CHANNEL ? 1 : 2;
 
 
         // set up output buffer if not set up by client.
-        if (output==null)
+        if (output == null)
             output = new SampleBuffer(header.frequency(), channels);
 
         float[] factors = equalizer.getBandFactors();
         filter1 = new SynthesisFilter(0, scalefactor, factors);
 
         // REVIEW: allow mono output for stereo
-        if (channels==2)
+        if (channels == 2)
             filter2 = new SynthesisFilter(1, scalefactor, factors);
 
         outputChannels = channels;
@@ -299,38 +268,30 @@ public class Decoder implements DecoderErrors
      * <p>
      * Instances of this class are not thread safe.
      */
-    public static class Params implements Cloneable
-    {
-        private OutputChannels    outputChannels = OutputChannels.BOTH;
+    public static class Params implements Cloneable {
+        private OutputChannels outputChannels = OutputChannels.BOTH;
 
-        private Equalizer        equalizer = new Equalizer();
+        private Equalizer equalizer = new Equalizer();
 
-        public Params()
-        {
+        public Params() {
         }
 
-        public Object clone()
-        {
-            try
-            {
+        public Object clone() {
+            try {
                 return super.clone();
-            }
-            catch (CloneNotSupportedException ex)
-            {
-                throw new InternalError(this+": "+ex);
+            } catch (CloneNotSupportedException ex) {
+                throw new InternalError(this + ": " + ex);
             }
         }
 
-        public void setOutputChannels(OutputChannels out)
-        {
-            if (out==null)
+        public void setOutputChannels(OutputChannels out) {
+            if (out == null)
                 throw new NullPointerException("out");
 
             outputChannels = out;
         }
 
-        public OutputChannels getOutputChannels()
-        {
+        public OutputChannels getOutputChannels() {
             return outputChannels;
         }
 
@@ -345,14 +306,12 @@ public class Decoder implements DecoderErrors
          * use the Equalizer returned from the getEqualizer() method on
          * the decoder.
          *
-         * @return    The <code>Equalizer</code> used to initialize the
-         *            EQ settings of the decoder.
+         * @return The <code>Equalizer</code> used to initialize the
+         * EQ settings of the decoder.
          */
-        public Equalizer getInitialEqualizerSettings()
-        {
+        public Equalizer getInitialEqualizerSettings() {
             return equalizer;
         }
-
-    };
+    }
 }
 

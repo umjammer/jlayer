@@ -21,9 +21,9 @@ package javazoom.jl.player.advanced;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -55,7 +55,7 @@ public class jlap {
 
     public void showUsage() {
         System.out.println("Usage: jla <filename>");
-        System.out.println("");
+        System.out.println();
         System.out.println(" e.g. : java javazoom.jl.player.advanced.jlap localfile.mp3");
     }
 
@@ -64,8 +64,8 @@ public class jlap {
     }
 
     public static AdvancedPlayer playMp3(File mp3, int start, int end, PlaybackListener listener) throws IOException,
-                                                                                                  JavaLayerException {
-        return playMp3(new BufferedInputStream(new FileInputStream(mp3)), start, end, listener);
+            JavaLayerException {
+        return playMp3(new BufferedInputStream(Files.newInputStream(mp3.toPath())), start, end, listener);
     }
 
     public static AdvancedPlayer playMp3(final InputStream is,
@@ -75,19 +75,17 @@ public class jlap {
         final AdvancedPlayer player = new AdvancedPlayer(is);
         player.setPlayBackListener(listener);
         // run in new thread
-        new Thread() {
-            public void run() {
-                try {
-                    player.play(start, end);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage());
-                }
+        new Thread(() -> {
+            try {
+                player.play(start, end);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
             }
-        }.start();
+        }).start();
         return player;
     }
 
-    public class InfoListener extends PlaybackListener {
+    public static class InfoListener extends PlaybackListener {
         public void playbackStarted(PlaybackEvent evt) {
             System.out.println("Play started from frame " + evt.getFrame());
         }
