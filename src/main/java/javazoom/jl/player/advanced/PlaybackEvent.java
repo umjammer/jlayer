@@ -62,5 +62,4 @@ public class PlaybackEvent {
     public void setSource(AdvancedPlayer source) {
         this.source = source;
     }
-
 }

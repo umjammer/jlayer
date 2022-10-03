@@ -23,15 +23,14 @@ package javazoom.jl.player;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javazoom.jl.decoder.JavaLayerException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.jlp;
 
 
 /**
@@ -42,7 +41,6 @@ import javazoom.jl.player.jlp;
  *
  * @since 0.4
  */
-@Disabled
 public class jlpTest {
 
     private Properties props = null;
@@ -56,11 +54,11 @@ public class jlpTest {
         String basefile = props.getProperty("basefile");
         String name = props.getProperty("filename");
         filename = basefile + name;
-System.err.println(filename);
-//        out = System.out;
+        System.err.println(filename);
     }
 
     @Test
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     public void testPlay() {
         String[] args = new String[1];
         args[0] = filename;

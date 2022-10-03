@@ -25,10 +25,9 @@ package javazoom.jl.decoder;
  * This interface provides constants describing the error
  * codes used by the Decoder to indicate errors.
  *
- * @author    MDM
+ * @author MDM
  */
-public interface DecoderErrors extends JavaLayerErrors
-{
+public interface DecoderErrors extends JavaLayerErrors {
 
     int UNKNOWN_ERROR = DECODER_ERROR + 0;
 
@@ -41,5 +40,4 @@ public interface DecoderErrors extends JavaLayerErrors
      * Illegal allocation in subband layer. Indicates a corrupt stream.
      */
     int ILLEGAL_SUBBAND_ALLOCATION = DECODER_ERROR + 2;
-
 }

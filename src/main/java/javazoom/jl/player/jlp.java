@@ -31,28 +31,25 @@ import java.net.URL;
 
 import javazoom.jl.decoder.JavaLayerException;
 
+
 /**
  * The <code>jlp</code> class implements a simple command-line
  * player for MPEG audio files.
  *
  * @author Mat McGowan (mdm@techie.com)
  */
-public class jlp
-{
+public class jlp {
+
     private String fFilename = null;
     private boolean remote = false;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         int retval = 0;
-        try
-        {
+        try {
             jlp player = createInstance(args);
-            if (player!=null)
+            if (player != null)
                 player.play();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             System.err.println(ex);
             ex.printStackTrace(System.err);
             retval = 1;
@@ -60,59 +57,45 @@ public class jlp
         System.exit(retval);
     }
 
-    static public jlp createInstance(String[] args)
-    {
+    static public jlp createInstance(String[] args) {
         jlp player = new jlp();
         if (!player.parseArgs(args))
             player = null;
         return player;
     }
 
-    private jlp()
-    {
+    private jlp() {
     }
 
-    public jlp(String filename)
-    {
+    public jlp(String filename) {
         init(filename);
     }
 
-    protected void init(String filename)
-    {
+    protected void init(String filename) {
         fFilename = filename;
     }
 
-    protected boolean parseArgs(String[] args)
-    {
+    protected boolean parseArgs(String[] args) {
         boolean parsed = false;
-        if (args.length == 1)
-        {
+        if (args.length == 1) {
             init(args[0]);
             parsed = true;
             remote = false;
-        }
-        else if (args.length == 2)
-        {
-            if (!(args[0].equals("-url")))
-            {
+        } else if (args.length == 2) {
+            if (!(args[0].equals("-url"))) {
                 showUsage();
-            }
-            else
-            {
+            } else {
                 init(args[1]);
                 parsed = true;
                 remote = true;
             }
-        }
-        else
-        {
+        } else {
             showUsage();
         }
         return parsed;
     }
 
-    public void showUsage()
-    {
+    public void showUsage() {
         System.out.println("Usage: jlp [-url] <filename>");
         System.out.println();
         System.out.println(" e.g. : java javazoom.jl.player.jlp localfile.mp3");
@@ -121,20 +104,17 @@ public class jlp
     }
 
     public void play()
-        throws JavaLayerException
-    {
-        try
-        {
-            System.out.println("playing "+fFilename+"...");
+            throws JavaLayerException {
+        try {
+            System.out.println("playing " + fFilename + "...");
             InputStream in = null;
             if (remote) in = getURLInputStream();
             else in = getInputStream();
             AudioDevice dev = getAudioDevice();
             Player player = new Player(in, dev);
             player.play();
-        } catch (Exception ex)
-        {
-            throw new JavaLayerException("Problem playing file "+fFilename, ex);
+        } catch (Exception ex) {
+            throw new JavaLayerException("Problem playing file " + fFilename, ex);
         }
     }
 
@@ -142,8 +122,7 @@ public class jlp
      * Playing file from URL (Streaming).
      */
     protected InputStream getURLInputStream()
-        throws Exception
-    {
+            throws Exception {
 
         URL url = new URL(fFilename);
         InputStream fin = url.openStream();
@@ -155,17 +134,14 @@ public class jlp
      * Playing file from FileInputStream.
      */
     protected InputStream getInputStream()
-        throws IOException
-    {
+            throws IOException {
         FileInputStream fin = new FileInputStream(fFilename);
         BufferedInputStream bin = new BufferedInputStream(fin);
         return bin;
     }
 
     protected AudioDevice getAudioDevice()
-        throws JavaLayerException
-    {
+            throws JavaLayerException {
         return FactoryRegistry.systemRegistry().createAudioDevice();
     }
-
 }

@@ -21,7 +21,6 @@ package javazoom.jl.player.advanced;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -65,7 +64,7 @@ public class jlap {
     }
 
     public static AdvancedPlayer playMp3(File mp3, int start, int end, PlaybackListener listener) throws IOException,
-                                                                                                  JavaLayerException {
+            JavaLayerException {
         return playMp3(new BufferedInputStream(Files.newInputStream(mp3.toPath())), start, end, listener);
     }
 

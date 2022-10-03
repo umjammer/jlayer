@@ -25,14 +25,11 @@ package javazoom.jl.decoder;
  * This interface describes all error codes that can be thrown
  * in <code>BistreamException</code>s.
  *
+ * @author MDM        12/12/99
  * @see BitstreamException
- *
- * @author    MDM        12/12/99
- * @since    0.0.6
+ * @since 0.0.6
  */
-
-public interface BitstreamErrors extends JavaLayerErrors
-{
+public interface BitstreamErrors extends JavaLayerErrors {
 
     /**
      * An undeterminable error occurred.
@@ -68,5 +65,4 @@ public interface BitstreamErrors extends JavaLayerErrors
      *
      */
     int BITSTREAM_LAST = 0x1ff;
-
 }

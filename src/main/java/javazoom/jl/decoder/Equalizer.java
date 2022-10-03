@@ -18,7 +18,6 @@
  *----------------------------------------------------------------------
  */
 
-
 package javazoom.jl.decoder;
 
 /**
@@ -31,59 +30,51 @@ package javazoom.jl.decoder;
  * At -1.0, the input signal is attenuated by 6dB, at +1.0 the signal is
  * amplified by 6dB.
  *
- * @see Decoder
- *
  * @author MDM
+ * @see Decoder
  */
-public final class Equalizer
-{
+public final class Equalizer {
+
     /**
      * Equalizer setting to denote that a given band will not be
      * present in the output signal.
      */
     static public final float BAND_NOT_PRESENT = Float.NEGATIVE_INFINITY;
 
-    static public final Equalizer    PASS_THRU_EQ = new Equalizer();
+    static public final Equalizer PASS_THRU_EQ = new Equalizer();
 
     private static final int BANDS = 32;
 
-    private final float[]    settings = new float[BANDS];
+    private final float[] settings = new float[BANDS];
 
     /**
      * Creates a new <code>Equalizer</code> instance.
      */
-    public Equalizer()
-    {
+    public Equalizer() {
     }
 
-    public Equalizer(float[] settings)
-    {
+    public Equalizer(float[] settings) {
         setFrom(settings);
     }
 
-    public Equalizer(EQFunction eq)
-    {
+    public Equalizer(EQFunction eq) {
         setFrom(eq);
     }
 
-    public void setFrom(float[] eq)
-    {
+    public void setFrom(float[] eq) {
         reset();
         int max = Math.min(eq.length, BANDS);
 
-        for (int i=0; i<max; i++)
-        {
+        for (int i = 0; i < max; i++) {
             settings[i] = limit(eq[i]);
         }
     }
 
-    public void setFrom(EQFunction eq)
-    {
+    public void setFrom(EQFunction eq) {
         reset();
         int max = BANDS;
 
-        for (int i=0; i<max; i++)
-        {
+        for (int i = 0; i < max; i++) {
             settings[i] = limit(eq.getBand(i));
         }
     }
@@ -92,43 +83,32 @@ public final class Equalizer
      * Sets the bands of this equalizer to the value the bands of
      * another equalizer. Bands that are not present in both equalizers are ignored.
      */
-    public void setFrom(Equalizer eq)
-    {
-        if (eq!=this)
-        {
+    public void setFrom(Equalizer eq) {
+        if (eq != this) {
             setFrom(eq.settings);
         }
     }
 
-
-
-
     /**
      * Sets all bands to 0.0
      */
-    public void reset()
-    {
-        for (int i=0; i<BANDS; i++)
-        {
+    public void reset() {
+        for (int i = 0; i < BANDS; i++) {
             settings[i] = 0.0f;
         }
     }
 
-
     /**
      * Retrieves the number of bands present in this equalizer.
      */
-    public int getBandCount()
-    {
+    public int getBandCount() {
         return settings.length;
     }
 
-    public float setBand(int band, float neweq)
-    {
+    public float setBand(int band, float neweq) {
         float eq = 0.0f;
 
-        if ((band>=0) && (band<BANDS))
-        {
+        if ((band >= 0) && (band < BANDS)) {
             eq = settings[band];
             settings[band] = limit(neweq);
         }
@@ -136,31 +116,25 @@ public final class Equalizer
         return eq;
     }
 
-
-
     /**
      * Retrieves the eq setting for a given band.
      */
-    public float getBand(int band)
-    {
+    public float getBand(int band) {
         float eq = 0.0f;
 
-        if ((band>=0) && (band<BANDS))
-        {
+        if ((band >= 0) && (band < BANDS)) {
             eq = settings[band];
         }
 
         return eq;
     }
 
-    private float limit(float eq)
-    {
-        if (eq==BAND_NOT_PRESENT)
+    private float limit(float eq) {
+        if (eq == BAND_NOT_PRESENT)
             return eq;
         if (eq > 1.0f)
             return 1.0f;
         return Math.max(eq, -1.0f);
-
     }
 
     /**
@@ -169,14 +143,12 @@ public final class Equalizer
      * in each band to provide the equalization represented by
      * this instance.
      *
-     * @return    an array of factors that can be applied to the
-     *            subbands.
+     * @return an array of factors that can be applied to the
+     * subbands.
      */
-    float[] getBandFactors()
-    {
+    float[] getBandFactors() {
         float[] factors = new float[BANDS];
-        for (int i=0, maxCount=BANDS; i<maxCount; i++)
-        {
+        for (int i = 0, maxCount = BANDS; i < maxCount; i++) {
             factors[i] = getBandFactor(settings[i]);
         }
 
@@ -187,34 +159,26 @@ public final class Equalizer
      * Converts an equalizer band setting to a sample factor.
      * The factor is determined by the function f = 2^n where
      * n is the equalizer band setting in the range [-1.0,1.0].
-     *
      */
-    float getBandFactor(float eq)
-    {
-        if (eq==BAND_NOT_PRESENT)
+    float getBandFactor(float eq) {
+        if (eq == BAND_NOT_PRESENT)
             return 0.0f;
 
-        float f = (float)Math.pow(2.0, eq);
+        float f = (float) Math.pow(2.0, eq);
         return f;
     }
 
-
-    static abstract public class EQFunction
-    {
+    static abstract public class EQFunction {
         /**
          * Returns the setting of a band in the equalizer.
          *
-         * @param band    The index of the band to retrieve the setting
-         *                for.
-         *
-         * @return        the setting of the specified band. This is a value between
-         *                -1 and +1.
+         * @param band The index of the band to retrieve the setting
+         *             for.
+         * @return the setting of the specified band. This is a value between
+         * -1 and +1.
          */
-        public float getBand(int band)
-        {
+        public float getBand(int band) {
             return 0.0f;
         }
-
     }
-
 }

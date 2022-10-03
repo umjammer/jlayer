@@ -22,7 +22,6 @@ package javazoom.jl.converter;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -47,6 +46,7 @@ import javazoom.jl.decoder.Obuffer;
  * @since 0.0.7
  */
 public class Converter {
+
     /**
      * Creates a new converter instance.
      */
@@ -177,7 +177,6 @@ public class Converter {
      * notification of tasks being carried out by the converter,
      * and to provide new information as it becomes available.
      */
-
     public interface ProgressListener {
         int UPDATE_FRAME_COUNT = 1;
 
@@ -192,18 +191,17 @@ public class Converter {
          * Notifies the listener that new information is available.
          *
          * @param updateID Code indicating the information that has been
-         *            updated.
-         *
-         * @param param1 Parameter whose value depends upon the update code.
-         * @param param2 Parameter whose value depends upon the update code.
-         *
-         *            The <code>updateID</code> parameter can take these values:
-         *
-         *            UPDATE_FRAME_COUNT: param1 is the frame count, or -1 if
-         *            not known.
-         *            UPDATE_CONVERT_COMPLETE: param1 is the conversion time,
-         *            param2
-         *            is the number of frames converted.
+         *                 updated.
+         * @param param1   Parameter whose value depends upon the update code.
+         * @param param2   Parameter whose value depends upon the update code.
+         *                 <p>
+         *                 The <code>updateID</code> parameter can take these values:
+         *                 <p>
+         *                 UPDATE_FRAME_COUNT: param1 is the frame count, or -1 if
+         *                 not known.
+         *                 UPDATE_CONVERT_COMPLETE: param1 is the conversion time,
+         *                 param2
+         *                 is the number of frames converted.
          */
         void converterUpdate(int updateID, int param1, int param2);
 
@@ -218,7 +216,7 @@ public class Converter {
          * but before it has been decoded.
          *
          * @param frameNo The 0-based sequence number of the frame.
-         * @param header The Header rerpesenting the frame just read.
+         * @param header  The Header rerpesenting the frame just read.
          */
         void readFrame(int frameNo, Header header);
 
@@ -226,8 +224,8 @@ public class Converter {
          * This method is called after a frame has been decoded.
          *
          * @param frameNo The 0-based sequence number of the frame.
-         * @param header The Header rerpesenting the frame just read.
-         * @param o The Obuffer the deocded data was written to.
+         * @param header  The Header rerpesenting the frame just read.
+         * @param o       The Obuffer the deocded data was written to.
          */
         void decodedFrame(int frameNo, Header header, Obuffer o);
 
@@ -236,25 +234,24 @@ public class Converter {
          * a frame.
          *
          * @param t The <code>Throwable</code> instance that
-         *            was thrown.
-         *
+         *          was thrown.
          * @return <code>true</code> to continue processing, or false
-         *         to abort conversion.
-         *
-         *         If this method returns <code>false</code>, the exception
-         *         is propagated to the caller of the convert() method. If
-         *         <code>true</code> is returned, the exception is silently
-         *         ignored and the converter moves onto the next frame.
+         * to abort conversion.
+         * <p>
+         * If this method returns <code>false</code>, the exception
+         * is propagated to the caller of the convert() method. If
+         * <code>true</code> is returned, the exception is silently
+         * ignored and the converter moves onto the next frame.
          */
         boolean converterException(Throwable t);
-
     }
 
     /**
      * Implementation of <code>ProgressListener</code> that writes
      * notification text to a <code>PrintWriter</code>.
+     * <p>
+     * REVIEW: i18n of text and order required.
      */
-    // REVIEW: i18n of text and order required.
     static public class PrintWriterProgressListener implements ProgressListener {
         static public final int NO_DETAIL = 0;
 
@@ -303,7 +300,7 @@ public class Converter {
 
                     pw.println();
                     pw.println("Converted " + param2 + " frames in " + param1 + " ms (" + (param1 / param2)
-                               + " ms per frame.)");
+                            + " ms per frame.)");
                 }
             }
         }
@@ -353,7 +350,5 @@ public class Converter {
             }
             return false;
         }
-
     }
-
 }

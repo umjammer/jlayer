@@ -27,6 +27,7 @@ package javazoom.jl.converter;
 
 import javazoom.jl.decoder.Obuffer;
 
+
 /**
  * Implements an Obuffer by writing the data to
  * a file in RIFF WAVE format.
@@ -35,81 +36,74 @@ import javazoom.jl.decoder.Obuffer;
  */
 
 
-public class WaveFileObuffer extends Obuffer
-{
-  private short[]         buffer;
-  private short[]         bufferp;
-  private int             channels;
-  private WaveFile      outWave;
+public class WaveFileObuffer extends Obuffer {
+    private short[] buffer;
+    private short[] bufferp;
+    private int channels;
+    private WaveFile outWave;
 
-  /**
-   * Creates a new WareFileObuffer instance.
-   *
-   * @param number_of_channels
-   *                The number of channels of audio data
-   *                this buffer will receive.
-   *
-   * @param freq    The sample frequency of the samples in the buffer.
-   *
-   * @param fileName    The filename to write the data to.
-   */
-  public WaveFileObuffer(int number_of_channels, int freq, String fileName)
-  {
-      if (fileName==null)
-        throw new NullPointerException("fileName");
+    /**
+     * Creates a new WareFileObuffer instance.
+     *
+     * @param number_of_channels The number of channels of audio data
+     *                           this buffer will receive.
+     * @param freq               The sample frequency of the samples in the buffer.
+     * @param fileName           The filename to write the data to.
+     */
+    public WaveFileObuffer(int number_of_channels, int freq, String fileName) {
+        if (fileName == null)
+            throw new NullPointerException("fileName");
 
-    buffer = new short[OBUFFERSIZE];
-    bufferp = new short[MAXCHANNELS];
-    channels = number_of_channels;
+        buffer = new short[OBUFFERSIZE];
+        bufferp = new short[MAXCHANNELS];
+        channels = number_of_channels;
 
-    for (int i = 0; i < number_of_channels; ++i)
-        bufferp[i] = (short)i;
+        for (int i = 0; i < number_of_channels; ++i)
+            bufferp[i] = (short) i;
 
-    outWave = new WaveFile();
+        outWave = new WaveFile();
 
-    int rc = outWave.OpenForWrite (fileName,freq,(short)16,(short)channels);
-  }
+        int rc = outWave.OpenForWrite(fileName, freq, (short) 16, (short) channels);
+    }
 
-  /**
-   * Takes a 16 Bit PCM sample.
-   */
-  public void append(int channel, short value)
-  {
-    buffer[bufferp[channel]] = value;
-    bufferp[channel] += (short) channels;
-  }
+    /**
+     * Takes a 16 Bit PCM sample.
+     */
+    public void append(int channel, short value) {
+        buffer[bufferp[channel]] = value;
+        bufferp[channel] += (short) channels;
+    }
 
-  /**
-   * Write the samples to the file (Random Acces).
-   */
-  short[] myBuffer = new short[2];
-  public void write_buffer(int val)
-  {
+    /**
+     * Write the samples to the file (Random Acces).
+     */
+    short[] myBuffer = new short[2];
 
-    int k = 0;
-    int rc = 0;
+    public void write_buffer(int val) {
 
-    rc = outWave.WriteData(buffer, bufferp[0]);
-    // REVIEW: handle RiffFile errors.
-    for (int i = 0; i < channels; ++i) bufferp[i] = (short)i;
-  }
+        int k = 0;
+        int rc = 0;
 
-  public void close()
-  {
-    outWave.Close();
-  }
+        rc = outWave.WriteData(buffer, bufferp[0]);
+        // REVIEW: handle RiffFile errors.
+        for (int i = 0; i < channels; ++i) bufferp[i] = (short) i;
+    }
 
-  /**
-   *
-   */
-  public void clear_buffer()
-  {}
+    public void close() {
+        outWave.Close();
+    }
 
-  /**
-   *
-   */
-  public void set_stop_flag()
-  {}
+    /**
+     *
+     */
+    public void clear_buffer() {
+    }
+
+    /**
+     *
+     */
+    public void set_stop_flag() {
+    }
 
   /*
    * Create STDOUT buffer

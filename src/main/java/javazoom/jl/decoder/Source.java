@@ -21,29 +21,27 @@ package javazoom.jl.decoder;
 
 import java.io.IOException;
 
+
 /**
  * Work in progress.
- *
+ * <p>
  * Class to describe a seekable data source.
- *
  */
-public interface Source
-{
+public interface Source {
 
-    long    LENGTH_UNKNOWN = -1;
+    long LENGTH_UNKNOWN = -1;
 
     int read(byte[] b, int offs, int len)
-        throws IOException;
+            throws IOException;
 
 
-    boolean    willReadBlock();
+    boolean willReadBlock();
 
-    boolean    isSeekable();
+    boolean isSeekable();
 
-    long        length();
+    long length();
 
-    long        tell();
+    long tell();
 
-    long        seek(long pos);
-
+    long seek(long pos);
 }

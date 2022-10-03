@@ -20,12 +20,11 @@
 
 package javazoom.jl.player;
 
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 import javazoom.jl.decoder.JavaLayerException;
+
 
 /**
  * The <code>FactoryRegistry</code> class stores the factories
@@ -33,18 +32,15 @@ import javazoom.jl.decoder.JavaLayerException;
  * <p>
  * Instances of this class are thread-safe.
  *
- * @since 0.0.8
  * @author Mat McGowan
+ * @since 0.0.8
  */
 
-public class FactoryRegistry extends AudioDeviceFactory
-{
+public class FactoryRegistry extends AudioDeviceFactory {
     static private FactoryRegistry instance = null;
 
-    static synchronized public FactoryRegistry systemRegistry()
-    {
-        if (instance==null)
-        {
+    static synchronized public FactoryRegistry systemRegistry() {
+        if (instance == null) {
             instance = new FactoryRegistry();
             instance.registerDefaultFactories();
         }
@@ -58,44 +54,35 @@ public class FactoryRegistry extends AudioDeviceFactory
      * Registers an <code>AudioDeviceFactory</code> instance
      * with this registry.
      */
-    public void addFactory(AudioDeviceFactory factory)
-    {
+    public void addFactory(AudioDeviceFactory factory) {
         factories.put(factory.getClass(), factory);
     }
 
-    public void removeFactoryType(Class<?> cls)
-    {
+    public void removeFactoryType(Class<?> cls) {
         factories.remove(cls);
     }
 
-    public void removeFactory(AudioDeviceFactory factory)
-    {
+    public void removeFactory(AudioDeviceFactory factory) {
         factories.remove(factory.getClass());
     }
 
-    public AudioDevice createAudioDevice() throws JavaLayerException
-    {
+    public AudioDevice createAudioDevice() throws JavaLayerException {
         AudioDevice device = null;
         AudioDeviceFactory[] factories = getFactoriesPriority();
 
-        if (factories==null)
-            throw new JavaLayerException(this+": no factories registered");
+        if (factories == null)
+            throw new JavaLayerException(this + ": no factories registered");
 
         JavaLayerException lastEx = null;
-        for (int i=0; (device==null) && (i<factories.length); i++)
-        {
-            try
-            {
+        for (int i = 0; (device == null) && (i < factories.length); i++) {
+            try {
                 device = factories[i].createAudioDevice();
-            }
-            catch (JavaLayerException ex)
-            {
+            } catch (JavaLayerException ex) {
                 lastEx = ex;
             }
         }
 
-        if (device==null && lastEx!=null)
-        {
+        if (device == null && lastEx != null) {
             throw new JavaLayerException("Cannot create AudioDevice", lastEx);
         }
 
@@ -103,18 +90,14 @@ public class FactoryRegistry extends AudioDeviceFactory
     }
 
 
-    protected AudioDeviceFactory[] getFactoriesPriority()
-    {
+    protected AudioDeviceFactory[] getFactoriesPriority() {
         AudioDeviceFactory[] fa = null;
-        synchronized (factories)
-        {
+        synchronized (factories) {
             int size = factories.size();
-            if (size!=0)
-            {
+            if (size != 0) {
                 fa = new AudioDeviceFactory[size];
                 int idx = 0;
-                for (AudioDeviceFactory factory : factories.values())
-                {
+                for (AudioDeviceFactory factory : factories.values()) {
                     fa[idx++] = factory;
                 }
             }
@@ -122,8 +105,7 @@ public class FactoryRegistry extends AudioDeviceFactory
         return fa;
     }
 
-    protected void registerDefaultFactories()
-    {
+    protected void registerDefaultFactories() {
         addFactory(new JavaSoundAudioDeviceFactory());
     }
 }

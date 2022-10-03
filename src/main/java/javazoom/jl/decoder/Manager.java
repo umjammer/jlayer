@@ -21,23 +21,20 @@ package javazoom.jl.decoder;
 
 /**
  * Work in progress.
- *
+ * <p>
  * Manages a number of controls.
  */
 public class Manager //implements Control
 {
-    public void addControl(Control c)
-    {
+    public void addControl(Control c) {
 
     }
 
-    public void removeControl(Control c)
-    {
+    public void removeControl(Control c) {
 
     }
 
-    public void removeAll()
-    {
+    public void removeAll() {
 
     }
 

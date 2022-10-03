@@ -22,9 +22,7 @@ package javazoom.jl.decoder;
 /**
  * Work in progress.
  */
-
-public interface Control
-{
+public interface Control {
 
     /**
      * Starts playback of the media presented by this control.
@@ -40,18 +38,17 @@ public interface Control
 
     void pause();
 
-
     boolean isRandomAccess();
 
     /**
      * Retrieves the current position.
      */
-    double    getPosition();
+    double getPosition();
 
     /**
      *
      */
-    void        setPosition(double d);
+    void setPosition(double d);
 
 
 }
