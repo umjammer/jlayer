@@ -3,7 +3,7 @@
 
   <groupId>net.javazoom</groupId>
   <artifactId>jlayer</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -24,13 +24,19 @@
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
-            -Djna.library.path=/usr/local/lib
           </argLine>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
 
   <dependencyManagement>
     <dependencies>
