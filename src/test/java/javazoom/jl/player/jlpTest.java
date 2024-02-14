@@ -43,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class jlpTest {
 
+    static final float volume = (float) Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+
     private Properties props = null;
     private String filename = null;
 
@@ -79,7 +81,7 @@ class jlpTest {
         args[0] = filename;
         jlp player = jlp.createInstance(args);
         // my audio device might have first priority
-        ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(0.05f);
+        ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(volume);
         DelayedWorker.later(3000, player::stop);
         player.play();
         assertTrue(true, "Play");
@@ -92,7 +94,7 @@ class jlpTest {
         args[0] = filename;
         jlp player = jlp.createInstance(args);
         player.setAudioDevice(FactoryRegistry.systemRegistry().createAudioDevice(MyJavaSoundAudioDeviceFactory.class));
-        ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(0.05f);
+        ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(volume);
         DelayedWorker.later(3000, player::stop);
         player.play();
         assertTrue(true, "Play");

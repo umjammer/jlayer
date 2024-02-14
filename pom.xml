@@ -24,6 +24,7 @@
         <configuration>
           <argLine>
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
+            -Dvavi.test.volume=0.02
           </argLine>
           <trimStackTrace>false</trimStackTrace>
         </configuration>
