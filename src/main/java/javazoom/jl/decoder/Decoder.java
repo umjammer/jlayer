@@ -43,7 +43,7 @@ public class Decoder implements DecoderErrors {
     private SynthesisFilter filter1;
 
     /**
-     * Sythesis filter for the right channel.
+     * Synthesis filter for the right channel.
      */
     private SynthesisFilter filter2;
 
@@ -124,13 +124,13 @@ public class Decoder implements DecoderErrors {
 
         int layer = header.layer();
 
-        output.clear_buffer();
+        output.clearBuffer();
 
         FrameDecoder decoder = retrieveDecoder(header, stream, layer);
 
         decoder.decodeFrame();
 
-        output.write_buffer(1);
+        output.writeBuffer(1);
 
         return output;
     }
@@ -190,41 +190,40 @@ public class Decoder implements DecoderErrors {
         return new DecoderException(errorCode, throwable);
     }
 
-    protected FrameDecoder retrieveDecoder(Header header, Bitstream stream, int layer)
-            throws DecoderException {
-        FrameDecoder decoder = null;
+    protected FrameDecoder retrieveDecoder(Header header, Bitstream stream, int layer) throws DecoderException {
+        FrameDecoder decoder = switch (layer) {
+            case 3 -> {
+                if (l3decoder == null) {
+                    l3decoder = new LayerIIIDecoder(stream,
+                            header, filter1, filter2,
+                            output, OutputChannels.BOTH_CHANNELS);
+                }
 
-        // REVIEW: allow channel output selection type
-        // (LEFT, RIGHT, BOTH, DOWNMIX)
-        switch (layer) {
-        case 3:
-            if (l3decoder == null) {
-                l3decoder = new LayerIIIDecoder(stream,
-                        header, filter1, filter2,
-                        output, OutputChannels.BOTH_CHANNELS);
+                yield l3decoder;
             }
+            case 2 -> {
+                if (l2decoder == null) {
+                    l2decoder = new LayerIIDecoder();
+                    l2decoder.create(stream,
+                            header, filter1, filter2,
+                            output, OutputChannels.BOTH_CHANNELS);
+                }
+                yield l2decoder;
+            }
+            case 1 -> {
+                if (l1decoder == null) {
+                    l1decoder = new LayerIDecoder();
+                    l1decoder.create(stream,
+                            header, filter1, filter2,
+                            output, OutputChannels.BOTH_CHANNELS);
+                }
+                yield l1decoder;
+            }
+            default -> null;
 
-            decoder = l3decoder;
-            break;
-        case 2:
-            if (l2decoder == null) {
-                l2decoder = new LayerIIDecoder();
-                l2decoder.create(stream,
-                        header, filter1, filter2,
-                        output, OutputChannels.BOTH_CHANNELS);
-            }
-            decoder = l2decoder;
-            break;
-        case 1:
-            if (l1decoder == null) {
-                l1decoder = new LayerIDecoder();
-                l1decoder.create(stream,
-                        header, filter1, filter2,
-                        output, OutputChannels.BOTH_CHANNELS);
-            }
-            decoder = l1decoder;
-            break;
-        }
+            // REVIEW: allow channel output selection type
+            // (LEFT, RIGHT, BOTH, DOWNMIX)
+        };
 
         if (decoder == null) {
             throw newDecoderException(UNSUPPORTED_LAYER, null);
@@ -233,8 +232,7 @@ public class Decoder implements DecoderErrors {
         return decoder;
     }
 
-    private void initialize(Header header)
-            throws DecoderException {
+    private void initialize(Header header) throws DecoderException {
 
         // REVIEW: allow customizable scale factor
         float scalefactor = 32700.0f;
@@ -269,6 +267,7 @@ public class Decoder implements DecoderErrors {
      * Instances of this class are not thread safe.
      */
     public static class Params implements Cloneable {
+
         private OutputChannels outputChannels = OutputChannels.BOTH;
 
         private Equalizer equalizer = new Equalizer();
@@ -276,6 +275,7 @@ public class Decoder implements DecoderErrors {
         public Params() {
         }
 
+        @Override
         public Object clone() {
             try {
                 return super.clone();

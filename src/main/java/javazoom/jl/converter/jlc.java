@@ -7,7 +7,7 @@
  *
  * 14/02/99     MPEG_Args Based Class - E.B
  * Adapted from javalayer and MPEG_Args.
- * Doc'ed and integerated with JL converter. Removed
+ * Doc'ed and integrated with JL converter. Removed
  * Win32 specifics from original Maplay code.
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,6 @@ package javazoom.jl.converter;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
-import javazoom.jl.decoder.Crc16;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.decoder.OutputChannels;
 
@@ -48,7 +47,7 @@ public class jlc {
 
     static public void main(String[] args) {
         String[] argv;
-        long start = System.currentTimeMillis();
+//        long start = System.currentTimeMillis();
         int argc = args.length + 1;
         argv = new String[argc];
         argv[0] = "jlc";
@@ -60,13 +59,13 @@ public class jlc {
 
         Converter conv = new Converter();
 
-        int detail = (ma.verbose_mode ? ma.verbose_level : Converter.PrintWriterProgressListener.NO_DETAIL);
+        int detail = (ma.verboseMode ? ma.verboseLevel : Converter.PrintWriterProgressListener.NO_DETAIL);
 
         Converter.ProgressListener listener = new Converter.PrintWriterProgressListener(new PrintWriter(System.out, true),
                 detail);
 
         try {
-            conv.convert(ma.filename, ma.output_filename, listener);
+            conv.convert(ma.filename, ma.outputFilename, listener);
         } catch (JavaLayerException ex) {
             logger.warning("Conversion failure: " + ex);
         }
@@ -80,27 +79,27 @@ public class jlc {
     static class jlcArgs {
         // channel constants moved into OutputChannels class.
 
-        public int which_c;
+        public int whichC;
 
-        public int output_mode;
+        public int outputMode;
 
-        public boolean use_own_scalefactor;
+        public boolean useOwnScalefactor;
 
-        public float scalefactor;
+        public float scaleFactor;
 
-        public String output_filename;
+        public String outputFilename;
 
         public String filename;
 
-        public boolean verbose_mode;
+        public boolean verboseMode;
 
-        public int verbose_level = 3;
+        public int verboseLevel = 3;
 
         public jlcArgs() {
-            which_c = OutputChannels.BOTH_CHANNELS;
-            use_own_scalefactor = false;
-            scalefactor = (float) 32768.0;
-            verbose_mode = false;
+            whichC = OutputChannels.BOTH_CHANNELS;
+            useOwnScalefactor = false;
+            scaleFactor = (float) 32768.0;
+            verboseMode = false;
         }
 
         /**
@@ -110,50 +109,49 @@ public class jlc {
          */
         public boolean processArgs(String[] argv) {
             filename = null;
-            Crc16[] crc;
-            crc = new Crc16[1];
+//            Crc16[] crc = new Crc16[1];
             int i;
             int argc = argv.length;
 
-            verbose_mode = false;
-            output_mode = OutputChannels.BOTH_CHANNELS;
-            output_filename = "";
+            verboseMode = false;
+            outputMode = OutputChannels.BOTH_CHANNELS;
+            outputFilename = "";
             if (argc < 2 || argv[1].equals("-h"))
-                return Usage();
+                return usage();
 
             i = 1;
             while (i < argc) {
 logger.finer("Option = " + argv[i]);
                 if (argv[i].charAt(0) == '-') {
                     if (argv[i].startsWith("-v")) {
-                        verbose_mode = true;
+                        verboseMode = true;
                         if (argv[i].length() > 2) {
                             try {
                                 String level = argv[i].substring(2);
-                                verbose_level = Integer.parseInt(level);
+                                verboseLevel = Integer.parseInt(level);
                             } catch (NumberFormatException ex) {
                                 System.err.println("Invalid verbose level. Using default.");
                             }
                         }
-                        System.out.println("Verbose Activated (level " + verbose_level + ")");
+                        System.out.println("Verbose Activated (level " + verboseLevel + ")");
                     } else if (argv[i].equals("-p")) {
                         if (++i == argc) {
                             System.out.println("Please specify an output filename after the -p option!");
                             System.exit(1);
                         }
-                        output_filename = argv[i];
+                        outputFilename = argv[i];
                     } else
-                        return Usage();
+                        return usage();
                 } else {
                     filename = argv[i];
                     System.out.println("FileName = " + argv[i]);
                     if (filename == null)
-                        return Usage();
+                        return usage();
                 }
                 i++;
             }
             if (filename == null)
-                return Usage();
+                return usage();
 
             return true;
         }
@@ -161,7 +159,7 @@ logger.finer("Option = " + argv[i]);
         /**
          * Usage of JavaLayer.
          */
-        public boolean Usage() {
+        public boolean usage() {
             System.out.println("JavaLayer Converter :");
             System.out.println("  -v[x]         verbose mode. ");
             System.out.println("                default = 2");

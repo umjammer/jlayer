@@ -39,8 +39,11 @@ package javazoom.jl.decoder;
  * Base Class for audio output.
  */
 public abstract class Obuffer {
-    public static final int OBUFFERSIZE = 2 * 1152;    // max. 2 * 1152 samples per frame
-    public static final int MAXCHANNELS = 2;        // max. number of channels
+
+    /** max. 2 * 1152 samples per frame */
+    public static final int OBUFFERSIZE = 2 * 1152;
+    /** max. number of channels */
+    public static final int MAXCHANNELS = 2;
 
     /**
      * Takes a 16 Bit PCM sample.
@@ -70,17 +73,17 @@ public abstract class Obuffer {
     /**
      * Write the samples to the file or directly to the audio hardware.
      */
-    public abstract void write_buffer(int val);
+    public abstract void writeBuffer(int val);
 
     public abstract void close();
 
     /**
      * Clears all data in the buffer (for seeking).
      */
-    public abstract void clear_buffer();
+    public abstract void clearBuffer();
 
     /**
      * Notify the buffer that the user has stopped the stream.
      */
-    public abstract void set_stop_flag();
+    public abstract void setStopFlag();
 }

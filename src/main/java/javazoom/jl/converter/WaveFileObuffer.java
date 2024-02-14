@@ -29,18 +29,17 @@ import javazoom.jl.decoder.Obuffer;
 
 
 /**
- * Implements an Obuffer by writing the data to
+ * Implements an {@link Obuffer} by writing the data to
  * a file in RIFF WAVE format.
  *
  * @since 0.0
  */
-
-
 public class WaveFileObuffer extends Obuffer {
-    private short[] buffer;
-    private short[] bufferp;
-    private int channels;
-    private WaveFile outWave;
+
+    private final short[] buffer;
+    private final short[] bufferP;
+    private final int channels;
+    private final WaveFile outWave;
 
     /**
      * Creates a new WareFileObuffer instance.
@@ -55,70 +54,68 @@ public class WaveFileObuffer extends Obuffer {
             throw new NullPointerException("fileName");
 
         buffer = new short[OBUFFERSIZE];
-        bufferp = new short[MAXCHANNELS];
+        bufferP = new short[MAXCHANNELS];
         channels = number_of_channels;
 
         for (int i = 0; i < number_of_channels; ++i)
-            bufferp[i] = (short) i;
+            bufferP[i] = (short) i;
 
         outWave = new WaveFile();
 
-        int rc = outWave.OpenForWrite(fileName, freq, (short) 16, (short) channels);
+        int rc = outWave.openForWrite(fileName, freq, (short) 16, (short) channels);
     }
 
     /**
      * Takes a 16 Bit PCM sample.
      */
+    @Override
     public void append(int channel, short value) {
-        buffer[bufferp[channel]] = value;
-        bufferp[channel] += (short) channels;
+        buffer[bufferP[channel]] = value;
+        bufferP[channel] += (short) channels;
     }
 
     /**
-     * Write the samples to the file (Random Acces).
+     * Write the samples to the file (Random Access).
      */
     short[] myBuffer = new short[2];
 
-    public void write_buffer(int val) {
+    @Override
+    public void writeBuffer(int val) {
 
-        int k = 0;
-        int rc = 0;
-
-        rc = outWave.WriteData(buffer, bufferp[0]);
+        int rc = outWave.writeData(buffer, bufferP[0]);
         // REVIEW: handle RiffFile errors.
-        for (int i = 0; i < channels; ++i) bufferp[i] = (short) i;
+        for (int i = 0; i < channels; ++i) bufferP[i] = (short) i;
     }
 
+    @Override
     public void close() {
-        outWave.Close();
+        outWave.close();
     }
 
     /**
      *
      */
-    public void clear_buffer() {
+    @Override
+    public void clearBuffer() {
     }
 
     /**
      *
      */
-    public void set_stop_flag() {
+    @Override
+    public void setStopFlag() {
     }
 
-  /*
-   * Create STDOUT buffer
-   *
-   *
-  public static Obuffer create_stdout_obuffer(MPEG_Args maplay_args)
-  {
-      Obuffer thebuffer = null;
-    int mode = maplay_args.MPEGheader.mode();
-    int which_channels = maplay_args.which_c;
-     if (mode == Header.single_channel || which_channels != MPEG_Args.both)
-        thebuffer = new FileObuffer(1,maplay_args.output_filename);
-     else
-        thebuffer = new FileObuffer(2,maplay_args.output_filename);
-     return(thebuffer);
-  }
-  */
+//    /**
+//     * Create STDOUT buffer
+//     */
+//    public static Obuffer create_stdout_obuffer(MPEG_Args maplay_args) {
+//        Obuffer thebuffer = null;
+//        int mode = maplay_args.MPEGheader.mode();
+//        int whichChannels = maplay_args.whichC;
+//        if (mode == Header.single_channel || whichChannels != MPEG_Args.both)
+//            thebuffer = new FileObuffer(1, maplay_args.outputFilename);
+//        else thebuffer = new FileObuffer(2, maplay_args.outputFilename);
+//        return (thebuffer);
+//    }
 }

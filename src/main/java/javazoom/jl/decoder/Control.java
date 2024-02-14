@@ -49,6 +49,4 @@ public interface Control {
      *
      */
     void setPosition(double d);
-
-
 }

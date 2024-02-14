@@ -3,7 +3,7 @@
  *
  * 29/05/01  Michael Scheerer,  Fixed some C++ to Java porting bugs.
  *
- * 16/07/01  Michael Scheerer, Catched a bug in method
+ * 16/07/01  Michael Scheerer, Caught a bug in method
  *           read_sampledata, which causes an outOfIndexException.
  *
  * 12/12/99  Initial version. Adapted from javalayer.java
@@ -34,13 +34,14 @@ package javazoom.jl.decoder;
  */
 class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
 
+    @Override
     protected void createSubbands() {
         int i;
         if (mode == Header.SINGLE_CHANNEL)
             for (i = 0; i < num_subbands; ++i)
                 subbands[i] = new SubbandLayer2(i);
         else if (mode == Header.JOINT_STEREO) {
-            for (i = 0; i < header.intensity_stereo_bound(); ++i)
+            for (i = 0; i < header.intensityStereoBound(); ++i)
                 subbands[i] = new SubbandLayer2Stereo(i);
             for (; i < num_subbands; ++i)
                 subbands[i] = new SubbandLayer2IntensityStereo(i);
@@ -50,9 +51,10 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         }
     }
 
+    @Override
     protected void readScaleFactorSelection() {
         for (int i = 0; i < num_subbands; ++i)
-            ((SubbandLayer2) subbands[i]).read_scalefactor_selection(stream, crc);
+            ((SubbandLayer2) subbands[i]).readScaleFactorSelection(stream, crc);
     }
 
     /**
@@ -371,48 +373,50 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
 
         // data taken from ISO/IEC DIS 11172, Annexes 3-B.2[abcd] and 3-B.4:
 
-        // subbands 0-2 in tables 3-B.2a and 2b: (index is allocation)
+        /** subbands 0-2 in tables 3-B.2a and 2b: (index is allocation) */
         public static final int[] table_ab1_codelength = {
                 // bits per codeword
                 0, 5, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
         };
 
+        /** pointer to sample grouping table, or NULL-pointer if ungrouped */
         public static final float[][] table_ab1_groupingtables = {
-                // pointer to sample grouping table, or NULL-pointer if ungrouped
                 null, grouping_5bits, null, null, null, null, null, null, null, null, null, null, null, null, null, null
         };
 
+        /** factor for requantization: (real)sample * factor - 1.0 gives requantized sample */
         public static final float[] table_ab1_factor = {
-                // factor for requantization: (real)sample * factor - 1.0 gives requantized sample
                 0.0f, 1.0f / 2.0f, 1.0f / 4.0f, 1.0f / 8.0f, 1.0f / 16.0f, 1.0f / 32.0f, 1.0f / 64.0f,
                 1.0f / 128.0f, 1.0f / 256.0f, 1.0f / 512.0f, 1.0f / 1024.0f, 1.0f / 2048.0f,
                 1.0f / 4096.0f, 1.0f / 8192.0f, 1.0f / 16384.0f, 1.0f / 32768.0f
         };
 
+        /** factor c for requantization from table 3-B.4 */
         public static final float[] table_ab1_c =
-                // factor c for requantization from table 3-B.4
                 {0.0f, 1.33333333333f, 1.14285714286f, 1.06666666666f, 1.03225806452f,
                 1.01587301587f, 1.00787401575f, 1.00392156863f, 1.00195694716f, 1.00097751711f,
                 1.00048851979f, 1.00024420024f, 1.00012208522f, 1.00006103888f, 1.00003051851f,
                 1.00001525902f};
 
+        /** addend d for requantization from table 3-B.4 */
         public static final float[] table_ab1_d =
-                // addend d for requantization from table 3-B.4
                 {0.0f, 0.50000000000f, 0.25000000000f, 0.12500000000f, 0.06250000000f,
                 0.03125000000f, 0.01562500000f, 0.00781250000f, 0.00390625000f, 0.00195312500f,
                 0.00097656250f, 0.00048828125f, 0.00024414063f, 0.00012207031f, 0.00006103516f,
                 0.00003051758f};
 
-        // subbands 3-... tables 3-B.2a and 2b:
+        /** subbands 3-... tables 3-B.2a and 2b */
         public static final float[][] table_ab234_groupingtables = {
                 null, grouping_5bits, grouping_7bits, null, grouping_10bits, null, null, null,
                 null, null, null, null, null, null, null, null
         };
 
-        // subbands 3-10 in tables 3-B.2a and 2b:
+        // subbands 3-10 in tables 3-B.2a and 2b
+
         public static final int[] table_ab2_codelength = {
                 0, 5, 7, 3, 10, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16
         };
+
         public static final float[] table_ab2_factor = {
                 0.0f, 1.0f / 2.0f, 1.0f / 4.0f, 1.0f / 4.0f, 1.0f / 8.0f, 1.0f / 8.0f, 1.0f / 16.0f,
                     1.0f / 32.0f, 1.0f / 64.0f, 1.0f / 128.0f, 1.0f / 256.0f, 1.0f / 512.0f,
@@ -432,6 +436,7 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         };
 
         // subbands 11-22 in tables 3-B.2a and 2b:
+
         public static final int[] table_ab3_codelength = {
                 0, 5, 7, 3, 10, 4, 5, 16
         };
@@ -484,7 +489,7 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         protected int scfsi;
         protected float scaleFactor1, scaleFactor2, scaleFactor3;
         protected int[] codeLength = {0};
-        protected float[][] groupingtable = new float[2][];
+        protected float[][] groupingTable = new float[2][];
         protected float[] factor = {0.0f};
         protected int groupNumber;
         protected int sampleNumber;
@@ -503,18 +508,18 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         /**
          *
          */
-        protected int get_allocationlength(Header header) {
+        protected int getAllocationLength(Header header) {
             if (header.version() == Header.MPEG1) {
-                int channel_bitrate = header.bitrate_index();
+                int channelBitrate = header.bitrateIndex();
 
                 // calculate bitrate per channel:
                 if (header.mode() != Header.SINGLE_CHANNEL)
-                    if (channel_bitrate == 4)
-                        channel_bitrate = 1;
+                    if (channelBitrate == 4)
+                        channelBitrate = 1;
                     else
-                        channel_bitrate -= 4;
+                        channelBitrate -= 4;
 
-                if (channel_bitrate == 1 || channel_bitrate == 2)
+                if (channelBitrate == 1 || channelBitrate == 2)
                     // table 3-B.2c or 3-B.2d
                     if (subbandNumber <= 1)
                         return 4;
@@ -544,11 +549,11 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
          *
          */
         protected void prepare_sample_reading(Header header, int allocation,
-                                              //float[][] groupingtable,
+                                              //float[][] groupingTable,
                                               int channel,
                                               float[] factor, int[] codeLength,
                                               float[] c, float[] d) {
-            int channelBitrate = header.bitrate_index();
+            int channelBitrate = header.bitrateIndex();
             // calculate bitrate per channel:
             if (header.mode() != Header.SINGLE_CHANNEL)
                 if (channelBitrate == 4)
@@ -558,7 +563,7 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
 
             if (channelBitrate == 1 || channelBitrate == 2) {
                 // table 3-B.2c or 3-B.2d
-                groupingtable[channel] = table_cd_groupingtables[allocation];
+                groupingTable[channel] = table_cd_groupingtables[allocation];
                 factor[0] = table_cd_factor[allocation];
                 codeLength[0] = table_cd_codelength[allocation];
                 c[0] = table_cd_c[allocation];
@@ -566,13 +571,13 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             } else {
                 // tables 3-B.2a or 3-B.2b
                 if (subbandNumber <= 2) {
-                    groupingtable[channel] = table_ab1_groupingtables[allocation];
+                    groupingTable[channel] = table_ab1_groupingtables[allocation];
                     factor[0] = table_ab1_factor[allocation];
                     codeLength[0] = table_ab1_codelength[allocation];
                     c[0] = table_ab1_c[allocation];
                     d[0] = table_ab1_d[allocation];
                 } else {
-                    groupingtable[channel] = table_ab234_groupingtables[allocation];
+                    groupingTable[channel] = table_ab234_groupingtables[allocation];
                     if (subbandNumber <= 10) {
                         factor[0] = table_ab2_factor[allocation];
                         codeLength[0] = table_ab2_codelength[allocation];
@@ -596,62 +601,64 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         /**
          *
          */
-        public void read_allocation(Bitstream stream, Header header, Crc16 crc) {
-            int length = get_allocationlength(header);
-            allocation = stream.get_bits(length);
+        @Override
+        public void readAllocation(Bitstream stream, Header header, Crc16 crc) {
+            int length = getAllocationLength(header);
+            allocation = stream.getBits(length);
             if (crc != null)
-                crc.add_bits(allocation, length);
+                crc.addBits(allocation, length);
         }
 
         /**
          *
          */
-        public void read_scalefactor_selection(Bitstream stream, Crc16 crc) {
+        public void readScaleFactorSelection(Bitstream stream, Crc16 crc) {
             if (allocation != 0) {
-                scfsi = stream.get_bits(2);
-                if (crc != null) crc.add_bits(scfsi, 2);
+                scfsi = stream.getBits(2);
+                if (crc != null) crc.addBits(scfsi, 2);
             }
         }
 
         /**
          *
          */
-        public void read_scalefactor(Bitstream stream, Header header) {
+        @Override
+        public void readScaleFactor(Bitstream stream, Header header) {
             if (allocation != 0) {
                 switch (scfsi) {
                 case 0:
-                    scaleFactor1 = scaleFactors[stream.get_bits(6)];
-                    scaleFactor2 = scaleFactors[stream.get_bits(6)];
-                    scaleFactor3 = scaleFactors[stream.get_bits(6)];
+                    scaleFactor1 = scaleFactors[stream.getBits(6)];
+                    scaleFactor2 = scaleFactors[stream.getBits(6)];
+                    scaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
                 case 1:
-                    scaleFactor1 = scaleFactor2 = scaleFactors[stream.get_bits(6)];
-                    scaleFactor3 = scaleFactors[stream.get_bits(6)];
+                    scaleFactor1 = scaleFactor2 = scaleFactors[stream.getBits(6)];
+                    scaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
                 case 2:
-                    scaleFactor1 = scaleFactor2 = scaleFactor3 = scaleFactors[stream.get_bits(6)];
+                    scaleFactor1 = scaleFactor2 = scaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
                 case 3:
-                    scaleFactor1 = scaleFactors[stream.get_bits(6)];
-                    scaleFactor2 = scaleFactor3 = scaleFactors[stream.get_bits(6)];
+                    scaleFactor1 = scaleFactors[stream.getBits(6)];
+                    scaleFactor2 = scaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
                 }
-                prepare_sample_reading(header, allocation, 0,
-                        factor, codeLength, c, d);
+                prepare_sample_reading(header, allocation, 0, factor, codeLength, c, d);
             }
         }
 
         /**
          *
          */
-        public boolean read_sampledata(Bitstream stream) {
+        @Override
+        public boolean readSampleData(Bitstream stream) {
             if (allocation != 0)
-                if (groupingtable[0] != null) {
-                    int samplecode = stream.get_bits(codeLength[0]);
+                if (groupingTable[0] != null) {
+                    int samplecode = stream.getBits(codeLength[0]);
                     // create requantized samples:
                     samplecode += samplecode << 1;
                     float[] target = samples;
-                    float[] source = groupingtable[0];
+                    float[] source = groupingTable[0];
                     //Bugfix:
                     int tmp = 0;
                     int temp = samplecode;
@@ -666,11 +673,11 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
                     tmp++;
                     target[tmp] = source[temp];
 
-                    // memcpy (samples, groupingtable + samplecode, 3 * sizeof (real));
+                    // memcpy (samples, groupingTable + samplecode, 3 * sizeof (real));
                 } else {
-                    samples[0] = (float) ((stream.get_bits(codeLength[0])) * factor[0] - 1.0);
-                    samples[1] = (float) ((stream.get_bits(codeLength[0])) * factor[0] - 1.0);
-                    samples[2] = (float) ((stream.get_bits(codeLength[0])) * factor[0] - 1.0);
+                    samples[0] = (float) ((stream.getBits(codeLength[0])) * factor[0] - 1.0);
+                    samples[1] = (float) ((stream.getBits(codeLength[0])) * factor[0] - 1.0);
+                    samples[2] = (float) ((stream.getBits(codeLength[0])) * factor[0] - 1.0);
                 }
 
             sampleNumber = 0;
@@ -680,11 +687,12 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         /**
          *
          */
+        @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             if ((allocation != 0) && (channels != OutputChannels.RIGHT_CHANNEL)) {
                 float sample = samples[sampleNumber];
 
-                if (groupingtable[0] == null)
+                if (groupingTable[0] == null)
                     sample = (sample + d[0]) * c[0];
                 if (groupNumber <= 4)
                     sample *= scaleFactor1;
@@ -692,7 +700,7 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
                     sample *= scaleFactor2;
                 else
                     sample *= scaleFactor3;
-                filter1.input_sample(sample, subbandNumber);
+                filter1.inputSample(sample, subbandNumber);
             }
 
             return ++sampleNumber == 3;
@@ -703,33 +711,36 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
      * Class for layer II subbands in joint stereo mode.
      */
     static class SubbandLayer2IntensityStereo extends SubbandLayer2 {
-        protected int channel2_scfsi;
-        protected float channel2_scalefactor1, channel2_scalefactor2, channel2_scalefactor3;
+
+        protected int channel2Scfsi;
+        protected float channel2ScaleFactor1, channel2ScaleFactor2, channel2ScaleFactor3;
 
         /**
          * Constructor
          */
-        public SubbandLayer2IntensityStereo(int subbandnumber) {
-            super(subbandnumber);
+        public SubbandLayer2IntensityStereo(int subbandNumber) {
+            super(subbandNumber);
         }
 
         /**
          *
          */
-        public void read_allocation(Bitstream stream, Header header, Crc16 crc) {
-            super.read_allocation(stream, header, crc);
+        @Override
+        public void readAllocation(Bitstream stream, Header header, Crc16 crc) {
+            super.readAllocation(stream, header, crc);
         }
 
         /**
          *
          */
-        public void read_scalefactor_selection(Bitstream stream, Crc16 crc) {
+        @Override
+        public void readScaleFactorSelection(Bitstream stream, Crc16 crc) {
             if (allocation != 0) {
-                scfsi = stream.get_bits(2);
-                channel2_scfsi = stream.get_bits(2);
+                scfsi = stream.getBits(2);
+                channel2Scfsi = stream.getBits(2);
                 if (crc != null) {
-                    crc.add_bits(scfsi, 2);
-                    crc.add_bits(channel2_scfsi, 2);
+                    crc.addBits(scfsi, 2);
+                    crc.addBits(channel2Scfsi, 2);
                 }
             }
         }
@@ -737,29 +748,30 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         /**
          *
          */
-        public void read_scalefactor(Bitstream stream, Header header) {
+        @Override
+        public void readScaleFactor(Bitstream stream, Header header) {
             if (allocation != 0) {
-                super.read_scalefactor(stream, header);
-                switch (channel2_scfsi) {
+                super.readScaleFactor(stream, header);
+                switch (channel2Scfsi) {
                 case 0:
-                    channel2_scalefactor1 = scaleFactors[stream.get_bits(6)];
-                    channel2_scalefactor2 = scaleFactors[stream.get_bits(6)];
-                    channel2_scalefactor3 = scaleFactors[stream.get_bits(6)];
+                    channel2ScaleFactor1 = scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor2 = scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
 
                 case 1:
-                    channel2_scalefactor1 = channel2_scalefactor2 = scaleFactors[stream.get_bits(6)];
-                    channel2_scalefactor3 = scaleFactors[stream.get_bits(6)];
+                    channel2ScaleFactor1 = channel2ScaleFactor2 = scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
 
                 case 2:
-                    channel2_scalefactor1 = channel2_scalefactor2 =
-                            channel2_scalefactor3 = scaleFactors[stream.get_bits(6)];
+                    channel2ScaleFactor1 = channel2ScaleFactor2 =
+                            channel2ScaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
 
                 case 3:
-                    channel2_scalefactor1 = scaleFactors[stream.get_bits(6)];
-                    channel2_scalefactor2 = channel2_scalefactor3 = scaleFactors[stream.get_bits(6)];
+                    channel2ScaleFactor1 = scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor2 = channel2ScaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
                 }
             }
@@ -768,33 +780,35 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         /**
          *
          */
-        public boolean read_sampledata(Bitstream stream) {
-            return super.read_sampledata(stream);
+        @Override
+        public boolean readSampleData(Bitstream stream) {
+            return super.readSampleData(stream);
         }
 
         /**
          *
          */
+        @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             if (allocation != 0) {
                 float sample = samples[sampleNumber];
 
-                if (groupingtable[0] == null)
+                if (groupingTable[0] == null)
                     sample = (sample + d[0]) * c[0];
                 if (channels == OutputChannels.BOTH_CHANNELS) {
                     float sample2 = sample;
                     if (groupNumber <= 4) {
                         sample *= scaleFactor1;
-                        sample2 *= channel2_scalefactor1;
+                        sample2 *= channel2ScaleFactor1;
                     } else if (groupNumber <= 8) {
                         sample *= scaleFactor2;
-                        sample2 *= channel2_scalefactor2;
+                        sample2 *= channel2ScaleFactor2;
                     } else {
                         sample *= scaleFactor3;
-                        sample2 *= channel2_scalefactor3;
+                        sample2 *= channel2ScaleFactor3;
                     }
-                    filter1.input_sample(sample, subbandNumber);
-                    filter2.input_sample(sample2, subbandNumber);
+                    filter1.inputSample(sample, subbandNumber);
+                    filter2.inputSample(sample2, subbandNumber);
                 } else if (channels == OutputChannels.LEFT_CHANNEL) {
                     if (groupNumber <= 4)
                         sample *= scaleFactor1;
@@ -802,15 +816,15 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
                         sample *= scaleFactor2;
                     else
                         sample *= scaleFactor3;
-                    filter1.input_sample(sample, subbandNumber);
+                    filter1.inputSample(sample, subbandNumber);
                 } else {
                     if (groupNumber <= 4)
-                        sample *= channel2_scalefactor1;
+                        sample *= channel2ScaleFactor1;
                     else if (groupNumber <= 8)
-                        sample *= channel2_scalefactor2;
+                        sample *= channel2ScaleFactor2;
                     else
-                        sample *= channel2_scalefactor3;
-                    filter1.input_sample(sample, subbandNumber);
+                        sample *= channel2ScaleFactor3;
+                    filter1.inputSample(sample, subbandNumber);
                 }
             }
 
@@ -823,102 +837,106 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
      */
     static class SubbandLayer2Stereo extends SubbandLayer2 {
         protected int channel2Allocation;
-        protected int channel2_scfsi;
-        protected float channel2ScaleFactor1, channel2ScaleFactor2, channel2_scalefactor3;
+        protected int channel2Scfsi;
+        protected float channel2ScaleFactor1, channel2ScaleFactor2, channel2ScaleFactor3;
         //protected boolean         channel2_grouping;  ???? Never used!
-        protected int[] channel2_codelength = {0};
+        protected int[] channel2CodeLength = {0};
         //protected float[][]     channel2_groupingtable = {{0},{0}};
-        protected float[] channel2_factor = {0};
-        protected float[] channel2_samples;
-        protected float[] channel2_c = {0};
-        protected float[] channel2_d = {0};
+        protected float[] channel2Factor = {0};
+        protected float[] channel2Samples;
+        protected float[] channel2C = {0};
+        protected float[] channel2D = {0};
 
         /**
          * Constructor
          */
-        public SubbandLayer2Stereo(int subbandnumber) {
-            super(subbandnumber);
-            channel2_samples = new float[3];
+        public SubbandLayer2Stereo(int subbandNumber) {
+            super(subbandNumber);
+            channel2Samples = new float[3];
         }
 
         /**
          *
          */
-        public void read_allocation(Bitstream stream, Header header, Crc16 crc) {
-            int length = get_allocationlength(header);
-            allocation = stream.get_bits(length);
-            channel2Allocation = stream.get_bits(length);
+        @Override
+        public void readAllocation(Bitstream stream, Header header, Crc16 crc) {
+            int length = getAllocationLength(header);
+            allocation = stream.getBits(length);
+            channel2Allocation = stream.getBits(length);
             if (crc != null) {
-                crc.add_bits(allocation, length);
-                crc.add_bits(channel2Allocation, length);
+                crc.addBits(allocation, length);
+                crc.addBits(channel2Allocation, length);
             }
         }
 
         /**
          *
          */
-        public void read_scalefactor_selection(Bitstream stream, Crc16 crc) {
+        @Override
+        public void readScaleFactorSelection(Bitstream stream, Crc16 crc) {
             if (allocation != 0) {
-                scfsi = stream.get_bits(2);
+                scfsi = stream.getBits(2);
                 if (crc != null)
-                    crc.add_bits(scfsi, 2);
+                    crc.addBits(scfsi, 2);
             }
             if (channel2Allocation != 0) {
-                channel2_scfsi = stream.get_bits(2);
+                channel2Scfsi = stream.getBits(2);
                 if (crc != null)
-                    crc.add_bits(channel2_scfsi, 2);
+                    crc.addBits(channel2Scfsi, 2);
             }
         }
 
         /**
          *
          */
-        public void read_scalefactor(Bitstream stream, Header header) {
-            super.read_scalefactor(stream, header);
+        @Override
+        public void readScaleFactor(Bitstream stream, Header header) {
+            super.readScaleFactor(stream, header);
             if (channel2Allocation != 0) {
-                switch (channel2_scfsi) {
+                switch (channel2Scfsi) {
                 case 0:
-                    channel2ScaleFactor1 = scaleFactors[stream.get_bits(6)];
-                    channel2ScaleFactor2 = scaleFactors[stream.get_bits(6)];
-                    channel2_scalefactor3 = scaleFactors[stream.get_bits(6)];
+                    channel2ScaleFactor1 = scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor2 = scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
 
                 case 1:
                     channel2ScaleFactor1 = channel2ScaleFactor2 =
-                            scaleFactors[stream.get_bits(6)];
-                    channel2_scalefactor3 = scaleFactors[stream.get_bits(6)];
+                            scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
 
                 case 2:
                     channel2ScaleFactor1 = channel2ScaleFactor2 =
-                            channel2_scalefactor3 = scaleFactors[stream.get_bits(6)];
+                            channel2ScaleFactor3 = scaleFactors[stream.getBits(6)];
                     break;
 
                 case 3:
-                    channel2ScaleFactor1 = scaleFactors[stream.get_bits(6)];
-                    channel2ScaleFactor2 = channel2_scalefactor3 =
-                            scaleFactors[stream.get_bits(6)];
+                    channel2ScaleFactor1 = scaleFactors[stream.getBits(6)];
+                    channel2ScaleFactor2 = channel2ScaleFactor3 =
+                            scaleFactors[stream.getBits(6)];
                     break;
                 }
                 prepare_sample_reading(header, channel2Allocation, 1,
-                        channel2_factor, channel2_codelength, channel2_c,
-                        channel2_d);
+                        channel2Factor, channel2CodeLength, channel2C,
+                        channel2D);
             }
         }
 
         /**
          *
          */
-        public boolean read_sampledata(Bitstream stream) {
-            boolean returnValue = super.read_sampledata(stream);
+        @Override
+        public boolean readSampleData(Bitstream stream) {
+            boolean returnValue = super.readSampleData(stream);
 
             if (channel2Allocation != 0)
-                if (groupingtable[1] != null) {
-                    int sampleCode = stream.get_bits(channel2_codelength[0]);
+                if (groupingTable[1] != null) {
+                    int sampleCode = stream.getBits(channel2CodeLength[0]);
                     // create requantized samples:
                     sampleCode += sampleCode << 1;
-                    float[] target = channel2_samples;
-                    float[] source = groupingtable[1];
+                    float[] target = channel2Samples;
+                    float[] source = groupingTable[1];
                     int tmp = 0;
                     int temp = sampleCode;
                     target[tmp] = source[temp];
@@ -930,12 +948,12 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
                     target[tmp] = source[temp];
 
                 } else {
-                    channel2_samples[0] = (float) ((stream.get_bits(channel2_codelength[0])) *
-                            channel2_factor[0] - 1.0);
-                    channel2_samples[1] = (float) ((stream.get_bits(channel2_codelength[0])) *
-                            channel2_factor[0] - 1.0);
-                    channel2_samples[2] = (float) ((stream.get_bits(channel2_codelength[0])) *
-                            channel2_factor[0] - 1.0);
+                    channel2Samples[0] = (float) ((stream.getBits(channel2CodeLength[0])) *
+                            channel2Factor[0] - 1.0);
+                    channel2Samples[1] = (float) ((stream.getBits(channel2CodeLength[0])) *
+                            channel2Factor[0] - 1.0);
+                    channel2Samples[2] = (float) ((stream.getBits(channel2CodeLength[0])) *
+                            channel2Factor[0] - 1.0);
                 }
             return returnValue;
         }
@@ -943,24 +961,25 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         /**
          *
          */
+        @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             boolean returnValue = super.put_next_sample(channels, filter1, filter2);
             if ((channel2Allocation != 0) && (channels != OutputChannels.LEFT_CHANNEL)) {
-                float sample = channel2_samples[sampleNumber - 1];
+                float sample = channel2Samples[sampleNumber - 1];
 
-                if (groupingtable[1] == null)
-                    sample = (sample + channel2_d[0]) * channel2_c[0];
+                if (groupingTable[1] == null)
+                    sample = (sample + channel2D[0]) * channel2C[0];
 
                 if (groupNumber <= 4)
                     sample *= channel2ScaleFactor1;
                 else if (groupNumber <= 8)
                     sample *= channel2ScaleFactor2;
                 else
-                    sample *= channel2_scalefactor3;
+                    sample *= channel2ScaleFactor3;
                 if (channels == OutputChannels.BOTH_CHANNELS)
-                    filter2.input_sample(sample, subbandNumber);
+                    filter2.inputSample(sample, subbandNumber);
                 else
-                    filter1.input_sample(sample, subbandNumber);
+                    filter1.inputSample(sample, subbandNumber);
             }
             return returnValue;
         }

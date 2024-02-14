@@ -73,6 +73,7 @@ Debug.println(Level.FINE, "volume: " + gain + ", " + hashCode());
 Debug.println(Level.FINE, "volume: " + gain + ", " + hashCode());
     }
 
+    @Override
     public void openImpl()
             throws JavaLayerException {
     }
@@ -90,7 +91,7 @@ Debug.println(Level.FINE, "volume: " + gain + ", " + hashCode());
                 source.start();
             }
         } catch (RuntimeException | LinkageError | LineUnavailableException ex) {
-ex.printStackTrace();
+ex.printStackTrace(System.err);
             t = ex;
         }
         if (source == null) {
@@ -102,12 +103,14 @@ ex.printStackTrace();
         return (int) (time * (fmt.getSampleRate() * fmt.getChannels() * fmt.getSampleSizeInBits()) / 8000.0);
     }
 
+    @Override
     protected void closeImpl() {
         if (source != null) {
             source.close();
         }
     }
 
+    @Override
     protected void writeImpl(short[] samples, int offs, int len)
             throws JavaLayerException {
         if (source == null) {
@@ -137,12 +140,14 @@ ex.printStackTrace();
         return b;
     }
 
+    @Override
     protected void flushImpl() {
         if (source != null) {
             source.drain();
         }
     }
 
+    @Override
     public int getPosition() {
         int pos = 0;
         if (source != null) {

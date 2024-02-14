@@ -25,48 +25,52 @@
 
 package javazoom.jl.converter;
 
+
 /**
  * Class allowing WaveFormat Access
  */
 public class WaveFile extends RiffFile {
+
     public static final int MAX_WAVE_CHANNELS = 2;
 
-    static class WaveFormat_ChunkData {
-        public short wFormatTag = 0;       // Format category (PCM=1)
-        public short nChannels = 0;        // Number of channels (mono=1, stereo=2)
-        public int nSamplesPerSec = 0;   // Sampling rate [Hz]
+    static class ChunkData {
+        /** Format category (PCM=1) */
+        public short wFormatTag = 0;
+        /** Number of channels (mono=1, stereo=2) */
+        public short nChannels = 0;
+        /** Sampling rate [Hz] */
+        public int nSamplesPerSec = 0;
         public int nAvgBytesPerSec = 0;
         public short nBlockAlign = 0;
         public short nBitsPerSample = 0;
 
-        public WaveFormat_ChunkData() {
+        public ChunkData() {
             wFormatTag = 1;     // PCM
-            Config(44100, (short) 16, (short) 1);
+            config(44100, (short) 16, (short) 1);
         }
 
-        public void Config(int NewSamplingRate, short NewBitsPerSample, short NewNumChannels) {
-            nSamplesPerSec = NewSamplingRate;
-            nChannels = NewNumChannels;
-            nBitsPerSample = NewBitsPerSample;
+        public void config(int newSamplingRate, short newBitsPerSample, short newNumChannels) {
+            nSamplesPerSec = newSamplingRate;
+            nChannels = newNumChannels;
+            nBitsPerSample = newBitsPerSample;
             nAvgBytesPerSec = (nChannels * nSamplesPerSec * nBitsPerSample) / 8;
             nBlockAlign = (short) ((nChannels * nBitsPerSample) / 8);
         }
     }
 
-
-    class WaveFormat_Chunk {
+    static class Chunk {
         public RiffChunkHeader header;
-        public WaveFormat_ChunkData data;
+        public ChunkData data;
 
-        public WaveFormat_Chunk() {
+        public Chunk() {
             header = new RiffChunkHeader();
-            data = new WaveFormat_ChunkData();
-            header.ckID = FourCC("fmt ");
+            data = new ChunkData();
+            header.ckID = fourCC("fmt ");
             header.ckSize = 16;
         }
 
-        public int VerifyValidity() {
-            boolean ret = header.ckID == FourCC("fmt ") &&
+        public int verifyValidity() {
+            boolean ret = header.ckID == fourCC("fmt ") &&
 
                     (data.nChannels == 1 || data.nChannels == 2) &&
 
@@ -89,56 +93,55 @@ public class WaveFile extends RiffFile {
         }
     }
 
-    private WaveFormat_Chunk wave_format;
-    private RiffChunkHeader pcm_data;
-    private long pcm_data_offset = 0;  // offset of 'pcm_data' in output file
-    private int num_samples = 0;
-
+    private Chunk waveFormat;
+    private RiffChunkHeader pcmData;
+    private long pcmDataOffset = 0;  // offset of 'pcmData' in output file
+    private int numSamples = 0;
 
     /**
      * Constructs a new WaveFile instance.
      */
     public WaveFile() {
-        pcm_data = new RiffChunkHeader();
-        wave_format = new WaveFormat_Chunk();
-        pcm_data.ckID = FourCC("data");
-        pcm_data.ckSize = 0;
-        num_samples = 0;
+        pcmData = new RiffChunkHeader();
+        waveFormat = new Chunk();
+        pcmData.ckID = fourCC("data");
+        pcmData.ckSize = 0;
+        numSamples = 0;
     }
 
     /**
      *
      */
-    public int OpenForWrite(String Filename, int SamplingRate, short BitsPerSample, short NumChannels) {
+    public int openForWrite(String filename, int samplingRate, short bitsPerSample, short numChannels) {
         // Verify parameters...
-        if ((Filename == null) ||
-                (BitsPerSample != 8 && BitsPerSample != 16) ||
-                NumChannels < 1 || NumChannels > 2) {
+        if ((filename == null) ||
+                (bitsPerSample != 8 && bitsPerSample != 16) ||
+                numChannels < 1 || numChannels > 2) {
             return DDC_INVALID_CALL;
         }
 
-        wave_format.data.Config(SamplingRate, BitsPerSample, NumChannels);
+        waveFormat.data.config(samplingRate, bitsPerSample, numChannels);
 
-        int retcode = Open(Filename, RFM_WRITE);
+        int retcode = Open(filename, RFM_WRITE);
 
         if (retcode == DDC_SUCCESS) {
             byte[] theWave = {(byte) 'W', (byte) 'A', (byte) 'V', (byte) 'E'};
-            retcode = Write(theWave, 4);
+            retcode = write(theWave, 4);
 
             if (retcode == DDC_SUCCESS) {
-                // Ecriture de wave_format
-                retcode = Write(wave_format.header, 8);
-                retcode = Write(wave_format.data.wFormatTag, 2);
-                retcode = Write(wave_format.data.nChannels, 2);
-                retcode = Write(wave_format.data.nSamplesPerSec, 4);
-                retcode = Write(wave_format.data.nAvgBytesPerSec, 4);
-                retcode = Write(wave_format.data.nBlockAlign, 2);
-                retcode = Write(wave_format.data.nBitsPerSample, 2);
+                // Writing waveFormat
+                retcode = write(waveFormat.header, 8);
+                retcode = write(waveFormat.data.wFormatTag, 2);
+                retcode = write(waveFormat.data.nChannels, 2);
+                retcode = write(waveFormat.data.nSamplesPerSec, 4);
+                retcode = write(waveFormat.data.nAvgBytesPerSec, 4);
+                retcode = write(waveFormat.data.nBlockAlign, 2);
+                retcode = write(waveFormat.data.nBitsPerSample, 2);
 
 
                 if (retcode == DDC_SUCCESS) {
-                    pcm_data_offset = CurrentFilePosition();
-                    retcode = Write(pcm_data, 8);
+                    pcmDataOffset = currentFilePosition();
+                    retcode = write(pcmData, 8);
                 }
             }
         }
@@ -149,58 +152,58 @@ public class WaveFile extends RiffFile {
     /**
      * Write 16-bit audio
      */
-    public int WriteData(short[] data, int numData) {
+    public int writeData(short[] data, int numData) {
         int extraBytes = numData * 2;
-        pcm_data.ckSize += extraBytes;
-        return super.Write(data, extraBytes);
+        pcmData.ckSize += extraBytes;
+        return super.write(data, extraBytes);
     }
 
     /**
      *
      */
-    public int Close() {
+    @Override
+    public int close() {
         int rc = DDC_SUCCESS;
 
         if (fmode == RFM_WRITE)
-            rc = Backpatch(pcm_data_offset, pcm_data, 8);
+            rc = backpatch(pcmDataOffset, pcmData, 8);
         if (rc == DDC_SUCCESS)
-            rc = super.Close();
+            rc = super.close();
         return rc;
     }
 
     // [Hz]
-    public int SamplingRate() {
-        return wave_format.data.nSamplesPerSec;
+    public int samplingRate() {
+        return waveFormat.data.nSamplesPerSec;
     }
 
-    public short BitsPerSample() {
-        return wave_format.data.nBitsPerSample;
+    public short bitsPerSample() {
+        return waveFormat.data.nBitsPerSample;
     }
 
-    public short NumChannels() {
-        return wave_format.data.nChannels;
+    public short numChannels() {
+        return waveFormat.data.nChannels;
     }
 
-    public int NumSamples() {
-        return num_samples;
+    public int numSamples() {
+        return numSamples;
     }
-
 
     /**
      * Open for write using another wave file's parameters...
      */
-    public int OpenForWrite(String Filename, WaveFile OtherWave) {
-        return OpenForWrite(Filename,
-                OtherWave.SamplingRate(),
-                OtherWave.BitsPerSample(),
-                OtherWave.NumChannels());
+    public int openForWrite(String filename, WaveFile otherWave) {
+        return openForWrite(filename,
+                otherWave.samplingRate(),
+                otherWave.bitsPerSample(),
+                otherWave.numChannels());
     }
 
     /**
      *
      */
-    public long CurrentFilePosition() {
-        return super.CurrentFilePosition();
+    @Override
+    public long currentFilePosition() {
+        return super.currentFilePosition();
     }
-
 }

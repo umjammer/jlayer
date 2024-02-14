@@ -68,11 +68,11 @@ public class jlap {
         return playMp3(new BufferedInputStream(Files.newInputStream(mp3.toPath())), start, end, listener);
     }
 
-    public static AdvancedPlayer playMp3(final InputStream is,
-                                         final int start,
-                                         final int end,
+    public static AdvancedPlayer playMp3(InputStream is,
+                                         int start,
+                                         int end,
                                          PlaybackListener listener) throws JavaLayerException {
-        final AdvancedPlayer player = new AdvancedPlayer(is);
+        AdvancedPlayer player = new AdvancedPlayer(is);
         player.setPlayBackListener(listener);
         // run in new thread
         new Thread(() -> {
@@ -86,10 +86,12 @@ public class jlap {
     }
 
     public static class InfoListener extends PlaybackListener {
+        @Override
         public void playbackStarted(PlaybackEvent evt) {
             System.out.println("Play started from frame " + evt.getFrame());
         }
 
+        @Override
         public void playbackFinished(PlaybackEvent evt) {
             System.out.println("Play completed at frame " + evt.getFrame());
             System.exit(0);

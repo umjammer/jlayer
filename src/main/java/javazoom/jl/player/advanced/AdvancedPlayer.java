@@ -32,7 +32,7 @@ import javazoom.jl.player.FactoryRegistry;
 
 
 /**
- * a hybrid of javazoom.jl.player.Player tweeked to include <code>play(startFrame, endFrame)</code>
+ * a hybrid of javazoom.jl.player.Player tweaked to include <code>play(startFrame, endFrame)</code>
  * hopefully this will be included in the api
  */
 public class AdvancedPlayer {
@@ -104,7 +104,7 @@ public class AdvancedPlayer {
     }
 
     /**
-     * Cloases this player. Any audio currently playing is stopped
+     * Closes this player. Any audio currently playing is stopped
      * immediately.
      */
     public synchronized void close() {
@@ -172,7 +172,7 @@ public class AdvancedPlayer {
      * @param end   The last frame to play
      * @return true if the last frame was played, or false if there are more frames.
      */
-    public boolean play(final int start, final int end) throws JavaLayerException {
+    public boolean play(int start, int end) throws JavaLayerException {
         boolean ret = true;
         int offset = start;
         while (offset-- > 0 && ret) ret = skipFrame();
