@@ -3,7 +3,7 @@
 
   <groupId>net.javazoom</groupId>
   <artifactId>jlayer</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 
   <build>
     <plugins>
