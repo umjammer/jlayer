@@ -26,8 +26,7 @@ package javazoom.jl.decoder;
  *
  * @author MDM
  */
-public class DecoderException extends JavaLayerException
-        implements DecoderErrors {
+public class DecoderException extends JavaLayerException implements DecoderErrors {
 
     private int errorCode = UNKNOWN_ERROR;
 

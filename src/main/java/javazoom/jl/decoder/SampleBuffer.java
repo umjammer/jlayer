@@ -31,22 +31,22 @@ package javazoom.jl.decoder;
  */
 public class SampleBuffer extends Obuffer {
 
-    private short[] buffer;
-    private int[] bufferp;
-    private int channels;
-    private int frequency;
+    private final short[] buffer;
+    private final int[] bufferP;
+    private final int channels;
+    private final int frequency;
 
     /**
      * Constructor
      */
     public SampleBuffer(int sample_frequency, int number_of_channels) {
         buffer = new short[OBUFFERSIZE];
-        bufferp = new int[MAXCHANNELS];
+        bufferP = new int[MAXCHANNELS];
         channels = number_of_channels;
         frequency = sample_frequency;
 
         for (int i = 0; i < number_of_channels; ++i)
-            bufferp[i] = (short) i;
+            bufferP[i] = (short) i;
     }
 
     public int getChannelCount() {
@@ -62,19 +62,21 @@ public class SampleBuffer extends Obuffer {
     }
 
     public int getBufferLength() {
-        return bufferp[0];
+        return bufferP[0];
     }
 
     /**
      * Takes a 16 Bit PCM sample.
      */
+    @Override
     public void append(int channel, short value) {
-        buffer[bufferp[channel]] = value;
-        bufferp[channel] += channels;
+        buffer[bufferP[channel]] = value;
+        bufferP[channel] += channels;
     }
 
+    @Override
     public void appendSamples(int channel, float[] f) {
-        int pos = bufferp[channel];
+        int pos = bufferP[channel];
 
         short s;
         float fs;
@@ -88,31 +90,33 @@ public class SampleBuffer extends Obuffer {
             pos += channels;
         }
 
-        bufferp[channel] = pos;
+        bufferP[channel] = pos;
     }
-
 
     /**
      * Write the samples to the file (Random Acces).
      */
-    public void write_buffer(int val) {
-
+    @Override
+    public void writeBuffer(int val) {
     }
 
+    @Override
     public void close() {
     }
 
     /**
      *
      */
-    public void clear_buffer() {
+    @Override
+    public void clearBuffer() {
         for (int i = 0; i < channels; ++i)
-            bufferp[i] = (short) i;
+            bufferP[i] = (short) i;
     }
 
     /**
      *
      */
-    public void set_stop_flag() {
+    @Override
+    public void setStopFlag() {
     }
 }

@@ -33,7 +33,7 @@ package javazoom.jl.decoder;
  * The implementation stores single bits as a word in the buffer. If
  * a bit is set, the corresponding word in the buffer will be non-zero.
  * If a bit is clear, the corresponding word is zero. Although this
- * may seem waseful, this can be a factor of two quicker than
+ * may seem wasteful, this can be a factor of two quicker than
  * packing 8 bits to a byte and extracting.
  * <p>
  * REVIEW: there is no range checking, so buffer underflow or overflow
@@ -54,7 +54,7 @@ final class BitReserve {
      */
     private static final int BUFSIZE_MASK = BUFSIZE - 1;
 
-    private int offset, totbit, buf_byte_idx;
+    private int offset, totbit, bufByteIdx;
     private final int[] buf = new int[BUFSIZE];
     @SuppressWarnings("unused")
     private int buf_bit_idx;
@@ -62,7 +62,7 @@ final class BitReserve {
     BitReserve() {
         offset = 0;
         totbit = 0;
-        buf_byte_idx = 0;
+        bufByteIdx = 0;
     }
 
     /**
@@ -82,7 +82,7 @@ final class BitReserve {
 
         int val = 0;
 
-        int pos = buf_byte_idx;
+        int pos = bufByteIdx;
         if (pos + N < BUFSIZE) {
             while (N-- > 0) {
                 val <<= 1;
@@ -95,7 +95,7 @@ final class BitReserve {
                 pos = (pos + 1) & BUFSIZE_MASK;
             }
         }
-        buf_byte_idx = pos;
+        bufByteIdx = pos;
         return val;
     }
 
@@ -106,8 +106,8 @@ final class BitReserve {
      */
     public int hget1bit() {
         totbit++;
-        int val = buf[buf_byte_idx];
-        buf_byte_idx = (buf_byte_idx + 1) & BUFSIZE_MASK;
+        int val = buf[bufByteIdx];
+        bufByteIdx = (bufByteIdx + 1) & BUFSIZE_MASK;
         return val;
     }
 
@@ -132,23 +132,23 @@ final class BitReserve {
     }
 
     /**
-     * Rewind N bits in Stream.
+     * Rewind n bits in Stream.
      */
-    public void rewindNbits(int N) {
-        totbit -= N;
-        buf_byte_idx -= N;
-        if (buf_byte_idx < 0)
-            buf_byte_idx += BUFSIZE;
+    public void rewindNBits(int n) {
+        totbit -= n;
+        bufByteIdx -= n;
+        if (bufByteIdx < 0)
+            bufByteIdx += BUFSIZE;
     }
 
     /**
-     * Rewind N bytes in Stream.
+     * Rewind n bytes in Stream.
      */
-    public void rewindNbytes(int N) {
-        int bits = (N << 3);
+    public void rewindNBytes(int n) {
+        int bits = (n << 3);
         totbit -= bits;
-        buf_byte_idx -= bits;
-        if (buf_byte_idx < 0)
-            buf_byte_idx += BUFSIZE;
+        bufByteIdx -= bits;
+        if (bufByteIdx < 0)
+            bufByteIdx += BUFSIZE;
     }
 }

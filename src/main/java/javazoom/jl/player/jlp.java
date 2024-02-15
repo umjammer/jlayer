@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javazoom.jl.decoder.JavaLayerException;
@@ -55,7 +56,7 @@ public class jlp {
             if (player != null)
                 player.play();
         } catch (Exception ex) {
-            System.err.println(ex);
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
             ex.printStackTrace(System.err);
             retval = 1;
         }

@@ -1,6 +1,6 @@
 /*
  * 11/19/04 1.0 moved to LGPL.
- * 12/12/99 Original verion. mdm@techie.com.
+ * 12/12/99 Original version. mdm@techie.com.
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -67,7 +67,7 @@ public class Converter {
                         String destName,
                         ProgressListener progressListener,
                         Decoder.Params decoderParams) throws JavaLayerException {
-        if (destName.length() == 0)
+        if (destName.isEmpty())
             destName = null;
         try {
             InputStream in = openInput(sourceName);
@@ -290,6 +290,7 @@ public class Converter {
             return (this.detailLevel >= detail);
         }
 
+        @Override
         public void converterUpdate(int updateID, int param1, int param2) {
             if (isDetail(VERBOSE_DETAIL)) {
                 switch (updateID) {
@@ -305,6 +306,7 @@ public class Converter {
             }
         }
 
+        @Override
         public void parsedFrame(int frameNo, Header header) {
             if ((frameNo == 0) && isDetail(VERBOSE_DETAIL)) {
                 String headerString = header.toString();
@@ -315,6 +317,7 @@ public class Converter {
             }
         }
 
+        @Override
         public void readFrame(int frameNo, Header header) {
             if ((frameNo == 0) && isDetail(VERBOSE_DETAIL)) {
                 String headerString = header.toString();
@@ -325,6 +328,7 @@ public class Converter {
             }
         }
 
+        @Override
         public void decodedFrame(int frameNo, Header header, Obuffer o) {
             if (isDetail(MAX_DETAIL)) {
                 String headerString = header.toString();
@@ -343,6 +347,7 @@ public class Converter {
             }
         }
 
+        @Override
         public boolean converterException(Throwable t) {
             if (this.detailLevel > NO_DETAIL) {
                 t.printStackTrace(pw);

@@ -52,10 +52,12 @@ public class JavaLayerException extends Exception {
         return exception;
     }
 
+    @Override
     public void printStackTrace() {
         printStackTrace(System.err);
     }
 
+    @Override
     public void printStackTrace(PrintStream ps) {
         if (this.exception == null) {
             super.printStackTrace(ps);

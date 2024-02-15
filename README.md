@@ -1,10 +1,30 @@
 [![Release](https://jitpack.io/v/umjammer/jlayer.svg)](https://jitpack.io/#umjammer/jlayer)
 [![Java CI](https://github.com/umjammer/jlayer/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/jlayer/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/umjammer/jlayer/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/jlayer/actions/workflows/codeql-analysis.yml)
-![Java](https://img.shields.io/badge/Java-8-b07219)
+![Java](https://img.shields.io/badge/Java-17-b07219)
 [![Parent](https://img.shields.io/badge/Parent-mp3spi-pink)](https://github.com/umjammer/mp3spi)
 
 # JLayer
+
+<img alt="mp3 logo" src="https://github.com/umjammer/mp3spi/assets/493908/b718b78d-15c6-4356-a5ca-fca63ad7ffcb" width=160 /><sub><a href="https://www.iis.fraunhofer.de/de/ff/amm/unterhaltungselektronik/mp3.html">🅮 fraunhofer</a></sub>
+
+MP3 Decoder in pure Java.
+
+## Install
+
+ * [maven](https://jitpack.io/#umjammer/jlayer)
+
+## Usage
+
+ * [sample](src/test/java/javazoom/jl/player/jlpTest.java)
+
+## References
+
+## TODO
+
+----
+
+# Original
 
  JavaZOOM 1999-2008
 
@@ -13,8 +33,6 @@
 
  JAVA and MP3 online Forums :<br/>
    [http://www.javazoom.net/services/forums/index.jsp](https://web.archive.org/web/20041010053627/http://www.javazoom.net/services/forums/index.jsp)
-
-----
 
 ## DESCRIPTION
 

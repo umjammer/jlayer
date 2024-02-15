@@ -31,9 +31,7 @@ public interface Source {
 
     long LENGTH_UNKNOWN = -1;
 
-    int read(byte[] b, int offs, int len)
-            throws IOException;
-
+    int read(byte[] b, int offs, int len) throws IOException;
 
     boolean willReadBlock();
 

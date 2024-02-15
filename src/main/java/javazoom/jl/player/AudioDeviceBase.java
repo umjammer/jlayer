@@ -50,6 +50,7 @@ public abstract class AudioDeviceBase implements AudioDevice {
      * @param decoder The decoder that will provide audio data
      *                to this audio device.
      */
+    @Override
     public synchronized void open(Decoder decoder) throws JavaLayerException {
         if (!isOpen()) {
             this.decoder = decoder;
@@ -78,6 +79,7 @@ public abstract class AudioDeviceBase implements AudioDevice {
      * @return <code>true</code> if the audio device is open,
      * <code>false</code> if it is not.
      */
+    @Override
     public synchronized boolean isOpen() {
         return open;
     }
@@ -87,6 +89,7 @@ public abstract class AudioDeviceBase implements AudioDevice {
      * audio, playback is stopped immediately without flushing
      * any buffered audio data.
      */
+    @Override
     public synchronized void close() {
         if (isOpen()) {
             closeImpl();
@@ -113,8 +116,9 @@ public abstract class AudioDeviceBase implements AudioDevice {
      * @param len     The number of samples from the array to write.
      * @throws JavaLayerException if the audio data could not be
      *                            written to the audio device.
-     *                            If the audio device is not open, this method does nthing.
+     *                            If the audio device is not open, this method does nothing.
      */
+    @Override
     public void write(short[] samples, int offs, int len)
             throws JavaLayerException {
         if (isOpen()) {
@@ -135,6 +139,7 @@ public abstract class AudioDeviceBase implements AudioDevice {
      * audio device. This method should only be called prior
      * to closing the device.
      */
+    @Override
     public void flush() {
         if (isOpen()) {
             flushImpl();

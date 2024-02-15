@@ -31,7 +31,7 @@ import javazoom.jl.decoder.JavaLayerException;
  * that these samples are signed 16-bit samples taken at the output frequency
  * of the decoder. If the decoder outputs more than one channel, the samples for
  * each channel are assumed to appear consecutively, with the lower numbered
- * channels preceeding higher-numbered channels. E.g. if there are two
+ * channels proceeding higher-numbered channels. E.g. if there are two
  * channels, the samples will appear in this order:
  * <pre><code>
  *

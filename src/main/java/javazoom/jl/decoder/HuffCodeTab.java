@@ -19,7 +19,7 @@
  *   date   programmers         comment
  *  27.2.92 F.O.Witte (ITT Intermetall)
  *  8/24/93 M. Iwadare          Changed for 1 pass decoding.
- *  7/14/94 J. Koller            useless 'typedef' before huffcodetab  removed
+ *  7/14/94 J. Koller            useless 'typedef' before HuffCodeTab  removed
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -39,10 +39,12 @@
 
 package javazoom.jl.decoder;
 
+
 /**
  * Class to implements Huffman decoder.
  */
-final class huffcodetab {
+final class HuffCodeTab {
+
     private static final int MXOFF = 250;
     private static final int HTN = 34;
 
@@ -431,7 +433,7 @@ final class huffcodetab {
     };
 
     /** Simulate extern struct */
-    public static huffcodetab[] ht = null;
+    public static HuffCodeTab[] ht = null;
 
     @SuppressWarnings("unused")
     private static int[] bitbuf = new int[32];
@@ -439,7 +441,7 @@ final class huffcodetab {
     /**
      * Big Constructor : Computes all Huffman Tables.
      */
-    private huffcodetab(String S, int XLEN, int YLEN, int LINBITS, int LINMAX, int REF,
+    private HuffCodeTab(String S, int XLEN, int YLEN, int LINBITS, int LINMAX, int REF,
                         int[] TABLE, int[] HLEN, int[][] VAL, int TREELEN) {
         tablename0 = S.charAt(0);
         tablename1 = S.charAt(1);
@@ -460,7 +462,7 @@ final class huffcodetab {
      * note! for counta,countb -the 4 bit value is returned in y,
      * discard x.
      */
-    public static int huffman_decoder(huffcodetab h, int[] x, int[] y, int[] v, int[] w, BitReserve br) {
+    public static int huffman_decoder(HuffCodeTab h, int[] x, int[] y, int[] v, int[] w, BitReserve br) {
         // array of all huffcodtable headers
         // 0..31 Huffman code table 0..31
         // 32,33 count1-tables
@@ -543,40 +545,40 @@ final class huffcodetab {
         if (ht != null)
             return;
 
-        ht = new huffcodetab[HTN];
-        ht[0] = new huffcodetab("0  ", 0, 0, 0, 0, -1, null, null, ValTab0, 0);
-        ht[1] = new huffcodetab("1  ", 2, 2, 0, 0, -1, null, null, ValTab1, 7);
-        ht[2] = new huffcodetab("2  ", 3, 3, 0, 0, -1, null, null, ValTab2, 17);
-        ht[3] = new huffcodetab("3  ", 3, 3, 0, 0, -1, null, null, ValTab3, 17);
-        ht[4] = new huffcodetab("4  ", 0, 0, 0, 0, -1, null, null, ValTab4, 0);
-        ht[5] = new huffcodetab("5  ", 4, 4, 0, 0, -1, null, null, ValTab5, 31);
-        ht[6] = new huffcodetab("6  ", 4, 4, 0, 0, -1, null, null, ValTab6, 31);
-        ht[7] = new huffcodetab("7  ", 6, 6, 0, 0, -1, null, null, ValTab7, 71);
-        ht[8] = new huffcodetab("8  ", 6, 6, 0, 0, -1, null, null, ValTab8, 71);
-        ht[9] = new huffcodetab("9  ", 6, 6, 0, 0, -1, null, null, ValTab9, 71);
-        ht[10] = new huffcodetab("10 ", 8, 8, 0, 0, -1, null, null, ValTab10, 127);
-        ht[11] = new huffcodetab("11 ", 8, 8, 0, 0, -1, null, null, ValTab11, 127);
-        ht[12] = new huffcodetab("12 ", 8, 8, 0, 0, -1, null, null, ValTab12, 127);
-        ht[13] = new huffcodetab("13 ", 16, 16, 0, 0, -1, null, null, ValTab13, 511);
-        ht[14] = new huffcodetab("14 ", 0, 0, 0, 0, -1, null, null, ValTab14, 0);
-        ht[15] = new huffcodetab("15 ", 16, 16, 0, 0, -1, null, null, ValTab15, 511);
-        ht[16] = new huffcodetab("16 ", 16, 16, 1, 1, -1, null, null, ValTab16, 511);
-        ht[17] = new huffcodetab("17 ", 16, 16, 2, 3, 16, null, null, ValTab16, 511);
-        ht[18] = new huffcodetab("18 ", 16, 16, 3, 7, 16, null, null, ValTab16, 511);
-        ht[19] = new huffcodetab("19 ", 16, 16, 4, 15, 16, null, null, ValTab16, 511);
-        ht[20] = new huffcodetab("20 ", 16, 16, 6, 63, 16, null, null, ValTab16, 511);
-        ht[21] = new huffcodetab("21 ", 16, 16, 8, 255, 16, null, null, ValTab16, 511);
-        ht[22] = new huffcodetab("22 ", 16, 16, 10, 1023, 16, null, null, ValTab16, 511);
-        ht[23] = new huffcodetab("23 ", 16, 16, 13, 8191, 16, null, null, ValTab16, 511);
-        ht[24] = new huffcodetab("24 ", 16, 16, 4, 15, -1, null, null, ValTab24, 512);
-        ht[25] = new huffcodetab("25 ", 16, 16, 5, 31, 24, null, null, ValTab24, 512);
-        ht[26] = new huffcodetab("26 ", 16, 16, 6, 63, 24, null, null, ValTab24, 512);
-        ht[27] = new huffcodetab("27 ", 16, 16, 7, 127, 24, null, null, ValTab24, 512);
-        ht[28] = new huffcodetab("28 ", 16, 16, 8, 255, 24, null, null, ValTab24, 512);
-        ht[29] = new huffcodetab("29 ", 16, 16, 9, 511, 24, null, null, ValTab24, 512);
-        ht[30] = new huffcodetab("30 ", 16, 16, 11, 2047, 24, null, null, ValTab24, 512);
-        ht[31] = new huffcodetab("31 ", 16, 16, 13, 8191, 24, null, null, ValTab24, 512);
-        ht[32] = new huffcodetab("32 ", 1, 16, 0, 0, -1, null, null, ValTab32, 31);
-        ht[33] = new huffcodetab("33 ", 1, 16, 0, 0, -1, null, null, ValTab33, 31);
+        ht = new HuffCodeTab[HTN];
+        ht[0] = new HuffCodeTab("0  ", 0, 0, 0, 0, -1, null, null, ValTab0, 0);
+        ht[1] = new HuffCodeTab("1  ", 2, 2, 0, 0, -1, null, null, ValTab1, 7);
+        ht[2] = new HuffCodeTab("2  ", 3, 3, 0, 0, -1, null, null, ValTab2, 17);
+        ht[3] = new HuffCodeTab("3  ", 3, 3, 0, 0, -1, null, null, ValTab3, 17);
+        ht[4] = new HuffCodeTab("4  ", 0, 0, 0, 0, -1, null, null, ValTab4, 0);
+        ht[5] = new HuffCodeTab("5  ", 4, 4, 0, 0, -1, null, null, ValTab5, 31);
+        ht[6] = new HuffCodeTab("6  ", 4, 4, 0, 0, -1, null, null, ValTab6, 31);
+        ht[7] = new HuffCodeTab("7  ", 6, 6, 0, 0, -1, null, null, ValTab7, 71);
+        ht[8] = new HuffCodeTab("8  ", 6, 6, 0, 0, -1, null, null, ValTab8, 71);
+        ht[9] = new HuffCodeTab("9  ", 6, 6, 0, 0, -1, null, null, ValTab9, 71);
+        ht[10] = new HuffCodeTab("10 ", 8, 8, 0, 0, -1, null, null, ValTab10, 127);
+        ht[11] = new HuffCodeTab("11 ", 8, 8, 0, 0, -1, null, null, ValTab11, 127);
+        ht[12] = new HuffCodeTab("12 ", 8, 8, 0, 0, -1, null, null, ValTab12, 127);
+        ht[13] = new HuffCodeTab("13 ", 16, 16, 0, 0, -1, null, null, ValTab13, 511);
+        ht[14] = new HuffCodeTab("14 ", 0, 0, 0, 0, -1, null, null, ValTab14, 0);
+        ht[15] = new HuffCodeTab("15 ", 16, 16, 0, 0, -1, null, null, ValTab15, 511);
+        ht[16] = new HuffCodeTab("16 ", 16, 16, 1, 1, -1, null, null, ValTab16, 511);
+        ht[17] = new HuffCodeTab("17 ", 16, 16, 2, 3, 16, null, null, ValTab16, 511);
+        ht[18] = new HuffCodeTab("18 ", 16, 16, 3, 7, 16, null, null, ValTab16, 511);
+        ht[19] = new HuffCodeTab("19 ", 16, 16, 4, 15, 16, null, null, ValTab16, 511);
+        ht[20] = new HuffCodeTab("20 ", 16, 16, 6, 63, 16, null, null, ValTab16, 511);
+        ht[21] = new HuffCodeTab("21 ", 16, 16, 8, 255, 16, null, null, ValTab16, 511);
+        ht[22] = new HuffCodeTab("22 ", 16, 16, 10, 1023, 16, null, null, ValTab16, 511);
+        ht[23] = new HuffCodeTab("23 ", 16, 16, 13, 8191, 16, null, null, ValTab16, 511);
+        ht[24] = new HuffCodeTab("24 ", 16, 16, 4, 15, -1, null, null, ValTab24, 512);
+        ht[25] = new HuffCodeTab("25 ", 16, 16, 5, 31, 24, null, null, ValTab24, 512);
+        ht[26] = new HuffCodeTab("26 ", 16, 16, 6, 63, 24, null, null, ValTab24, 512);
+        ht[27] = new HuffCodeTab("27 ", 16, 16, 7, 127, 24, null, null, ValTab24, 512);
+        ht[28] = new HuffCodeTab("28 ", 16, 16, 8, 255, 24, null, null, ValTab24, 512);
+        ht[29] = new HuffCodeTab("29 ", 16, 16, 9, 511, 24, null, null, ValTab24, 512);
+        ht[30] = new HuffCodeTab("30 ", 16, 16, 11, 2047, 24, null, null, ValTab24, 512);
+        ht[31] = new HuffCodeTab("31 ", 16, 16, 13, 8191, 24, null, null, ValTab24, 512);
+        ht[32] = new HuffCodeTab("32 ", 1, 16, 0, 0, -1, null, null, ValTab32, 31);
+        ht[33] = new HuffCodeTab("33 ", 1, 16, 0, 0, -1, null, null, ValTab33, 31);
     }
 }

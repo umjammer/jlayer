@@ -20,6 +20,9 @@
 
 package javazoom.jl.decoder;
 
+import java.util.Arrays;
+
+
 /**
  * The <code>Equalizer</code> class can be used to specify
  * equalization settings for the MPEG audio decoder.
@@ -93,9 +96,7 @@ public final class Equalizer {
      * Sets all bands to 0.0
      */
     public void reset() {
-        for (int i = 0; i < BANDS; i++) {
-            settings[i] = 0.0f;
-        }
+        Arrays.fill(settings, 0.0f);
     }
 
     /**
