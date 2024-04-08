@@ -598,9 +598,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public void readAllocation(Bitstream stream, Header header, Crc16 crc) {
             int length = getAllocationLength(header);
@@ -619,9 +616,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactor(Bitstream stream, Header header) {
             if (allocation != 0) {
@@ -647,9 +641,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public boolean readSampleData(Bitstream stream) {
             if (allocation != 0)
@@ -684,9 +675,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             return ++groupNumber == 12;
         }
 
-        /**
-         *
-         */
         @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             if ((allocation != 0) && (channels != OutputChannels.RIGHT_CHANNEL)) {
@@ -722,17 +710,11 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             super(subbandNumber);
         }
 
-        /**
-         *
-         */
         @Override
         public void readAllocation(Bitstream stream, Header header, Crc16 crc) {
             super.readAllocation(stream, header, crc);
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactorSelection(Bitstream stream, Crc16 crc) {
             if (allocation != 0) {
@@ -745,9 +727,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactor(Bitstream stream, Header header) {
             if (allocation != 0) {
@@ -777,17 +756,11 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public boolean readSampleData(Bitstream stream) {
             return super.readSampleData(stream);
         }
 
-        /**
-         *
-         */
         @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             if (allocation != 0) {
@@ -855,9 +828,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             channel2Samples = new float[3];
         }
 
-        /**
-         *
-         */
         @Override
         public void readAllocation(Bitstream stream, Header header, Crc16 crc) {
             int length = getAllocationLength(header);
@@ -869,9 +839,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactorSelection(Bitstream stream, Crc16 crc) {
             if (allocation != 0) {
@@ -886,9 +853,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactor(Bitstream stream, Header header) {
             super.readScaleFactor(stream, header);
@@ -923,9 +887,6 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public boolean readSampleData(Bitstream stream) {
             boolean returnValue = super.readSampleData(stream);
@@ -948,19 +909,13 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
                     target[tmp] = source[temp];
 
                 } else {
-                    channel2Samples[0] = (float) ((stream.getBits(channel2CodeLength[0])) *
-                            channel2Factor[0] - 1.0);
-                    channel2Samples[1] = (float) ((stream.getBits(channel2CodeLength[0])) *
-                            channel2Factor[0] - 1.0);
-                    channel2Samples[2] = (float) ((stream.getBits(channel2CodeLength[0])) *
-                            channel2Factor[0] - 1.0);
+                    channel2Samples[0] = (float) ((stream.getBits(channel2CodeLength[0])) * channel2Factor[0] - 1.0);
+                    channel2Samples[1] = (float) ((stream.getBits(channel2CodeLength[0])) * channel2Factor[0] - 1.0);
+                    channel2Samples[2] = (float) ((stream.getBits(channel2CodeLength[0])) * channel2Factor[0] - 1.0);
                 }
             return returnValue;
         }
 
-        /**
-         *
-         */
         @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             boolean returnValue = super.put_next_sample(channels, filter1, filter2);
