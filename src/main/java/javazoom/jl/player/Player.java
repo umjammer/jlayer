@@ -46,17 +46,17 @@ public class Player {
      * The current frame number.
      */
     @SuppressWarnings("unused")
-    private int frame = 0;
+    private static final int frame = 0;
 
     /**
      * The MPEG audio bitstream.
      */
-    private Bitstream bitstream;
+    private final Bitstream bitstream;
 
     /**
      * The MPEG audio decoder.
      */
-    private Decoder decoder;
+    private final Decoder decoder;
 
     /**
      * The AudioDevice the audio samples are written to.
@@ -142,7 +142,7 @@ public class Player {
             lastPosition = out.getPosition();
             try {
                 bitstream.close();
-            } catch (BitstreamException ex) {
+            } catch (BitstreamException ignore) {
             }
         }
     }

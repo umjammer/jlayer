@@ -40,11 +40,15 @@ import java.io.IOException;
  * Frequencies above 4 kHz are removed by ignoring higher subbands.
  */
 final class SynthesisFilter {
+
     private final float[] v1;
     private final float[] v2;
-    private float[] actualV;            // v1 or v2
-    private int actualWritePos;    // 0-15
-    private final float[] samples;            // 32 new subband samples
+    /** v1 or v2 */
+    private float[] actualV;
+    /** 0-15 */
+    private int actualWritePos;
+    /** 32 new subband samples */
+    private final float[] samples;
     private final int channel;
     private final float scaleFactor;
     private float[] eq;
@@ -65,8 +69,8 @@ final class SynthesisFilter {
         samples = new float[32];
         channel = channelNumber;
         scaleFactor = factor;
-        setEQ(eq);
-        //setQuality(HIGH_QUALITY);
+        setEQ(eq0);
+//        setQuality(HIGH_QUALITY);
 
         reset();
     }
@@ -454,47 +458,43 @@ final class SynthesisFilter {
         dest[464 + pos] = new_v18;
         dest[480 + pos] = new_v17;
         dest[496 + pos] = new_v16;
-/*
-    }
-    else
-    {
-        v1[0 + actualWritePos] = -new_v0;
-        // insert V[33-48] (== new_v[16-31]) into other v:
-        v1[16 + actualWritePos] = new_v16;
-        v1[32 + actualWritePos] = new_v17;
-        v1[48 + actualWritePos] = new_v18;
-        v1[64 + actualWritePos] = new_v19;
-        v1[80 + actualWritePos] = new_v20;
-        v1[96 + actualWritePos] = new_v21;
-        v1[112 + actualWritePos] = new_v22;
-        v1[128 + actualWritePos] = new_v23;
-        v1[144 + actualWritePos] = new_v24;
-        v1[160 + actualWritePos] = new_v25;
-        v1[176 + actualWritePos] = new_v26;
-        v1[192 + actualWritePos] = new_v27;
-        v1[208 + actualWritePos] = new_v28;
-        v1[224 + actualWritePos] = new_v29;
-        v1[240 + actualWritePos] = new_v30;
-        v1[256 + actualWritePos] = new_v31;
-
-        // insert V[49-63] (== new_v[30-16]) into other v:
-        v1[272 + actualWritePos] = new_v30;
-        v1[288 + actualWritePos] = new_v29;
-        v1[304 + actualWritePos] = new_v28;
-        v1[320 + actualWritePos] = new_v27;
-        v1[336 + actualWritePos] = new_v26;
-        v1[352 + actualWritePos] = new_v25;
-        v1[368 + actualWritePos] = new_v24;
-        v1[384 + actualWritePos] = new_v23;
-        v1[400 + actualWritePos] = new_v22;
-        v1[416 + actualWritePos] = new_v21;
-        v1[432 + actualWritePos] = new_v20;
-        v1[448 + actualWritePos] = new_v19;
-        v1[464 + actualWritePos] = new_v18;
-        v1[480 + actualWritePos] = new_v17;
-        v1[496 + actualWritePos] = new_v16;
-    }
-*/
+//    } else {
+//        v1[0 + actualWritePos] = -new_v0;
+//        // insert V[33-48] (== new_v[16-31]) into other v:
+//        v1[16 + actualWritePos] = new_v16;
+//        v1[32 + actualWritePos] = new_v17;
+//        v1[48 + actualWritePos] = new_v18;
+//        v1[64 + actualWritePos] = new_v19;
+//        v1[80 + actualWritePos] = new_v20;
+//        v1[96 + actualWritePos] = new_v21;
+//        v1[112 + actualWritePos] = new_v22;
+//        v1[128 + actualWritePos] = new_v23;
+//        v1[144 + actualWritePos] = new_v24;
+//        v1[160 + actualWritePos] = new_v25;
+//        v1[176 + actualWritePos] = new_v26;
+//        v1[192 + actualWritePos] = new_v27;
+//        v1[208 + actualWritePos] = new_v28;
+//        v1[224 + actualWritePos] = new_v29;
+//        v1[240 + actualWritePos] = new_v30;
+//        v1[256 + actualWritePos] = new_v31;
+//
+//        // insert V[49-63] (== new_v[30-16]) into other v:
+//        v1[272 + actualWritePos] = new_v30;
+//        v1[288 + actualWritePos] = new_v29;
+//        v1[304 + actualWritePos] = new_v28;
+//        v1[320 + actualWritePos] = new_v27;
+//        v1[336 + actualWritePos] = new_v26;
+//        v1[352 + actualWritePos] = new_v25;
+//        v1[368 + actualWritePos] = new_v24;
+//        v1[384 + actualWritePos] = new_v23;
+//        v1[400 + actualWritePos] = new_v22;
+//        v1[416 + actualWritePos] = new_v21;
+//        v1[432 + actualWritePos] = new_v20;
+//        v1[448 + actualWritePos] = new_v19;
+//        v1[464 + actualWritePos] = new_v18;
+//        v1[480 + actualWritePos] = new_v17;
+//        v1[496 + actualWritePos] = new_v16;
+//        }
     }
 
     /**
@@ -773,10 +773,10 @@ final class SynthesisFilter {
      * Compute PCM Samples.
      */
 
-    private float[] _tmpOut = new float[32];
+    private final float[] _tmpOut = new float[32];
 
 
-    private void computePcmSamples0(Obuffer buffer) {
+    private void computePcmSamples0(OBuffer buffer) {
         float[] vp = actualV;
         //int inc = v_inc;
         float[] tmpOut = _tmpOut;
@@ -810,7 +810,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples1(Obuffer buffer) {
+    private void computePcmSamples1(OBuffer buffer) {
         float[] vp = actualV;
         //int inc = v_inc;
         float[] tmpOut = _tmpOut;
@@ -845,7 +845,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples2(Obuffer buffer) {
+    private void computePcmSamples2(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -881,7 +881,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples3(Obuffer buffer) {
+    private void computePcmSamples3(OBuffer buffer) {
         float[] vp = actualV;
 
         @SuppressWarnings("unused")
@@ -919,7 +919,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples4(Obuffer buffer) {
+    private void computePcmSamples4(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -955,7 +955,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples5(Obuffer buffer) {
+    private void computePcmSamples5(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -991,7 +991,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples6(Obuffer buffer) {
+    private void computePcmSamples6(OBuffer buffer) {
         float[] vp = actualV;
         //int inc = v_inc;
         float[] tmpOut = _tmpOut;
@@ -1026,7 +1026,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples7(Obuffer buffer) {
+    private void computePcmSamples7(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -1062,7 +1062,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples8(Obuffer buffer) {
+    private void computePcmSamples8(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -1098,7 +1098,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples9(Obuffer buffer) {
+    private void computePcmSamples9(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -1134,7 +1134,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples10(Obuffer buffer) {
+    private void computePcmSamples10(OBuffer buffer) {
         float[] vp = actualV;
         //int inc = v_inc;
         float[] tmpOut = _tmpOut;
@@ -1169,7 +1169,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples11(Obuffer buffer) {
+    private void computePcmSamples11(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -1205,7 +1205,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples12(Obuffer buffer) {
+    private void computePcmSamples12(OBuffer buffer) {
         float[] vp = actualV;
         //int inc = v_inc;
         float[] tmpOut = _tmpOut;
@@ -1240,7 +1240,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples13(Obuffer buffer) {
+    private void computePcmSamples13(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -1276,7 +1276,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples14(Obuffer buffer) {
+    private void computePcmSamples14(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -1312,7 +1312,7 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples15(Obuffer buffer) {
+    private void computePcmSamples15(OBuffer buffer) {
         float[] vp = actualV;
 
         //int inc = v_inc;
@@ -1346,57 +1346,57 @@ final class SynthesisFilter {
         } // for
     }
 
-    private void computePcmSamples(Obuffer buffer) {
+    private void computePcmSamples(OBuffer buffer) {
 
         switch (actualWritePos) {
-        case 0:
-            computePcmSamples0(buffer);
-            break;
-        case 1:
-            computePcmSamples1(buffer);
-            break;
-        case 2:
-            computePcmSamples2(buffer);
-            break;
-        case 3:
-            computePcmSamples3(buffer);
-            break;
-        case 4:
-            computePcmSamples4(buffer);
-            break;
-        case 5:
-            computePcmSamples5(buffer);
-            break;
-        case 6:
-            computePcmSamples6(buffer);
-            break;
-        case 7:
-            computePcmSamples7(buffer);
-            break;
-        case 8:
-            computePcmSamples8(buffer);
-            break;
-        case 9:
-            computePcmSamples9(buffer);
-            break;
-        case 10:
-            computePcmSamples10(buffer);
-            break;
-        case 11:
-            computePcmSamples11(buffer);
-            break;
-        case 12:
-            computePcmSamples12(buffer);
-            break;
-        case 13:
-            computePcmSamples13(buffer);
-            break;
-        case 14:
-            computePcmSamples14(buffer);
-            break;
-        case 15:
-            computePcmSamples15(buffer);
-            break;
+            case 0:
+                computePcmSamples0(buffer);
+                break;
+            case 1:
+                computePcmSamples1(buffer);
+                break;
+            case 2:
+                computePcmSamples2(buffer);
+                break;
+            case 3:
+                computePcmSamples3(buffer);
+                break;
+            case 4:
+                computePcmSamples4(buffer);
+                break;
+            case 5:
+                computePcmSamples5(buffer);
+                break;
+            case 6:
+                computePcmSamples6(buffer);
+                break;
+            case 7:
+                computePcmSamples7(buffer);
+                break;
+            case 8:
+                computePcmSamples8(buffer);
+                break;
+            case 9:
+                computePcmSamples9(buffer);
+                break;
+            case 10:
+                computePcmSamples10(buffer);
+                break;
+            case 11:
+                computePcmSamples11(buffer);
+                break;
+            case 12:
+                computePcmSamples12(buffer);
+                break;
+            case 13:
+                computePcmSamples13(buffer);
+                break;
+            case 14:
+                computePcmSamples14(buffer);
+                break;
+            case 15:
+                computePcmSamples15(buffer);
+                break;
         }
 
         if (buffer != null) {
@@ -1405,10 +1405,10 @@ final class SynthesisFilter {
     }
 
     /**
-     * Calculate 32 PCM samples and put the into the Obuffer-object.
+     * Calculate 32 PCM samples and put the into the OBuffer-object.
      */
 
-    public void calculate_pcm_samples(Obuffer buffer) {
+    public void calculate_pcm_samples(OBuffer buffer) {
         computeNewV();
         computePcmSamples(buffer);
 
@@ -1526,10 +1526,10 @@ final class SynthesisFilter {
         if (len < 0)
             len = 0;
 
-        float[] subarray = new float[len];
-        System.arraycopy(array, offs + 0, subarray, 0, len);
+        float[] subArray = new float[len];
+        System.arraycopy(array, offs + 0, subArray, 0, len);
 
-        return subarray;
+        return subArray;
     }
 
     // The original data for d[]. This data is loaded from a file

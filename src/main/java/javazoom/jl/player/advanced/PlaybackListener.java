@@ -24,10 +24,9 @@ package javazoom.jl.player.advanced;
  *
  * @author Paul Stanton (http://wanto.f2o.org/)
  */
-public abstract class PlaybackListener {
-    public void playbackStarted(PlaybackEvent evt) {
-    }
+public interface PlaybackListener {
 
-    public void playbackFinished(PlaybackEvent evt) {
-    }
+    void playbackStarted(PlaybackEvent evt);
+
+    void playbackFinished(PlaybackEvent evt);
 }

@@ -32,10 +32,10 @@ public class Decoder implements DecoderErrors {
     static private final Params DEFAULT_PARAMS = new Params();
 
     /**
-     * The Obuffer instance that will receive the decoded
+     * The OBuffer instance that will receive the decoded
      * PCM samples.
      */
-    private Obuffer output;
+    private OBuffer output;
 
     /**
      * Synthesis filter for the left channel.
@@ -57,9 +57,9 @@ public class Decoder implements DecoderErrors {
     private int outputFrequency;
     private int outputChannels;
 
-    private Equalizer equalizer = new Equalizer();
+    private final Equalizer equalizer = new Equalizer();
 
-    private Params params;
+    private final Params params;
 
     private boolean initialized;
 
@@ -116,7 +116,7 @@ public class Decoder implements DecoderErrors {
      * @param stream The bit stream that provides the bits for te body of the frame.
      * @return A SampleBuffer containing the decoded samples.
      */
-    public Obuffer decodeFrame(Header header, Bitstream stream)
+    public OBuffer decodeFrame(Header header, Bitstream stream)
             throws DecoderException {
         if (!initialized) {
             initialize(header);
@@ -139,7 +139,7 @@ public class Decoder implements DecoderErrors {
      * Changes the output buffer. This will take effect the next time
      * decodeFrame() is called.
      */
-    public void setOutputBuffer(Obuffer out) {
+    public void setOutputBuffer(OBuffer out) {
         output = out;
     }
 
@@ -179,7 +179,7 @@ public class Decoder implements DecoderErrors {
      * output buffer when decoding a single frame of MPEG audio.
      */
     public int getOutputBlockSize() {
-        return Obuffer.OBUFFERSIZE;
+        return OBuffer.O_BUFFER_SIZE;
     }
 
     protected DecoderException newDecoderException(int errorCode) {
@@ -270,7 +270,7 @@ public class Decoder implements DecoderErrors {
 
         private OutputChannels outputChannels = OutputChannels.BOTH;
 
-        private Equalizer equalizer = new Equalizer();
+        private final Equalizer equalizer = new Equalizer();
 
         public Params() {
         }

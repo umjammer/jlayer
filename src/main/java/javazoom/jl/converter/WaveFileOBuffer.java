@@ -25,16 +25,16 @@
 
 package javazoom.jl.converter;
 
-import javazoom.jl.decoder.Obuffer;
+import javazoom.jl.decoder.OBuffer;
 
 
 /**
- * Implements an {@link Obuffer} by writing the data to
+ * Implements an {@link OBuffer} by writing the data to
  * a file in RIFF WAVE format.
  *
  * @since 0.0
  */
-public class WaveFileObuffer extends Obuffer {
+public class WaveFileOBuffer extends OBuffer {
 
     private final short[] buffer;
     private final short[] bufferP;
@@ -49,12 +49,12 @@ public class WaveFileObuffer extends Obuffer {
      * @param freq               The sample frequency of the samples in the buffer.
      * @param fileName           The filename to write the data to.
      */
-    public WaveFileObuffer(int number_of_channels, int freq, String fileName) {
+    public WaveFileOBuffer(int number_of_channels, int freq, String fileName) {
         if (fileName == null)
             throw new NullPointerException("fileName");
 
-        buffer = new short[OBUFFERSIZE];
-        bufferP = new short[MAXCHANNELS];
+        buffer = new short[O_BUFFER_SIZE];
+        bufferP = new short[MAX_CHANNELS];
         channels = number_of_channels;
 
         for (int i = 0; i < number_of_channels; ++i)
@@ -109,8 +109,8 @@ public class WaveFileObuffer extends Obuffer {
 //    /**
 //     * Create STDOUT buffer
 //     */
-//    public static Obuffer create_stdout_obuffer(MPEG_Args maplay_args) {
-//        Obuffer thebuffer = null;
+//    public static OBuffer create_stdout_obuffer(MPEG_Args maplay_args) {
+//        OBuffer thebuffer = null;
 //        int mode = maplay_args.MPEGheader.mode();
 //        int whichChannels = maplay_args.whichC;
 //        if (mode == Header.single_channel || whichChannels != MPEG_Args.both)

@@ -50,14 +50,14 @@ public class OutputChannels {
     /**
      * Flag to indicate output is mono.
      */
-    public static final int DOWNMIX_CHANNELS = 3;
+    public static final int DOWN_MIX_CHANNELS = 3;
 
     public static final OutputChannels LEFT = new OutputChannels(LEFT_CHANNEL);
     public static final OutputChannels RIGHT = new OutputChannels(RIGHT_CHANNEL);
     public static final OutputChannels BOTH = new OutputChannels(BOTH_CHANNELS);
-    public static final OutputChannels DOWNMIX = new OutputChannels(DOWNMIX_CHANNELS);
+    public static final OutputChannels DOWNMIX = new OutputChannels(DOWN_MIX_CHANNELS);
 
-    private int outputChannels;
+    private final int outputChannels;
 
     /**
      * Creates an <code>OutputChannels</code> instance
@@ -72,7 +72,7 @@ public class OutputChannels {
             case LEFT_CHANNEL -> LEFT;
             case RIGHT_CHANNEL -> RIGHT;
             case BOTH_CHANNELS -> BOTH;
-            case DOWNMIX_CHANNELS -> DOWNMIX;
+            case DOWN_MIX_CHANNELS -> DOWNMIX;
             default -> throw new IllegalArgumentException("Invalid channel code: " + code);
         };
     }
@@ -87,7 +87,7 @@ public class OutputChannels {
     /**
      * Retrieves the code representing the desired output channels.
      * Will be one of LEFT_CHANNEL, RIGHT_CHANNEL, BOTH_CHANNELS
-     * or DOWNMIX_CHANNELS.
+     * or DOWN_MIX_CHANNELS.
      *
      * @return the channel code represented by this instance.
      */

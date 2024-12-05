@@ -34,13 +34,13 @@ class LayerIDecoder implements FrameDecoder {
     protected Bitstream stream;
     protected Header header;
     protected SynthesisFilter filter1, filter2;
-    protected Obuffer buffer;
+    protected OBuffer buffer;
     protected int whichChannels;
     protected int mode;
 
     protected int num_subbands;
     protected Subband[] subbands;
-    protected Crc16 crc; // new Crc16[1] to enable CRC checking.
+    protected final Crc16 crc; // new Crc16[1] to enable CRC checking.
 
     public LayerIDecoder() {
         crc = new Crc16();
@@ -48,7 +48,7 @@ class LayerIDecoder implements FrameDecoder {
 
     public void create(Bitstream stream, Header header,
                        SynthesisFilter filterA, SynthesisFilter filterB,
-                       Obuffer buffer, int whichCh) {
+                       OBuffer buffer, int whichCh) {
         this.stream = stream;
         this.header = header;
         filter1 = filterA;
@@ -192,7 +192,7 @@ class LayerIDecoder implements FrameDecoder {
                 ((1.0f / 8192.0f) - 1.0f) * (16384.0f / 16383.0f), ((1.0f / 16384.0f) - 1.0f) * (32768.0f / 32767.0f)
         };
 
-        protected int subbandNumber;
+        protected final int subbandNumber;
         protected int sampleNumber;
         protected int allocation;
         protected float scaleFactor;

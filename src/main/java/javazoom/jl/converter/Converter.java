@@ -31,7 +31,7 @@ import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.decoder.Obuffer;
+import javazoom.jl.decoder.OBuffer;
 
 
 /**
@@ -95,7 +95,7 @@ public class Converter {
             }
             progressListener.converterUpdate(ProgressListener.UPDATE_FRAME_COUNT, frameCount, 0);
 
-            Obuffer output = null;
+            OBuffer output = null;
             Decoder decoder = new Decoder(decoderParams);
             Bitstream stream = new Bitstream(sourceStream);
 
@@ -121,11 +121,11 @@ public class Converter {
                             // the source (e.g. when downmixing stereo to mono.)
                             int channels = (header.mode() == Header.SINGLE_CHANNEL) ? 1 : 2;
                             int freq = header.frequency();
-                            output = new WaveFileObuffer(channels, freq, destName);
+                            output = new WaveFileOBuffer(channels, freq, destName);
                             decoder.setOutputBuffer(output);
                         }
 
-                        Obuffer decoderOutput = decoder.decodeFrame(header, stream);
+                        OBuffer decoderOutput = decoder.decodeFrame(header, stream);
 
                         // REVIEW: the way the output buffer is set
                         // on the decoder is a bit dodgy. Even though
@@ -225,9 +225,9 @@ public class Converter {
          *
          * @param frameNo The 0-based sequence number of the frame.
          * @param header  The Header rerpesenting the frame just read.
-         * @param o       The Obuffer the deocded data was written to.
+         * @param o       The OBuffer the deocded data was written to.
          */
-        void decodedFrame(int frameNo, Header header, Obuffer o);
+        void decodedFrame(int frameNo, Header header, OBuffer o);
 
         /**
          * Called when an exception is thrown during while converting
@@ -273,9 +273,9 @@ public class Converter {
 
         static public final int MAX_DETAIL = 10;
 
-        private PrintWriter pw;
+        private final PrintWriter pw;
 
-        private int detailLevel;
+        private final int detailLevel;
 
         static public PrintWriterProgressListener newStdOut(int detail) {
             return new PrintWriterProgressListener(new PrintWriter(System.out, true), detail);
@@ -329,7 +329,7 @@ public class Converter {
         }
 
         @Override
-        public void decodedFrame(int frameNo, Header header, Obuffer o) {
+        public void decodedFrame(int frameNo, Header header, OBuffer o) {
             if (isDetail(MAX_DETAIL)) {
                 String headerString = header.toString();
                 pw.println("Decoded frame " + frameNo + ": " + headerString);

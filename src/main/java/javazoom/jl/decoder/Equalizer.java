@@ -130,7 +130,7 @@ public final class Equalizer {
         return eq;
     }
 
-    private float limit(float eq) {
+    private static float limit(float eq) {
         if (eq == BAND_NOT_PRESENT)
             return eq;
         if (eq > 1.0f)

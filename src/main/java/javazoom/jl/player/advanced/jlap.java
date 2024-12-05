@@ -85,7 +85,7 @@ public class jlap {
         return player;
     }
 
-    public static class InfoListener extends PlaybackListener {
+    public static class InfoListener implements PlaybackListener {
         @Override
         public void playbackStarted(PlaybackEvent evt) {
             System.out.println("Play started from frame " + evt.getFrame());

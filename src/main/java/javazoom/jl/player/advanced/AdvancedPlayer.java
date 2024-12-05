@@ -38,9 +38,9 @@ import javazoom.jl.player.FactoryRegistry;
 public class AdvancedPlayer {
 
     /** The MPEG audio bitstream. */
-    private Bitstream bitstream;
+    private final Bitstream bitstream;
     /** The MPEG audio decoder. */
-    private Decoder decoder;
+    private final Decoder decoder;
     /** The AudioDevice the audio samples are written to. */
     private AudioDevice audio;
     /** Has the player been closed? */
@@ -118,7 +118,7 @@ public class AdvancedPlayer {
             lastPosition = out.getPosition();
             try {
                 bitstream.close();
-            } catch (BitstreamException ex) {
+            } catch (BitstreamException ignore) {
             }
         }
     }

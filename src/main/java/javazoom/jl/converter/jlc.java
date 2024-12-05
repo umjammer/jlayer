@@ -29,7 +29,8 @@
 package javazoom.jl.converter;
 
 import java.io.PrintWriter;
-import java.util.logging.Logger;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.decoder.OutputChannels;
@@ -43,7 +44,7 @@ import javazoom.jl.decoder.OutputChannels;
  */
 public class jlc {
 
-    private static final Logger logger = Logger.getLogger(jlc.class.getName());
+    private static final Logger logger = System.getLogger(jlc.class.getName());
 
     static public void main(String[] args) {
         String[] argv;
@@ -67,7 +68,7 @@ public class jlc {
         try {
             conv.convert(ma.filename, ma.outputFilename, listener);
         } catch (JavaLayerException ex) {
-            logger.warning("Conversion failure: " + ex);
+            logger.log(Level.WARNING, "Conversion failure: " + ex.getMessage(), ex);
         }
 
         System.exit(0);
@@ -79,13 +80,13 @@ public class jlc {
     static class jlcArgs {
         // channel constants moved into OutputChannels class.
 
-        public int whichC;
+        public final int whichC;
 
         public int outputMode;
 
-        public boolean useOwnScalefactor;
+        public final boolean useOwnScalefactor;
 
-        public float scaleFactor;
+        public final float scaleFactor;
 
         public String outputFilename;
 
@@ -121,7 +122,7 @@ public class jlc {
 
             i = 1;
             while (i < argc) {
-logger.finer("Option = " + argv[i]);
+logger.log(Level.TRACE, "Option = " + argv[i]);
                 if (argv[i].charAt(0) == '-') {
                     if (argv[i].startsWith("-v")) {
                         verboseMode = true;

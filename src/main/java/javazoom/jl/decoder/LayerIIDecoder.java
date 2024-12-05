@@ -484,18 +484,18 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
                 0.00006103516f
         };
 
-        protected int subbandNumber;
+        protected final int subbandNumber;
         protected int allocation;
         protected int scfsi;
         protected float scaleFactor1, scaleFactor2, scaleFactor3;
-        protected int[] codeLength = {0};
-        protected float[][] groupingTable = new float[2][];
-        protected float[] factor = {0.0f};
+        protected final int[] codeLength = {0};
+        protected final float[][] groupingTable = new float[2][];
+        protected final float[] factor = {0.0f};
         protected int groupNumber;
         protected int sampleNumber;
-        protected float[] samples = new float[3];
-        protected float[] c = {0};
-        protected float[] d = {0};
+        protected final float[] samples = new float[3];
+        protected final float[] c = {0};
+        protected final float[] d = {0};
 
         /**
          * Constructor
@@ -813,12 +813,12 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder {
         protected int channel2Scfsi;
         protected float channel2ScaleFactor1, channel2ScaleFactor2, channel2ScaleFactor3;
         //protected boolean         channel2_grouping;  ???? Never used!
-        protected int[] channel2CodeLength = {0};
+        protected final int[] channel2CodeLength = {0};
         //protected float[][]     channel2_groupingtable = {{0},{0}};
-        protected float[] channel2Factor = {0};
-        protected float[] channel2Samples;
-        protected float[] channel2C = {0};
-        protected float[] channel2D = {0};
+        protected final float[] channel2Factor = {0};
+        protected final float[] channel2Samples;
+        protected final float[] channel2C = {0};
+        protected final float[] channel2D = {0};
 
         /**
          * Constructor

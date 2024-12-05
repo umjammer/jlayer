@@ -37,7 +37,7 @@ public final class Crc16 {
      * Dummy Constructor
      */
     public Crc16() {
-        crc = (short) 0xFFFF;
+        crc = (short) 0xffff;
     }
 
     /**
@@ -60,7 +60,7 @@ public final class Crc16 {
      */
     public short checksum() {
         short sum = crc;
-        crc = (short) 0xFFFF;
+        crc = (short) 0xffff;
         return sum;
     }
 }

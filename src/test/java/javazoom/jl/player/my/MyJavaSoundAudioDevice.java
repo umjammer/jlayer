@@ -74,8 +74,7 @@ Debug.println(Level.FINE, "volume: " + gain + ", " + hashCode());
     }
 
     @Override
-    public void openImpl()
-            throws JavaLayerException {
+    public void openImpl() throws JavaLayerException {
     }
 
     // createSource fix.

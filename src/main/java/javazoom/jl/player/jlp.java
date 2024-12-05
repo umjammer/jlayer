@@ -28,8 +28,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.lang.System.Logger.Level;
+import java.lang.System.Logger;
 
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -42,7 +42,7 @@ import javazoom.jl.decoder.JavaLayerException;
  */
 public class jlp {
 
-    private static final Logger logger = Logger.getLogger(jlp.class.getName());
+    private static final Logger logger = System.getLogger(jlp.class.getName());
 
     private String fFilename = null;
     private boolean remote = false;
@@ -56,8 +56,7 @@ public class jlp {
             if (player != null)
                 player.play();
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
-            ex.printStackTrace(System.err);
+            logger.log(Level.ERROR, ex.getMessage(), ex);
             retval = 1;
         }
         System.exit(retval);
@@ -117,7 +116,7 @@ public class jlp {
             if (remote) in = getURLInputStream();
             else in = getInputStream();
             AudioDevice dev = setAudioDevice();
-            logger.fine("audioDevice: " + dev);
+            logger.log(Level.DEBUG, "audioDevice: " + dev);
             player = new Player(in, dev);
             player.play();
         } catch (Exception ex) {

@@ -79,12 +79,7 @@ public class JavaSoundAudioDevice extends AudioDeviceBase {
         }
     }
 
-    @Override
-    protected void openImpl()
-            throws JavaLayerException {
-    }
-
-    // createSource fix.
+    /** createSource fix. */
     protected void createSource() throws JavaLayerException {
         Throwable t = null;
         try {

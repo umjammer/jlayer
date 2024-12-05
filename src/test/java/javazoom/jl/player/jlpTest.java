@@ -21,6 +21,8 @@
 package javazoom.jl.player;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import javazoom.jl.player.my.MyJavaSoundAudioDevice;
@@ -28,6 +30,9 @@ import javazoom.jl.player.my.MyJavaSoundAudioDeviceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 import vavix.util.DelayedWorker;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,25 +46,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @since 0.4
  */
+@PropsEntity
 class jlpTest {
 
-    static final float volume = (float) Double.parseDouble(System.getProperty("vavi.test.volume",  "0.2"));
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @Property(name = "vavi.test.volume")
+    float volume = 0.2f;
 
     private Properties props = null;
     private String filename = null;
 
-    long time;
+    static long time = System.getProperty("vavi.test", "").equals("ide") ? 100 * 1000 : 3 * 1000;
 
     @BeforeEach
     void setUp() throws Exception {
         props = new Properties();
         InputStream pin = getClass().getClassLoader().getResourceAsStream("test.mp3.properties");
         props.load(pin);
-        String basefile = props.getProperty("basefile");
+        String baseFile = props.getProperty("basefile");
         String name = props.getProperty("filename");
-        filename = basefile + name;
-        System.err.println(filename);
-        time = System.getProperty("vavi.test", "").equals("ide") ? 100000 : 3000;
+        filename = baseFile + name;
+Debug.println(filename);
+
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
+Debug.println("volume: " + volume);
     }
 
     @Test
@@ -69,7 +84,7 @@ class jlpTest {
         args[0] = filename;
         jlp player = jlp.createInstance(args);
         player.setAudioDevice(FactoryRegistry.systemRegistry().createAudioDevice(JavaSoundAudioDeviceFactory.class));
-        DelayedWorker.later(3000, player::stop);
+        DelayedWorker.later(time, player::stop);
         player.play();
         assertTrue(true, "Play");
     }
@@ -82,7 +97,7 @@ class jlpTest {
         jlp player = jlp.createInstance(args);
         // my audio device might have first priority
         ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(volume);
-        DelayedWorker.later(3000, player::stop);
+        DelayedWorker.later(time, player::stop);
         player.play();
         assertTrue(true, "Play");
     }
@@ -95,7 +110,7 @@ class jlpTest {
         jlp player = jlp.createInstance(args);
         player.setAudioDevice(FactoryRegistry.systemRegistry().createAudioDevice(MyJavaSoundAudioDeviceFactory.class));
         ((MyJavaSoundAudioDevice) player.setAudioDevice()).setVolume(volume);
-        DelayedWorker.later(3000, player::stop);
+        DelayedWorker.later(time, player::stop);
         player.play();
         assertTrue(true, "Play");
     }

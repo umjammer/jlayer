@@ -59,8 +59,8 @@ public class WaveFile extends RiffFile {
     }
 
     static class Chunk {
-        public RiffChunkHeader header;
-        public ChunkData data;
+        public final RiffChunkHeader header;
+        public final ChunkData data;
 
         public Chunk() {
             header = new RiffChunkHeader();
@@ -86,15 +86,15 @@ public class WaveFile extends RiffFile {
     }
 
     public static class WaveFileSample {
-        public short[] chan;
+        public final short[] chan;
 
         public WaveFileSample() {
             chan = new short[WaveFile.MAX_WAVE_CHANNELS];
         }
     }
 
-    private Chunk waveFormat;
-    private RiffChunkHeader pcmData;
+    private final Chunk waveFormat;
+    private final RiffChunkHeader pcmData;
     private long pcmDataOffset = 0;  // offset of 'pcmData' in output file
     private int numSamples = 0;
 
