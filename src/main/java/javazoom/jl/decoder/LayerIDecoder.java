@@ -34,13 +34,13 @@ class LayerIDecoder implements FrameDecoder {
     protected Bitstream stream;
     protected Header header;
     protected SynthesisFilter filter1, filter2;
-    protected Obuffer buffer;
+    protected OBuffer buffer;
     protected int whichChannels;
     protected int mode;
 
     protected int num_subbands;
     protected Subband[] subbands;
-    protected Crc16 crc; // new Crc16[1] to enable CRC checking.
+    protected final Crc16 crc; // new Crc16[1] to enable CRC checking.
 
     public LayerIDecoder() {
         crc = new Crc16();
@@ -48,7 +48,7 @@ class LayerIDecoder implements FrameDecoder {
 
     public void create(Bitstream stream, Header header,
                        SynthesisFilter filterA, SynthesisFilter filterB,
-                       Obuffer buffer, int whichCh) {
+                       OBuffer buffer, int whichCh) {
         this.stream = stream;
         this.header = header;
         filter1 = filterA;
@@ -192,7 +192,7 @@ class LayerIDecoder implements FrameDecoder {
                 ((1.0f / 8192.0f) - 1.0f) * (16384.0f / 16383.0f), ((1.0f / 16384.0f) - 1.0f) * (32768.0f / 32767.0f)
         };
 
-        protected int subbandNumber;
+        protected final int subbandNumber;
         protected int sampleNumber;
         protected int allocation;
         protected float scaleFactor;
@@ -208,9 +208,6 @@ class LayerIDecoder implements FrameDecoder {
             sampleNumber = 0;
         }
 
-        /**
-         *
-         */
         @Override
         public void readAllocation(Bitstream stream, Header header, Crc16 crc) throws DecoderException {
             if ((allocation = stream.getBits(4)) == 15) {
@@ -227,17 +224,11 @@ class LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactor(Bitstream stream, Header header) {
             if (allocation != 0) scaleFactor = scaleFactors[stream.getBits(6)];
         }
 
-        /**
-         *
-         */
         @Override
         public boolean readSampleData(Bitstream stream) {
             if (allocation != 0) {
@@ -250,9 +241,6 @@ class LayerIDecoder implements FrameDecoder {
             return false;
         }
 
-        /**
-         *
-         */
         @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             if ((allocation != 0) && (channels != OutputChannels.RIGHT_CHANNEL)) {
@@ -276,17 +264,11 @@ class LayerIDecoder implements FrameDecoder {
             super(subbandNumber);
         }
 
-        /**
-         *
-         */
         @Override
         public void readAllocation(Bitstream stream, Header header, Crc16 crc) throws DecoderException {
             super.readAllocation(stream, header, crc);
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactor(Bitstream stream, Header header) {
             if (allocation != 0) {
@@ -295,24 +277,18 @@ class LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public boolean readSampleData(Bitstream stream) {
             return super.readSampleData(stream);
         }
 
-        /**
-         *
-         */
         @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             if (allocation != 0) {
                 sample = sample * factor + offset; // requantization
                 if (channels == OutputChannels.BOTH_CHANNELS) {
-                    float sample1 = sample * scaleFactor,
-                            sample2 = sample * channel2ScaleFactor;
+                    float sample1 = sample * scaleFactor;
+                    float sample2 = sample * channel2ScaleFactor;
                     filter1.inputSample(sample1, subbandNumber);
                     filter2.inputSample(sample2, subbandNumber);
                 } else if (channels == OutputChannels.LEFT_CHANNEL) {
@@ -336,7 +312,8 @@ class LayerIDecoder implements FrameDecoder {
         protected float channel2ScaleFactor;
         protected int channel2SampleLength;
         protected float channel2Sample;
-        protected float channel2Factor, channel2Offset;
+        protected float channel2Factor;
+        protected float channel2Offset;
 
         /**
          * Constructor
@@ -345,9 +322,6 @@ class LayerIDecoder implements FrameDecoder {
             super(subbandNumber);
         }
 
-        /**
-         *
-         */
         @Override
         public void readAllocation(Bitstream stream, Header header, Crc16 crc) throws DecoderException {
             allocation = stream.getBits(4);
@@ -368,18 +342,12 @@ class LayerIDecoder implements FrameDecoder {
             }
         }
 
-        /**
-         *
-         */
         @Override
         public void readScaleFactor(Bitstream stream, Header header) {
             if (allocation != 0) scaleFactor = scaleFactors[stream.getBits(6)];
             if (channel2Allocation != 0) channel2ScaleFactor = scaleFactors[stream.getBits(6)];
         }
 
-        /**
-         *
-         */
         @Override
         public boolean readSampleData(Bitstream stream) {
             boolean returnValue = super.readSampleData(stream);
@@ -389,15 +357,11 @@ class LayerIDecoder implements FrameDecoder {
             return (returnValue);
         }
 
-        /**
-         *
-         */
         @Override
         public boolean put_next_sample(int channels, SynthesisFilter filter1, SynthesisFilter filter2) {
             super.put_next_sample(channels, filter1, filter2);
             if ((channel2Allocation != 0) && (channels != OutputChannels.LEFT_CHANNEL)) {
-                float sample2 = (channel2Sample * channel2Factor + channel2Offset) *
-                        channel2ScaleFactor;
+                float sample2 = (channel2Sample * channel2Factor + channel2Offset) * channel2ScaleFactor;
                 if (channels == OutputChannels.BOTH_CHANNELS)
                     filter2.inputSample(sample2, subbandNumber);
                 else

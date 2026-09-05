@@ -68,7 +68,7 @@ public class RiffFile {
     public static final int RFM_READ = 2;
 
     /** header for whole file */
-    private RiffChunkHeader riffHeader;
+    private final RiffChunkHeader riffHeader;
     /** current file I/O mode */
     protected int fmode;
     /** I/O stream to use */
@@ -412,7 +412,7 @@ public class RiffFile {
     /**
      * Error Messages.
      */
-    private String toDDCRETString(int retcode) {
+    private static String toDDCRETString(int retcode) {
         return switch (retcode) {
             case DDC_SUCCESS -> "DDC_SUCCESS";
             case DDC_FAILURE -> "DDC_FAILURE";

@@ -74,8 +74,7 @@ Debug.println(Level.FINE, "volume: " + gain + ", " + hashCode());
     }
 
     @Override
-    public void openImpl()
-            throws JavaLayerException {
+    public void openImpl() throws JavaLayerException {
     }
 
     // createSource fix.
@@ -99,7 +98,7 @@ ex.printStackTrace(System.err);
         }
     }
 
-    public int millisecondsToBytes(AudioFormat fmt, int time) {
+    public static int millisecondsToBytes(AudioFormat fmt, int time) {
         return (int) (time * (fmt.getSampleRate() * fmt.getChannels() * fmt.getSampleSizeInBits()) / 8000.0);
     }
 

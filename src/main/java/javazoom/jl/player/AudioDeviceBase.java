@@ -40,6 +40,7 @@ import javazoom.jl.decoder.JavaLayerException;
  * @since 0.0.8
  */
 public abstract class AudioDeviceBase implements AudioDevice {
+
     private boolean open = false;
 
     private Decoder decoder = null;

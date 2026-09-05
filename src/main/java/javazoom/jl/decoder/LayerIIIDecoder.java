@@ -43,7 +43,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
     static final double d43 = (4.0 / 3.0);
 
-    public int[] scaleFacBuffer;
+    public final int[] scaleFacBuffer;
 
     private int checkSumHuff = 0;
     private final int[] is1d;
@@ -56,7 +56,7 @@ final class LayerIIIDecoder implements FrameDecoder {
     private final Bitstream stream;
     private final Header header;
     private final SynthesisFilter filter1, filter2;
-    private final Obuffer buffer;
+    private final OBuffer buffer;
     private final int whichChannels;
     private BitReserve br;
     private final III_SideInfo si;
@@ -80,7 +80,7 @@ final class LayerIIIDecoder implements FrameDecoder {
      */
     public LayerIIIDecoder(Bitstream stream, Header header,
                            SynthesisFilter filterA, SynthesisFilter filterB,
-                           Obuffer buffer, int whichCh) {
+                           OBuffer buffer, int whichCh) {
         HuffCodeTab.initHuff();
         is1d = new int[SBLIMIT * SSLIMIT + 4];
         ro = new float[2][SBLIMIT][SSLIMIT];
@@ -168,7 +168,7 @@ final class LayerIIIDecoder implements FrameDecoder {
         if (channels == 2) {
             switch (whichChannels) {
             case OutputChannels.LEFT_CHANNEL:
-            case OutputChannels.DOWNMIX_CHANNELS:
+            case OutputChannels.DOWN_MIX_CHANNELS:
                 firstChannel = lastChannel = 0;
                 break;
 
@@ -214,8 +214,8 @@ final class LayerIIIDecoder implements FrameDecoder {
 
     // subband samples are buffered and passed to the
     // SynthesisFilter in one go.
-    private float[] samples1 = new float[32];
-    private float[] samples2 = new float[32];
+    private final float[] samples1 = new float[32];
+    private final float[] samples2 = new float[32];
 
     /**
      * Decode one frame, filling the buffer with the output samples.
@@ -272,7 +272,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             stereo(gr);
 
-            if ((whichChannels == OutputChannels.DOWNMIX_CHANNELS) && (channels > 1))
+            if ((whichChannels == OutputChannels.DOWN_MIX_CHANNELS) && (channels > 1))
                 do_downmix();
 
             for (ch = firstChannel; ch <= lastChannel; ch++) {
@@ -696,10 +696,10 @@ final class LayerIIIDecoder implements FrameDecoder {
     /**
      *
      */
-    int[] x = {0};
-    int[] y = {0};
-    int[] v = {0};
-    int[] w = {0};
+    final int[] x = {0};
+    final int[] y = {0};
+    final int[] v = {0};
+    final int[] w = {0};
 
     private void huffman_decode(int ch, int gr) {
         x[0] = 0;
@@ -1024,8 +1024,8 @@ final class LayerIIIDecoder implements FrameDecoder {
         }
     }
 
-    int[] is_pos = new int[576];
-    float[] is_ratio = new float[576];
+    final int[] is_pos = new int[576];
+    final float[] is_ratio = new float[576];
 
     /**
      *
@@ -1337,8 +1337,8 @@ final class LayerIIIDecoder implements FrameDecoder {
 
     // MDM: tsOutCopy and rawout do not need initializing, so the arrays
     // can be reused.
-    float[] tsOutCopy = new float[18];
-    float[] rawout = new float[36];
+    final float[] tsOutCopy = new float[18];
+    final float[] rawout = new float[36];
 
     /**
      *
@@ -1429,9 +1429,6 @@ final class LayerIIIDecoder implements FrameDecoder {
 
         float tmpf_0, tmpf_1, tmpf_2, tmpf_3, tmpf_4, tmpf_5, tmpf_6, tmpf_7, tmpf_8, tmpf_9;
         float tmpf_10, tmpf_11, tmpf_12, tmpf_13, tmpf_14, tmpf_15, tmpf_16, tmpf_17;
-
-        tmpf_0 = tmpf_1 = tmpf_2 = tmpf_3 = tmpf_4 = tmpf_5 = tmpf_6 = tmpf_7 = tmpf_8 = tmpf_9 =
-                tmpf_10 = tmpf_11 = tmpf_12 = tmpf_13 = tmpf_14 = tmpf_15 = tmpf_16 = tmpf_17 = 0.0f;
 
         if (block_type == 2) {
 
@@ -1747,8 +1744,8 @@ final class LayerIIIDecoder implements FrameDecoder {
      * L3TABLE
      */
     static class SBI {
-        public int[] l;
-        public int[] s;
+        public final int[] l;
+        public final int[] s;
 
         public SBI() {
             l = new int[23];
@@ -1769,8 +1766,8 @@ final class LayerIIIDecoder implements FrameDecoder {
         public int windowSwitchingFlag = 0;
         public int blockType = 0;
         public int mixedBlockFlag = 0;
-        public int[] tableSelect;
-        public int[] subblockGain;
+        public final int[] tableSelect;
+        public final int[] subblockGain;
         public int region0Count = 0;
         public int region1Count = 0;
         public int preflag = 0;
@@ -1787,8 +1784,8 @@ final class LayerIIIDecoder implements FrameDecoder {
     }
 
     static class Temporaire {
-        public int[] scfsi;
-        public GrInfoS[] gr;
+        public final int[] scfsi;
+        public final GrInfoS[] gr;
 
         /**
          * Dummy Constructor
@@ -1805,7 +1802,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
         public int mainDataBegin = 0;
         public int privateBits = 0;
-        public Temporaire[] ch;
+        public final Temporaire[] ch;
 
         /**
          * Dummy Constructor
@@ -1819,9 +1816,9 @@ final class LayerIIIDecoder implements FrameDecoder {
 
     static class Temporaire2 {
         /** [cb] */
-        public int[] l;
+        public final int[] l;
         /** [window][cb] */
-        public int[][] s;
+        public final int[][] s;
 
         /**
          * Dummy Constructor
@@ -1841,7 +1838,7 @@ final class LayerIIIDecoder implements FrameDecoder {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 3, 3, 2, 0
     };
 
-    private SBI[] sfBandIndex; // Init in the constructor.
+    private final SBI[] sfBandIndex; // Init in the constructor.
 
     public static final float[] two_to_negative_half_pow = {
             1.0000000000E+00f, 7.0710678119E-01f, 5.0000000000E-01f, 3.5355339059E-01f,
@@ -1985,8 +1982,8 @@ final class LayerIIIDecoder implements FrameDecoder {
     // END OF INV_MDCT
 
     static class SfTable {
-        public int[] l;
-        public int[] s;
+        public final int[] l;
+        public final int[] s;
 
         public SfTable() {
             l = new int[5];
@@ -1999,7 +1996,7 @@ final class LayerIIIDecoder implements FrameDecoder {
         }
     }
 
-    public SfTable sfTable;
+    public final SfTable sfTable;
 
     public static final int[][][] nr_of_sfb_block = {
             {{6, 5, 5, 5}, {9, 9, 9, 9}, {6, 9, 9, 9}},

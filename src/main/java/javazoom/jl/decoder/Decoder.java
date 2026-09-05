@@ -20,6 +20,9 @@
 
 package javazoom.jl.decoder;
 
+import javazoom.jl.converter.Converter;
+
+
 /**
  * The <code>Decoder</code> class encapsulates the details of
  * decoding an MPEG audio frame.
@@ -32,10 +35,10 @@ public class Decoder implements DecoderErrors {
     static private final Params DEFAULT_PARAMS = new Params();
 
     /**
-     * The Obuffer instance that will receive the decoded
+     * The OBuffer instance that will receive the decoded
      * PCM samples.
      */
-    private Obuffer output;
+    private OBuffer output;
 
     /**
      * Synthesis filter for the left channel.
@@ -57,9 +60,9 @@ public class Decoder implements DecoderErrors {
     private int outputFrequency;
     private int outputChannels;
 
-    private Equalizer equalizer = new Equalizer();
+    private final Equalizer equalizer = new Equalizer();
 
-    private Params params;
+    private final Params params;
 
     private boolean initialized;
 
@@ -116,7 +119,7 @@ public class Decoder implements DecoderErrors {
      * @param stream The bit stream that provides the bits for te body of the frame.
      * @return A SampleBuffer containing the decoded samples.
      */
-    public Obuffer decodeFrame(Header header, Bitstream stream)
+    public OBuffer decodeFrame(Header header, Bitstream stream)
             throws DecoderException {
         if (!initialized) {
             initialize(header);
@@ -139,7 +142,7 @@ public class Decoder implements DecoderErrors {
      * Changes the output buffer. This will take effect the next time
      * decodeFrame() is called.
      */
-    public void setOutputBuffer(Obuffer out) {
+    public void setOutputBuffer(OBuffer out) {
         output = out;
     }
 
@@ -179,7 +182,49 @@ public class Decoder implements DecoderErrors {
      * output buffer when decoding a single frame of MPEG audio.
      */
     public int getOutputBlockSize() {
-        return Obuffer.OBUFFERSIZE;
+        return OBuffer.O_BUFFER_SIZE;
+    }
+
+    /**
+     * Convenience: decode the next frame from the provided Bitstream and
+     * return a populated SampleBuffer. Returns null if no frame is available.
+     * This preserves the old API; use this method for simpler decoding.
+     */
+    public SampleBuffer decodeNextFrame(Bitstream stream) throws BitstreamException, DecoderException {
+        Header h = stream.readFrame();
+        if (h == null) return null;
+        int channels = (h.mode() == Header.SINGLE_CHANNEL) ? 1 : 2;
+        SampleBuffer sb = new SampleBuffer(h.frequency(), channels);
+        setOutputBuffer(sb);
+        decodeFrame(h, stream);
+        stream.closeFrame();
+        return sb;
+    }
+
+    /**
+     * Convenience: decode the next frame and return raw PCM 16-bit little-endian bytes.
+     * Returns null if no frame is available.
+     */
+    public byte[] decodeNextFrameToPCM(Bitstream stream) throws BitstreamException, DecoderException {
+        SampleBuffer sb = decodeNextFrame(stream);
+        if (sb == null) return null;
+        short[] buf = sb.getBuffer();
+        int len = sb.getBufferLength();
+        byte[] out = new byte[len * 2];
+        for (int i = 0; i < len; i++) {
+            short s = buf[i];
+            out[i * 2] = (byte) (s & 0xFF);
+            out[i * 2 + 1] = (byte) ((s >>> 8) & 0xFF);
+        }
+        return out;
+    }
+
+    /**
+     * Convenience static helper that uses the existing Converter API.
+     * Keeps backwards compatibility while offering a simpler entry point.
+     */
+    public static void convertToWav(String sourceName, String destName) throws javazoom.jl.decoder.JavaLayerException {
+        new Converter().convert(sourceName, destName);
     }
 
     protected DecoderException newDecoderException(int errorCode) {
@@ -270,7 +315,7 @@ public class Decoder implements DecoderErrors {
 
         private OutputChannels outputChannels = OutputChannels.BOTH;
 
-        private Equalizer equalizer = new Equalizer();
+        private final Equalizer equalizer = new Equalizer();
 
         public Params() {
         }

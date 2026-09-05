@@ -6,7 +6,7 @@
 
 # JLayer
 
-<img alt="mp3 logo" src="https://github.com/umjammer/mp3spi/assets/493908/b718b78d-15c6-4356-a5ca-fca63ad7ffcb" width=160 /><sub><a href="https://www.iis.fraunhofer.de/de/ff/amm/unterhaltungselektronik/mp3.html">🅮 fraunhofer</a></sub>
+<img alt="logo" src="src/test/resources/duke_mp3.png" width=160 />
 
 MP3 Decoder in pure Java.
 
@@ -16,11 +16,22 @@ MP3 Decoder in pure Java.
 
 ## Usage
 
- * [sample](src/test/java/javazoom/jl/player/jlpTest.java)
+ * i recommend to use this library [via mp3spi](https://github.com/umjammer/jlayer/issues/5)
+ * [direct usage sample](src/test/java/javazoom/jl/player/jlpTest.java)
 
 ## References
 
+ * https://www.baeldung.com/java-play-sound
+
 ## TODO
+
+ * javazoom
+   * Implement high-level Player and Converter classes.
+   * Add MP1 and MP2 support and test.
+   * Add option to run each "stage" on own thread.
+     * E.g. read & parse input, decode subbands, subband synthesis, audio output.
+   * Retrofit seek support (temporarily removed when reworking classes.)
+   * Document and give example code.
 
 ----
 
@@ -106,3 +117,7 @@ and anyone can add his contribution. JLayer is licensed under LGPL (see [LICENSE
 ### How to skip frames to have a seek feature ?
 
   See `javazoom.jl.player.advanced.jlap` source to learn how to skip frames.
+
+---
+
+<sub>image designed by @umjammer, drawn by nano banana</sub>

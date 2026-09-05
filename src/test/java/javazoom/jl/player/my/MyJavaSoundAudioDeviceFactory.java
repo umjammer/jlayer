@@ -34,7 +34,7 @@ public class MyJavaSoundAudioDeviceFactory extends AudioDeviceFactory {
         return new MyJavaSoundAudioDevice();
     }
 
-    private void testAudioDevice() throws JavaLayerException {
+    private static void testAudioDevice() throws JavaLayerException {
         MyJavaSoundAudioDevice dev = new MyJavaSoundAudioDevice();
         dev.test();
     }

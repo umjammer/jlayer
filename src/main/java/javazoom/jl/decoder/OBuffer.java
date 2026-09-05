@@ -4,7 +4,7 @@
  * 15/02/99 ,Java Conversion by E.B ,ebsp@iname.com, JavaLayer
  *
  *   Declarations for output buffer, includes operating system
- *   implementation of the virtual Obuffer. Optional routines
+ *   implementation of the virtual OBuffer. Optional routines
  *   enabling seeks and stops added by Jeff Tsay.
  *
  *  @(#) obuffer.h 1.8, last edit: 6/15/94 16:51:56
@@ -38,12 +38,12 @@ package javazoom.jl.decoder;
 /**
  * Base Class for audio output.
  */
-public abstract class Obuffer {
+public abstract class OBuffer {
 
     /** max. 2 * 1152 samples per frame */
-    public static final int OBUFFERSIZE = 2 * 1152;
+    public static final int O_BUFFER_SIZE = 2 * 1152;
     /** max. number of channels */
-    public static final int MAXCHANNELS = 2;
+    public static final int MAX_CHANNELS = 2;
 
     /**
      * Takes a 16 Bit PCM sample.
@@ -64,7 +64,7 @@ public abstract class Obuffer {
     /**
      * Clip Sample to 16 Bits
      */
-    private short clip(float sample) {
+    private static short clip(float sample) {
         return ((sample > 32767.0f) ? 32767 :
                 ((sample < -32768.0f) ? -32768 :
                         (short) sample));

@@ -21,6 +21,9 @@
 package javazoom.jl.decoder;
 
 import java.io.PrintStream;
+import java.lang.System.Logger;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,6 +36,8 @@ import java.io.PrintStream;
  * @author MDM
  */
 public class JavaLayerException extends Exception {
+
+    private static final Logger logger = getLogger(JavaLayerException.class.getName());
 
     private Throwable exception;
 
@@ -62,7 +67,7 @@ public class JavaLayerException extends Exception {
         if (this.exception == null) {
             super.printStackTrace(ps);
         } else {
-            exception.printStackTrace();
+            exception.printStackTrace(ps);
         }
     }
 }

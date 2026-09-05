@@ -20,11 +20,12 @@
 
 package javazoom.jl.player;
 
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.logging.Logger;
+import java.lang.System.Logger;
 
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -41,7 +42,7 @@ import javazoom.jl.decoder.JavaLayerException;
  */
 public class FactoryRegistry {
 
-    private static final Logger logger = Logger.getLogger(FactoryRegistry.class.getName());
+    private static final Logger logger = System.getLogger(FactoryRegistry.class.getName());
 
     private static FactoryRegistry instance = null;
 
@@ -88,7 +89,7 @@ public class FactoryRegistry {
         AudioDevice device = null;
 
         JavaLayerException lastEx = null;
-logger.fine("factories order: " + Arrays.toString(getFactoriesPriority()));
+logger.log(Level.DEBUG, "factories order: " + Arrays.toString(getFactoriesPriority()));
         for (AudioDeviceFactory factory : getFactoriesPriority()) {
             try {
                 device = factory.createAudioDevice();
@@ -120,7 +121,7 @@ logger.fine("factories order: " + Arrays.toString(getFactoriesPriority()));
     protected void registerDefaultFactories() {
         ServiceLoader<AudioDeviceFactory> loader = ServiceLoader.load(AudioDeviceFactory.class);
         for (AudioDeviceFactory factory : loader) {
-logger.fine("initial factory: " + factory);
+logger.log(Level.DEBUG, "initial factory: " + factory);
             addFactory(factory);
         }
     }

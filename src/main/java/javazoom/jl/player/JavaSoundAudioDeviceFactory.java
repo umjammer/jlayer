@@ -34,8 +34,7 @@ public class JavaSoundAudioDeviceFactory extends AudioDeviceFactory {
     private boolean tested = false;
 
     @Override
-    public synchronized AudioDevice createAudioDevice()
-            throws JavaLayerException {
+    public synchronized AudioDevice createAudioDevice() throws JavaLayerException {
 
         if (!tested) {
             testAudioDevice();
@@ -45,7 +44,7 @@ public class JavaSoundAudioDeviceFactory extends AudioDeviceFactory {
         return new JavaSoundAudioDevice();
     }
 
-    private void testAudioDevice() throws JavaLayerException {
+    private static void testAudioDevice() throws JavaLayerException {
         JavaSoundAudioDevice dev = new JavaSoundAudioDevice();
         dev.test();
     }
