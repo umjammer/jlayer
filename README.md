@@ -6,7 +6,7 @@
 
 # JLayer
 
-<img alt="mp3 logo" src="https://github.com/umjammer/mp3spi/assets/493908/b718b78d-15c6-4356-a5ca-fca63ad7ffcb" width=160 /><sub><a href="https://www.iis.fraunhofer.de/de/ff/amm/unterhaltungselektronik/mp3.html">🅮 fraunhofer</a></sub>
+<img alt="logo" src="src/test/resources/duke_mp3.png" width=160 />
 
 MP3 Decoder in pure Java.
 
@@ -117,3 +117,7 @@ and anyone can add his contribution. JLayer is licensed under LGPL (see [LICENSE
 ### How to skip frames to have a seek feature ?
 
   See `javazoom.jl.player.advanced.jlap` source to learn how to skip frames.
+
+---
+
+<sub>image designed by @umjammer, drawn by nano banana</sub>
