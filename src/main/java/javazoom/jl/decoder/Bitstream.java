@@ -307,7 +307,7 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
      * @throws BitstreamException if an error occurs
      */
     public Header readFrame() throws BitstreamException {
-        Header result;
+        Header result = null;
         try {
             result = readNextFrame();
 
@@ -324,9 +324,11 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
                     closeFrame();
                     result = readNextFrame();
                 } catch (BitstreamException e) {
-                    throw newBitstreamException(e.getErrorCode(), e);
+                    if (e.getErrorCode() != STREAM_EOF) {
+                        throw newBitstreamException(e.getErrorCode(), e);
+                    }
                 }
-            } else {
+            } else if (ex.getErrorCode() != STREAM_EOF) {
                 throw ex;
             }
         }
