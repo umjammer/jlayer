@@ -27,6 +27,8 @@ import java.util.Properties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -135,10 +137,12 @@ System.err.println("number_of_subbands=" + header.numberOfSubbands());
         in.closeFrame();
     }
 
-    static String mp3 = "/c-major-scale_test_audacity.mp3";
-
-    @Test
-    public void testStream2() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "/c-major-scale_test_audacity.mp3",
+            "/c-major-scale_test_web-convert_mono.mp3",
+    })
+    public void testStream2(String mp3) throws Exception {
         in = new Bitstream(BitstreamTest.class.getResourceAsStream(mp3));
         InputStream id3in = in.getRawID3v2();
         int size = (id3in == null) ? 0 : id3in.available();
