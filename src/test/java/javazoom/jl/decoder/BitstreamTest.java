@@ -23,14 +23,14 @@ package javazoom.jl.decoder;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import vavi.util.Debug;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -74,32 +74,32 @@ public class BitstreamTest {
         InputStream id3in = in.getRawID3v2();
         int size = id3in.available();
         Header header = in.readFrame();
-Debug.println(Level.FINE, "--- " + filename + " ---");
-Debug.println(Level.FINE, "ID3v2Size=" + size);
-Debug.println(Level.FINE, "version=" + header.version());
-Debug.println(Level.FINE, "version_string=" + header.versionString());
-Debug.println(Level.FINE, "layer=" + header.layer());
-Debug.println(Level.FINE, "frequency=" + header.frequency());
-Debug.println(Level.FINE, "frequency_string=" + header.sampleFrequencyString());
-Debug.println(Level.FINE, "bitrate=" + header.bitrate());
-Debug.println(Level.FINE, "bitrate_string=" + header.bitrateString());
-Debug.println(Level.FINE, "mode=" + header.mode());
-Debug.println(Level.FINE, "mode_string=" + header.modeString());
-Debug.println(Level.FINE, "slots=" + header.slots());
-Debug.println(Level.FINE, "vbr=" + header.vbr());
-Debug.println(Level.FINE, "vbr_scale=" + header.vbrScale());
-Debug.println(Level.FINE, "max_number_of_frames=" + header.maxNumberOfFrames(mp3in.available()));
-Debug.println(Level.FINE, "min_number_of_frames=" + header.minNumberOfFrames(mp3in.available()));
-Debug.println(Level.FINE, "ms_per_frame=" + header.msPerFrame());
-Debug.println(Level.FINE, "frames_per_second=" + (float) ((1.0 / (header.msPerFrame())) * 1000.0));
-Debug.println(Level.FINE, "total_ms=" + header.totalMs(mp3in.available()));
-Debug.println(Level.FINE, "SyncHeader=" + header.getSyncHeader());
-Debug.println(Level.FINE, "checksums=" + header.checksums());
-Debug.println(Level.FINE, "copyright=" + header.copyright());
-Debug.println(Level.FINE, "original=" + header.original());
-Debug.println(Level.FINE, "padding=" + header.padding());
-Debug.println(Level.FINE, "framesize=" + header.calculateFrameSize());
-Debug.println(Level.FINE, "number_of_subbands=" + header.numberOfSubbands());
+System.err.println("--- " + filename + " ---");
+System.err.println("ID3v2Size=" + size);
+System.err.println("version=" + header.version());
+System.err.println("version_string=" + header.versionString());
+System.err.println("layer=" + header.layer());
+System.err.println("frequency=" + header.frequency());
+System.err.println("frequency_string=" + header.sampleFrequencyString());
+System.err.println("bitrate=" + header.bitrate());
+System.err.println("bitrate_string=" + header.bitrateString());
+System.err.println("mode=" + header.mode());
+System.err.println("mode_string=" + header.modeString());
+System.err.println("slots=" + header.slots());
+System.err.println("vbr=" + header.vbr());
+System.err.println("vbr_scale=" + header.vbrScale());
+System.err.println("max_number_of_frames=" + header.maxNumberOfFrames(mp3in.available()));
+System.err.println("min_number_of_frames=" + header.minNumberOfFrames(mp3in.available()));
+System.err.println("ms_per_frame=" + header.msPerFrame());
+System.err.println("frames_per_second=" + (float) ((1.0 / (header.msPerFrame())) * 1000.0));
+System.err.println("total_ms=" + header.totalMs(mp3in.available()));
+System.err.println("SyncHeader=" + header.getSyncHeader());
+System.err.println("checksums=" + header.checksums());
+System.err.println("copyright=" + header.copyright());
+System.err.println("original=" + header.original());
+System.err.println("padding=" + header.padding());
+System.err.println("framesize=" + header.calculateFrameSize());
+System.err.println("number_of_subbands=" + header.numberOfSubbands());
         assertEquals(Integer.parseInt(props.getProperty("ID3v2Size")), size, "ID3v2Size");
         assertEquals(Integer.parseInt(props.getProperty("version")), header.version(), "version");
         assertEquals(props.getProperty("version_string"), header.versionString(), "version_string");
@@ -132,6 +132,52 @@ Debug.println(Level.FINE, "number_of_subbands=" + header.numberOfSubbands());
         assertEquals(Integer.parseInt(props.getProperty("number_of_subbands")),
                 header.numberOfSubbands(),
                 "number_of_subbands");
+        in.closeFrame();
+    }
+
+    static String mp3 = "/c-major-scale_test_audacity.mp3";
+
+    @Test
+    public void testStream2() throws Exception {
+        in = new Bitstream(BitstreamTest.class.getResourceAsStream(mp3));
+        InputStream id3in = in.getRawID3v2();
+        int size = (id3in == null) ? 0 : id3in.available();
+        Header header = in.readFrame();
+System.err.println("--- " + mp3 + " ---");
+System.err.println("ID3v2Size=" + size);
+System.err.println("version=" + header.version());
+System.err.println("version_string=" + header.versionString());
+System.err.println("layer=" + header.layer());
+System.err.println("frequency=" + header.frequency());
+System.err.println("frequency_string=" + header.sampleFrequencyString());
+System.err.println("bitrate=" + header.bitrate());
+System.err.println("bitrate_string=" + header.bitrateString());
+System.err.println("mode=" + header.mode());
+System.err.println("mode_string=" + header.modeString());
+System.err.println("slots=" + header.slots());
+System.err.println("vbr=" + header.vbr());
+System.err.println("vbr_scale=" + header.vbrScale());
+System.err.println("max_number_of_frames=" + header.maxNumberOfFrames(mp3in.available()));
+System.err.println("min_number_of_frames=" + header.minNumberOfFrames(mp3in.available()));
+System.err.println("ms_per_frame=" + header.msPerFrame());
+System.err.println("frames_per_second=" + (float) ((1.0 / (header.msPerFrame())) * 1000.0));
+System.err.println("total_ms=" + header.totalMs(mp3in.available()));
+System.err.println("SyncHeader=" + header.getSyncHeader());
+System.err.println("checksums=" + header.checksums());
+System.err.println("copyright=" + header.copyright());
+System.err.println("original=" + header.original());
+System.err.println("padding=" + header.padding());
+System.err.println("framesize=" + header.calculateFrameSize());
+System.err.println("number_of_subbands=" + header.numberOfSubbands());
+        // Relaxed assertions: ensure header successfully parsed and no exceptions.
+        assertNotNull(header, "Header should not be null");
+        assertTrue(header.calculateFrameSize() >= 0, "framesize");
+        // Basic sanity checks (relaxed to support different test files)
+        assertTrue(header.msPerFrame() > 0.0f, "ms_per_frame");
+        assertTrue((float) ((1.0 / (header.msPerFrame())) * 1000.0) > 0.0f, "frames_per_second");
+        assertTrue(header.totalMs(mp3in.available()) >= 0.0f, "total_ms");
+        assertTrue(header.calculateFrameSize() >= 0, "framesize");
+        assertTrue(header.numberOfSubbands() >= 0, "number_of_subbands");
         in.closeFrame();
     }
 }

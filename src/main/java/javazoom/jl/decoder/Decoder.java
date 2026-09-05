@@ -20,6 +20,9 @@
 
 package javazoom.jl.decoder;
 
+import javazoom.jl.converter.Converter;
+
+
 /**
  * The <code>Decoder</code> class encapsulates the details of
  * decoding an MPEG audio frame.
@@ -180,6 +183,48 @@ public class Decoder implements DecoderErrors {
      */
     public int getOutputBlockSize() {
         return OBuffer.O_BUFFER_SIZE;
+    }
+
+    /**
+     * Convenience: decode the next frame from the provided Bitstream and
+     * return a populated SampleBuffer. Returns null if no frame is available.
+     * This preserves the old API; use this method for simpler decoding.
+     */
+    public SampleBuffer decodeNextFrame(Bitstream stream) throws BitstreamException, DecoderException {
+        Header h = stream.readFrame();
+        if (h == null) return null;
+        int channels = (h.mode() == Header.SINGLE_CHANNEL) ? 1 : 2;
+        SampleBuffer sb = new SampleBuffer(h.frequency(), channels);
+        setOutputBuffer(sb);
+        decodeFrame(h, stream);
+        stream.closeFrame();
+        return sb;
+    }
+
+    /**
+     * Convenience: decode the next frame and return raw PCM 16-bit little-endian bytes.
+     * Returns null if no frame is available.
+     */
+    public byte[] decodeNextFrameToPCM(Bitstream stream) throws BitstreamException, DecoderException {
+        SampleBuffer sb = decodeNextFrame(stream);
+        if (sb == null) return null;
+        short[] buf = sb.getBuffer();
+        int len = sb.getBufferLength();
+        byte[] out = new byte[len * 2];
+        for (int i = 0; i < len; i++) {
+            short s = buf[i];
+            out[i * 2] = (byte) (s & 0xFF);
+            out[i * 2 + 1] = (byte) ((s >>> 8) & 0xFF);
+        }
+        return out;
+    }
+
+    /**
+     * Convenience static helper that uses the existing Converter API.
+     * Keeps backwards compatibility while offering a simpler entry point.
+     */
+    public static void convertToWav(String sourceName, String destName) throws javazoom.jl.decoder.JavaLayerException {
+        new Converter().convert(sourceName, destName);
     }
 
     protected DecoderException newDecoderException(int errorCode) {
