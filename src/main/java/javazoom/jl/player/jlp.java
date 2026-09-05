@@ -126,7 +126,29 @@ public class jlp {
 
     /** @since 1.0.2 */
     public void stop() {
-        player.close();
+        if (player != null) {
+            player.close();
+        }
+    }
+
+    /**
+     * Returns the current player instance.
+     *
+     * @return the Player instance, or null if not playing
+     * @since 1.0.4
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Returns whether a player is currently active.
+     *
+     * @return true if player exists and is not closed
+     * @since 1.0.4
+     */
+    public boolean isPlaying() {
+        return player != null && !player.isClosed();
     }
 
     /**

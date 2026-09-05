@@ -158,6 +158,16 @@ public class Player {
     }
 
     /**
+     * Returns whether the player has been closed.
+     *
+     * @return true if the player has been closed, false otherwise
+     * @since 1.0.2
+     */
+    public synchronized boolean isClosed() {
+        return closed;
+    }
+
+    /**
      * Retrieves the position in milliseconds of the current audio
      * sample being played. This method delegates to the <code>
      * AudioDevice</code> that is used by this player to sound
@@ -184,13 +194,17 @@ public class Player {
             if (out == null)
                 return false;
 
-            Header h = bitstream.readFrame();
+            Bitstream stream = bitstream;
+            if (stream == null)
+                return false;
+
+            Header h = stream.readFrame();
 
             if (h == null)
                 return false;
 
             // sample buffer set when decoder constructed
-            SampleBuffer output = (SampleBuffer) decoder.decodeFrame(h, bitstream);
+            SampleBuffer output = (SampleBuffer) decoder.decodeFrame(h, stream);
 
             synchronized (this) {
                 out = audio;

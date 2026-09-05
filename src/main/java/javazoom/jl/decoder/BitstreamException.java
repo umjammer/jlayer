@@ -49,6 +49,17 @@ public class BitstreamException extends JavaLayerException implements BitstreamE
         this.errorCode = errorCode;
     }
 
+    /**
+     * Constructs a BitstreamException from a Throwable cause.
+     * The error code is set to STREAM_ERROR.
+     *
+     * @param t the cause of this exception
+     * @since 1.0.4
+     */
+    public BitstreamException(Throwable t) {
+        this(STREAM_ERROR, t);
+    }
+
     public int getErrorCode() {
         return errorCode;
     }

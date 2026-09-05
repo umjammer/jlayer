@@ -26,13 +26,18 @@ import java.util.Properties;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -52,6 +57,8 @@ public class BitstreamTest {
     private Properties props = null;
     private FileInputStream mp3in = null;
     private Bitstream in = null;
+
+    static final String mp3 = "/c-major-scale_test_audacity.mp3";
 
     @BeforeEach
     protected void setUp() throws Exception {
@@ -183,5 +190,82 @@ System.err.println("number_of_subbands=" + header.numberOfSubbands());
         assertTrue(header.calculateFrameSize() >= 0, "framesize");
         assertTrue(header.numberOfSubbands() >= 0, "number_of_subbands");
         in.closeFrame();
+    }
+
+    @DisplayName("Read multiple frames sequentially")
+    void testMultipleFrames() throws Exception {
+        Bitstream bitstream = new Bitstream(BitstreamTest.class.getResourceAsStream(mp3));
+
+        int frameCount = 0;
+        int maxFrames = 10;
+
+        while (frameCount < maxFrames && !bitstream.isEOF()) {
+            Header header = bitstream.readFrame();
+            if (header == null) {
+                break;
+            }
+
+            assertNotNull(header, "Header should not be null");
+            assertTrue(header.calculateFrameSize() > 0,
+                    "Frame " + frameCount + " should have valid size");
+
+            bitstream.closeFrame();
+            frameCount++;
+        }
+
+        assertTrue(frameCount > 0, "Should read at least one frame");
+        System.out.println("Successfully read " + frameCount + " frames");
+    }
+
+    @Test
+    @DisplayName("Bitstream state management")
+    void testBitstreamState() throws Exception {
+        Bitstream bitstream = new Bitstream(BitstreamTest.class.getResourceAsStream(mp3));
+
+        assertFalse(bitstream.isClosed(), "Bitstream should not be closed initially");
+        assertFalse(bitstream.isEOF(), "Should not be at EOF initially");
+
+        // Read a frame
+        Header header = bitstream.readFrame();
+        assertNotNull(header);
+        bitstream.closeFrame();
+
+        assertFalse(bitstream.isClosed(), "Bitstream should still be open");
+
+        // Close and verify
+        bitstream.close();
+        assertTrue(bitstream.isClosed(), "Bitstream should be closed");
+
+        // Closing again should be safe (idempotent)
+        assertDoesNotThrow(() -> bitstream.close(), "Multiple close calls should not throw");
+    }
+
+    @Test
+    @DisplayName("Handle EOF gracefully")
+    void testEOFHandling() throws Exception {
+        Bitstream bitstream = new Bitstream(BitstreamTest.class.getResourceAsStream(mp3));
+
+        // Read until EOF
+        int frameCount = 0;
+        while (!bitstream.isEOF()) {
+            Header header = bitstream.readFrame();
+            if (header == null) {
+                break;
+            }
+            bitstream.closeFrame();
+            frameCount++;
+
+            // Safety limit
+            if (frameCount > 10000) {
+                fail("Too many frames, possible infinite loop");
+            }
+        }
+
+        assertTrue(frameCount > 0, "Should have read some frames");
+        System.out.println("Total frames read: " + frameCount);
+
+        // After EOF, readFrame should return null
+        Header header = bitstream.readFrame();
+        assertNull(header, "readFrame should return null at EOF");
     }
 }
