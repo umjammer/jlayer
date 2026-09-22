@@ -24,6 +24,7 @@ import java.io.InputStream;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Decoder;
+import javazoom.jl.decoder.GaplessTrim;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.decoder.SampleBuffer;
@@ -43,6 +44,13 @@ public class AdvancedPlayer {
     private final Decoder decoder;
     /** The AudioDevice the audio samples are written to. */
     private AudioDevice audio;
+
+    /**
+     * Drops the encoder's padding, built once the first frame says how much there is.
+     *
+     * @since 1.0.5
+     */
+    private GaplessTrim trim;
     /** Has the player been closed? */
     private boolean closed = false;
     /** Has the player played back all frames from the stream? */
@@ -139,10 +147,15 @@ public class AdvancedPlayer {
             // sample buffer set when decoder constructed
             SampleBuffer output = (SampleBuffer) decoder.decodeFrame(h, bitstream);
 
+            if (trim == null) {
+                trim = GaplessTrim.of(h, output.getChannelCount());
+            }
+            int keep = trim.accept(output.getBufferLength());
+
             synchronized (this) {
                 out = audio;
-                if (out != null) {
-                    out.write(output.getBuffer(), 0, output.getBufferLength());
+                if (out != null && keep > 0) {
+                    out.write(output.getBuffer(), trim.offset(), keep);
                 }
             }
 
