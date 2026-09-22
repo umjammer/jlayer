@@ -62,6 +62,17 @@ public final class Header {
     public static final int THIRTYTWO = 2;
 
     /**
+     * The decoder's own latency, in samples, which the LAME gapless specification says a decoder
+     * must remove in addition to the encoder delay the tag reports.
+     *
+     * <p>528 samples of MDCT and synthesis latency, plus one. The same constant every other MP3
+     * decoder applies; it is not specific to this implementation.
+     *
+     * @since 1.0.5
+     */
+    public static final int DECODER_DELAY = 529;
+
+    /**
      * Sample frequencies table [version][frequency_index].
      * Made static final for better performance.
      */
@@ -140,6 +151,12 @@ public final class Header {
     private int h_vbr_scale = -1;
     private int h_vbr_bytes;
     private byte[] h_vbr_toc;
+
+    /** LAME encoder delay in samples, or -1 when the file carries no LAME tag. */
+    private int h_enc_delay = -1;
+
+    /** LAME encoder padding in samples, or -1 when the file carries no LAME tag. */
+    private int h_enc_padding = -1;
 
     // Frame information
     public short checksum;
@@ -375,7 +392,10 @@ public final class Header {
                         h_vbr_scale <<= 8;
                         h_vbr_scale += (firstFrame[offset + i] & 0xFF);
                     }
+                    offset += 4;
                 }
+
+                parseLameTag(firstFrame, offset);
 
                 return true;
             }
@@ -384,6 +404,78 @@ public final class Header {
         }
 
         return false;
+    }
+
+    /**
+     * Parse the LAME extension that follows the Xing/Info fields, for its gapless information.
+     *
+     * <p>LAME and the encoders that imitate its tag write a nine-byte version string ("LAME3.100",
+     * "Lavc61.19") immediately after the Xing fields, then twelve bits of encoder delay followed
+     * by twelve bits of encoder padding, twenty-one bytes further on. Those two numbers say how
+     * many samples the encoder added at each end; without them a decoder cannot tell where the
+     * recording actually starts and stops.
+     *
+     * <p>Leaves both at -1 when there is no such extension, which is a legitimate state and not an
+     * error: a bare Xing header is still a valid VBR header.
+     *
+     * @param firstFrame the first frame data
+     * @param offset index just past the Xing/Info fields
+     */
+    private void parseLameTag(byte[] firstFrame, int offset) {
+        try {
+            if (!startsWith(firstFrame, offset, "LAME")
+                    && !startsWith(firstFrame, offset, "Lavc")
+                    && !startsWith(firstFrame, offset, "Lavf")) {
+                return;
+            }
+            int at = offset + 21;
+            h_enc_delay = ((firstFrame[at] & 0xFF) << 4) | ((firstFrame[at + 1] & 0xFF) >> 4);
+            h_enc_padding = ((firstFrame[at + 1] & 0x0F) << 8) | (firstFrame[at + 2] & 0xFF);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // A truncated extension. Not an error; there is simply nothing to read.
+            h_enc_delay = -1;
+            h_enc_padding = -1;
+        }
+    }
+
+    /**
+     * Copies the VBR header information parsed from the header frame onto this one.
+     *
+     * <p>The Xing/Info/VBRI frame is consumed by {@link Bitstream} and never reaches a caller, so
+     * without this the information it carried would be lost with it. The first audio frame takes
+     * it instead, which is where a caller looks anyway — every existing user of {@code vbr()} and
+     * {@code vbrToc()} reads them from the first frame {@code readFrame()} returns.
+     *
+     * @param headerFrame the header frame that was consumed
+     */
+    void copyVbrFrom(Header headerFrame) {
+        h_vbr = headerFrame.h_vbr;
+        h_vbr_frames = headerFrame.h_vbr_frames;
+        h_vbr_bytes = headerFrame.h_vbr_bytes;
+        h_vbr_scale = headerFrame.h_vbr_scale;
+        h_vbr_toc = headerFrame.h_vbr_toc;
+        h_enc_delay = headerFrame.h_enc_delay;
+        h_enc_padding = headerFrame.h_enc_padding;
+    }
+
+    /**
+     * Whether {@code data} holds {@code marker} at {@code offset}, as ASCII.
+     *
+     * @param data the bytes to look in
+     * @param offset where to look
+     * @param marker the ASCII marker expected there
+     * @return true when it is there
+     */
+    private static boolean startsWith(byte[] data, int offset, String marker) {
+        if (offset < 0 || offset + marker.length() > data.length) {
+            return false;
+        }
+        for (int i = 0; i < marker.length(); i++) {
+            if (data[offset + i] != (byte) marker.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -586,6 +678,68 @@ public final class Header {
      */
     public byte[] vbrToc() {
         return h_vbr_toc;
+    }
+
+    /**
+     * The number of MPEG frames the VBR header claims, not counting the header frame itself,
+     * or -1 when the file has no VBR header or the header omits the count.
+     *
+     * @return frame count, or -1
+     * @since 1.0.5
+     */
+    public int vbrFrames() {
+        return h_vbr_frames;
+    }
+
+    /**
+     * Samples the encoder added before the recording, from the LAME tag, or -1 when unknown.
+     *
+     * <p>A decoder that plays these emits sound the recording does not contain. The full amount to
+     * drop is this plus {@link #DECODER_DELAY}; {@link #samplesToSkipAtStart()} does that sum.
+     *
+     * @return encoder delay in samples, or -1
+     * @since 1.0.5
+     */
+    public int encoderDelay() {
+        return h_enc_delay;
+    }
+
+    /**
+     * Samples the encoder added after the recording, from the LAME tag, or -1 when unknown.
+     *
+     * @return encoder padding in samples, or -1
+     * @since 1.0.5
+     * @see #samplesToSkipAtEnd()
+     */
+    public int encoderPadding() {
+        return h_enc_padding;
+    }
+
+    /**
+     * How many samples to discard from the start of the decoded stream, or 0 when the file does
+     * not say.
+     *
+     * @return {@link #encoderDelay()} plus {@link #DECODER_DELAY}, or 0
+     * @since 1.0.5
+     */
+    public int samplesToSkipAtStart() {
+        return h_enc_delay < 0 ? 0 : h_enc_delay + DECODER_DELAY;
+    }
+
+    /**
+     * How many samples to discard from the end of the decoded stream, or 0 when the file does not
+     * say.
+     *
+     * <p>Less than {@link #encoderPadding()}, because the decoder's own latency has already
+     * consumed part of it: the samples that latency delayed are real audio arriving late, and they
+     * occupy the front of the padding. Never negative — a file whose padding is smaller than the
+     * decoder delay has nothing left to drop here.
+     *
+     * @return {@link #encoderPadding()} minus {@link #DECODER_DELAY}, floored at 0
+     * @since 1.0.5
+     */
+    public int samplesToSkipAtEnd() {
+        return h_enc_padding < 0 ? 0 : Math.max(0, h_enc_padding - DECODER_DELAY);
     }
 
     /**
