@@ -315,6 +315,19 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
             if (firstFrame && result != null) {
                 result.parseVBR(frameBytes);
                 firstFrame = false;
+                if (result.vbr()) {
+                    // The Xing/Info/VBRI frame carries the VBR header and no audio. Decoding it
+                    // yields 1152 samples of silence at the head of every VBR file, so it is
+                    // consumed here rather than handed to the caller. Its contents have just been
+                    // read into this Header and remain available through vbr(), vbrFrames() and
+                    // the rest; only the samples are discarded.
+                    closeFrame();
+                    Header audio = readNextFrame();
+                    if (audio != null) {
+                        audio.copyVbrFrom(result);
+                    }
+                    result = audio;
+                }
             }
         } catch (BitstreamException ex) {
             if (ex.getErrorCode() == INVALIDFRAME) {
