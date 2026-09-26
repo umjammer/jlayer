@@ -25,17 +25,21 @@ import java.io.InputStream;
 
 
 /**
- * <i>Work In Progress.</i>
+ * A {@link Source} over an {@link InputStream}, which is what every caller that hands
+ * {@link Bitstream} a stream gets.
  * <p>
- * An instance of <code>InputStreamSource</code> implements a
- * <code>Source</code> that provides data from an <code>InputStream
- * </code>. Seeking functionality is not supported.
+ * Not seekable, because an {@code InputStream} is not: it cannot go back, and pretending otherwise
+ * by buffering the whole thing would turn a five-minute track into forty megabytes of heap. A
+ * caller that wants to seek passes a {@link FileSource} instead.
  *
  * @author MDM
  */
 public class InputStreamSource implements Source {
 
     private final InputStream in;
+
+    /** Bytes handed out so far, which is the one position question a forward-only source can answer. */
+    private long position;
 
     public InputStreamSource(InputStream in) {
         if (in == null)
@@ -47,6 +51,9 @@ public class InputStreamSource implements Source {
     @Override
     public int read(byte[] b, int offs, int len) throws IOException {
         int read = in.read(b, offs, len);
+        if (read > 0) {
+            position += read;
+        }
         return read;
     }
 
@@ -60,18 +67,24 @@ public class InputStreamSource implements Source {
         return false;
     }
 
+    /**
+     * How far into the stream the next read will start.
+     *
+     * <p>Countable even here: a stream that cannot go back still knows how far it has come, and a
+     * caller that wants to remember a position for a later run can have it.
+     */
     @Override
     public long tell() {
-        return -1;
+        return position;
     }
 
     @Override
     public long seek(long to) {
-        return -1;
+        return LENGTH_UNKNOWN;
     }
 
     @Override
     public long length() {
-        return -1;
+        return LENGTH_UNKNOWN;
     }
 }

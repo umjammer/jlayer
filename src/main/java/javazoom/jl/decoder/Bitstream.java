@@ -103,8 +103,27 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
 
     /**
      * The input source stream.
+     *
+     * <p>Not final since 1.0.5: {@link #seek} replaces it, because a {@link BufferedInputStream}
+     * holds bytes from where the stream used to be and has no way to drop them.
      */
-    private final PushbackInputStream source;
+    private PushbackInputStream source;
+
+    /**
+     * The seekable source behind {@link #source}, or null when this bitstream was handed a stream.
+     */
+    private final Source origin;
+
+    /**
+     * Where the next byte read will come from, counted from the start of the source.
+     *
+     * <p>Maintained here rather than asked of the source, because two buffers sit in between: the
+     * source's file pointer runs ahead by however much {@link BufferedInputStream} has read, which
+     * is not a position any caller means. Every byte this class consumes passes through
+     * {@link #readFully} or {@link #readBytes}, so counting there is exact — including the bytes a
+     * resync walks past, which is the reason a frame's offset cannot be computed from frame sizes.
+     */
+    private long position;
 
     /**
      * Reusable header instance to avoid allocations.
@@ -183,14 +202,67 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
      * @throws NullPointerException if in is null
      */
     public Bitstream(InputStream in) {
+        this(in, null);
+    }
+
+    /**
+     * Construct a Bitstream that reads from a source it can also reposition.
+     *
+     * <p>The difference this makes is {@link #seek}: a {@link FileSource} can go back and an
+     * {@link InputStreamSource} cannot, and {@link #isSeekable} says which. Everything else about
+     * reading is identical — the source is wrapped in the same buffer and the same pushback stream.
+     *
+     * @param source where to read from, and possibly to seek in
+     * @throws NullPointerException if source is null
+     * @since 1.0.5
+     */
+    public Bitstream(Source source) {
+        this(asStream(Objects.requireNonNull(source, "Source cannot be null")), source);
+    }
+
+    private Bitstream(InputStream in, Source origin) {
         Objects.requireNonNull(in, "InputStream cannot be null");
 
+        this.origin = origin;
         in = new BufferedInputStream(in);
         loadID3v2(in);
         firstFrame = true;
+        // Where the audio starts: loadID3v2 has consumed the tag, so the first frame's offset is
+        // the tag's size and every position this class reports is comparable with a file offset.
+        position = headerPos;
         source = new PushbackInputStream(in, BUFFER_INT_SIZE * 4);
 
         closeFrame();
+    }
+
+    /** A {@link Source} seen as the stream the reading code already knows how to use. */
+    private static InputStream asStream(Source source) {
+        return new InputStream() {
+            @Override
+            public int read() throws IOException {
+                byte[] one = new byte[1];
+                int read = source.read(one, 0, 1);
+                return read <= 0 ? -1 : one[0] & 0xff;
+            }
+
+            @Override
+            public int read(byte[] b, int offs, int len) throws IOException {
+                return source.read(b, offs, len);
+            }
+
+            @Override
+            public void close() throws IOException {
+                if (source instanceof AutoCloseable closeable) {
+                    try {
+                        closeable.close();
+                    } catch (IOException alreadyIo) {
+                        throw alreadyIo;
+                    } catch (Exception other) {
+                        throw new IOException(other);
+                    }
+                }
+            }
+        };
     }
 
     /**
@@ -383,6 +455,106 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
         if (frameSize > 0) {
             totalBytesRead += frameSize;
         }
+    }
+
+    /**
+     * Whether {@link #seek} does anything on this bitstream.
+     *
+     * <p>True only for a {@link Source} that can reposition — in practice a {@link FileSource}. A
+     * player asks this before offering a seek bar rather than after a listener drags it.
+     *
+     * @since 1.0.5
+     */
+    public boolean isSeekable() {
+        return origin != null && origin.isSeekable();
+    }
+
+    /**
+     * Where the next byte will be read from, counted from the start of the source.
+     *
+     * <p>After {@link #readFrame} this is the offset of the frame <em>after</em> the one just
+     * returned, which is the position to remember if you want to come back to it: pass it to
+     * {@link #seek} and the next {@code readFrame()} returns the same frame again.
+     *
+     * @since 1.0.5
+     */
+    public long position() {
+        return position;
+    }
+
+    /**
+     * The total length of the source in bytes, or {@link Source#LENGTH_UNKNOWN}.
+     *
+     * @since 1.0.5
+     */
+    public long length() {
+        return origin == null ? Source.LENGTH_UNKNOWN : origin.length();
+    }
+
+    /**
+     * Moves to a byte offset and resynchronises to the next frame that starts at or after it.
+     *
+     * <p>The seek this class's header comment has called "temporarily removed" since 1997. What was
+     * missing was never the decoding — {@link LayerIIIDecoder#seek_notify} has been here all along,
+     * and the bit reservoir already degrades safely — but the ability to move the bytes.
+     *
+     * <h2>Landing on a frame</h2>
+     *
+     * <p>{@code position} does not have to be a frame boundary. The next {@link #readFrame} scans
+     * forward for a sync mark exactly as it does at the start of a file, and the validation is the
+     * one that was already here: a candidate header is accepted only when the frame length it
+     * implies lands on another sync mark ({@code isSyncCurrentPosition}). After the first frame of
+     * the file has been read the comparison is stricter still, because the sync word then carries
+     * the version, layer and sample rate this file actually uses — 21 bits of agreement rather than
+     * the bare 11 of a sync pattern. A seek deliberately keeps that word: an 11-bit pattern matches
+     * roughly one byte in 2048 of arbitrary data, which for a five-megabyte file is a few thousand
+     * false candidates to be wrong about.
+     *
+     * <h2>What the caller must do afterwards</h2>
+     *
+     * <p>Call {@link Decoder#seekNotify} before decoding again, then warm up: decode forward
+     * discarding frames until one produces samples, <b>discard that one too</b>, and play from the
+     * next. Layer III frames are not independent — {@code main_data_begin} points backwards up to
+     * 511 bytes into frames a seek did not read, and the first frame that can be reconstructed is
+     * still missing its IMDCT overlap. {@link Decoder#seekNotify} has the measurements. A caller
+     * that wants the target frame itself therefore seeks two or three frames before it.
+     *
+     * @param position where to go, in bytes from the start of the source; clamped to the source
+     * @return the position actually reached, or {@link Source#LENGTH_UNKNOWN} if this bitstream
+     *         cannot seek
+     * @throws BitstreamException if the source cannot be repositioned
+     * @since 1.0.5
+     */
+    public long seek(long position) throws BitstreamException {
+        if (closed) {
+            throw newBitstreamException(STREAM_ERROR,
+                    new IllegalStateException("Bitstream is closed"));
+        }
+        if (!isSeekable()) {
+            return Source.LENGTH_UNKNOWN;
+        }
+        long landed = origin.seek(Math.max(0, position));
+        if (landed == Source.LENGTH_UNKNOWN) {
+            throw newBitstreamException(STREAM_ERROR,
+                    new IOException("the source refused to seek to " + position));
+        }
+        // A new pushback stream over a new buffer. The old one holds bytes from where the source
+        // used to be, and neither BufferedInputStream nor PushbackInputStream can be told to forget
+        // them; reusing either would hand the resync data from the wrong part of the file.
+        source = new PushbackInputStream(
+                new BufferedInputStream(asStream(origin)), BUFFER_INT_SIZE * 4);
+        // No ID3v2 parse here: the tag is at the front, it was read when this object was built, and
+        // re-reading it from the middle of a file would find a picture frame and believe it.
+        this.position = landed;
+        eof = false;
+        // The Xing/Info frame is the first frame of the file and cannot be at a seek target, so a
+        // second VBR parse has nothing to find and something to get wrong: parseVBR looks for "Xing",
+        // "Info" or "VBRI" at a computed offset, and arbitrary audio data that happens to spell one
+        // would set h_vbr and a frame count from noise. Unlikely rather than impossible, and there is
+        // nothing to gain by trying.
+        firstFrame = false;
+        closeFrame();
+        return landed;
     }
 
     /**
@@ -625,6 +797,11 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
 
         try {
             source.unread(syncBuf, 0, read);
+            // Given back, so they were never consumed. Without this the position runs four bytes
+            // ahead per frame — the look-ahead that validates a sync mark is not progress through
+            // the stream, and a position that counted it would name an offset four bytes inside
+            // every frame. Which is exactly how the first run of the seek tests failed.
+            position -= read;
         } catch (IOException ignore) {
         }
 
@@ -645,6 +822,7 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
         if (wordPointer == -1 && bitIndex == -1 && (frameSize > 0)) {
             try {
                 source.unread(frameBytes, 0, frameSize);
+                position -= frameSize;
             } catch (IOException ex) {
                 throw newBitstreamException(STREAM_ERROR, ex);
             }
@@ -709,6 +887,7 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
                     break;
                 }
                 nRead += bytesRead;
+                position += bytesRead;
                 offs += bytesRead;
                 len -= bytesRead;
             }
@@ -731,6 +910,7 @@ public final class Bitstream implements BitstreamErrors, AutoCloseable {
                     break;
                 }
                 totalBytesRead += bytesread;
+                position += bytesread;
                 offs += bytesread;
                 len -= bytesread;
             }
